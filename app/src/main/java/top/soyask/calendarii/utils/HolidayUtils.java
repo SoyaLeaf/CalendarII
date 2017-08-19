@@ -1,0 +1,130 @@
+package top.soyask.calendarii.utils;
+
+import java.util.Calendar;
+
+/**
+ * Created by mxf on 2017/8/10.
+ */
+public class HolidayUtils {
+
+    public static final String getHolidayOfMonth(Calendar calendar) {
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        switch (dayOfMonth) {
+            case 1:
+                if (month == Calendar.JANUARY) {
+                    return "元旦";
+                }
+                if (month == Calendar.APRIL) {
+                    return "愚人节";
+                }
+                if (month == Calendar.MAY) {
+                    return "劳动节";
+                }
+                if (month == Calendar.JUNE) {
+                    return "儿童节";
+                }
+                if (month == Calendar.JULY) {
+                    return "建党节";
+                }
+                if (month == Calendar.AUGUST) {
+                    return "建军节";
+                }
+                if (month == Calendar.OCTOBER) {
+                    return "国庆节";
+                }
+            default:
+                switch (month) {
+                    case Calendar.FEBRUARY:
+                        if (dayOfMonth == 2) {
+                            return "湿地日";
+                        }
+                        if (dayOfMonth == 14) {
+                            return "情人节";
+                        }
+                        break;
+                    case Calendar.MARCH:
+                        if (dayOfMonth == 8) {
+                            return "妇女节";
+                        }
+                        if (dayOfMonth == 12) {
+                            return "植树节";
+                        }
+                        if (dayOfMonth == 15) {
+                            return "消权日";
+                        }
+                        break;
+                    case Calendar.APRIL:
+                        if (dayOfMonth == 22) {
+                            return "地球日";
+                        }
+                        break;
+
+                    case Calendar.MAY:
+                        if (dayOfMonth == 4) {
+                            return "青年节";
+                        }
+                        if (dayOfMonth == 12) {
+                            return "护士节";
+                        }
+                        if (dayOfMonth == 15) {
+                            return "博物馆日";
+                        } else {
+                            return calculateHolidayForWeek(calendar);
+                        }
+                    case Calendar.JUNE:
+                        if (dayOfMonth == 5) {
+                            return "环境日";
+                        }
+                        if (dayOfMonth == 23) {
+                            return "奥林匹克日";
+                        } else {
+                            return calculateHolidayForWeek(calendar);
+                        }
+                    case Calendar.JULY:
+                        break;
+                    case Calendar.AUGUST:
+                        break;
+                    case Calendar.SEPTEMBER:
+                        if (dayOfMonth == 3) {
+                            return "抗战胜利日";
+                        }
+                        break;
+                    case Calendar.OCTOBER:
+                        break;
+                    case Calendar.NOVEMBER:
+                        break;
+                    case Calendar.DECEMBER:
+                        if (dayOfMonth == 1) {
+                            return "艾滋病日";
+                        }
+                        if (dayOfMonth == 25) {
+                            return "圣诞节";
+                        }
+                        break;
+                }
+                return null;
+        }
+    }
+
+    private static String calculateHolidayForWeek(Calendar calendar) {
+        int dayForWeek = DayUitls.getDayForWeek(calendar);
+        String holiday = null;
+        if (dayForWeek == 0) {
+            switch (calendar.get(Calendar.MONTH)) {
+                case Calendar.MAY:
+                    if (DayUitls.getWeekForMonth(calendar) == 3) {
+                        holiday = "母亲节";
+                    }
+                    break;
+                case Calendar.JUNE:
+                    if (DayUitls.getWeekForMonth(calendar) == 4) {
+                        holiday = "父亲节";
+                    }
+                    break;
+            }
+        }
+        return holiday;
+    }
+
+}

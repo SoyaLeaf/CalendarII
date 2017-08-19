@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#c0000000">
+    <!--<Button-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
+    <com.dinuscxj.progressbar.CircleProgressBar
+        android:id="@+id/cpb"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_centerInParent="true"
+        app:draw_progress_text="false"
+        app:progress_stroke_width="8dp"
+        app:progress_background_color="@color/text_color_primary_light"
+        app:progress_shader="linear"
+        app:progress_start_color="#33cc00"
+        app:progress_end_color="@color/colorAccent"
+        app:style="solid_line" />
+
+    <RadioGroup
+        android:id="@+id/rg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cpb"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="24dp">
+
+        <RadioButton
+            android:id="@+id/rb_comp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimary"
+            android:text="删除被划掉的事件"
+            android:textColor="@color/text_color_primary_light" />
+
+        <RadioButton
+            android:id="@+id/rb_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorPrimary"
+            android:text="删除全部事件"
+            android:textColor="@color/text_color_primary_light" />
+    </RadioGroup>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="长按删除"
+        android:textColor="@color/text_color_primary_light"
+        android:textSize="@dimen/primary_font_size" />
+</RelativeLayout>

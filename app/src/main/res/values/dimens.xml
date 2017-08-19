@@ -1,0 +1,44 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!--Material Design-->
+    <!--质感设计-->
+    <!-- Create By Soya米小饭  2017-03-27-->
+
+    <!--各类字体大小-->
+    <dimen name="hint_font_size">12sp</dimen>
+    <dimen name="primary_font_size">15sp</dimen>
+    <dimen name="subtitle_font_size">16sp</dimen>
+    <dimen name="appbar_font_size">20sp</dimen>
+    <dimen name="large_title_font_size">24sp</dimen>
+    <dimen name="large_font_size_34">34sp</dimen>
+    <dimen name="large_font_size_45">45sp</dimen>
+    <dimen name="large_font_size_56">56sp</dimen>
+    <dimen name="large_font_size_112">112sp</dimen>
+
+    <!--布局-->
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="corners_radius">2dp</dimen>
+    <dimen name="normal_space">2dp</dimen>
+    <dimen name="states_height">24dp</dimen>
+    <dimen name="action_bar_height">56dp</dimen>
+    <dimen name="bottom_nav_height">56dp</dimen>
+    <dimen name="floating_button_normal_size">56dp</dimen>
+    <dimen name="floating_button_smaller_size">40dp</dimen>
+    <dimen name="profile_pic_normal">64dp</dimen>
+    <dimen name="profile_pic_smaller">40dp</dimen>
+
+    <!--抽屉到屏幕右边的距离-->
+    <dimen name="drawer_right">56dp</dimen>
+    <dimen name="card_space">8dp</dimen>
+    <dimen name="split_line_vertical_margin">8dp</dimen>
+    <dimen name="normal_margin">16dp</dimen>
+    <!--屏幕左右对齐的的基线距离 即左右的留白宽度-->
+    <dimen name="screen_margin">@dimen/normal_margin</dimen>
+    <!--文字到屏幕左边的距离-->
+    <dimen name="text_left_margin">72dp</dimen>
+    <dimen name="item_day_size">40dp</dimen>
+    <dimen name="card_float_elevation">8dp</dimen>
+</resources>

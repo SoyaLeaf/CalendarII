@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:navigationIcon="@drawable/ic_clear_white_24dp"
+        app:title="添加事件"
+        app:titleTextColor="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/ib_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_margin="@dimen/normal_margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_done_white_24dp" />
+    </android.support.v7.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:gravity="start"
+        android:hint="您需要记录什么？"
+        android:padding="16dp"
+        android:textSize="@dimen/primary_font_size" />
+
+    <Button
+        android:id="@+id/btn_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:drawableLeft="@drawable/ic_date_range_grey_500_18dp"
+        android:text="17年11月11日"
+        android:textColor="@color/text_color_primary_dark"
+        android:textSize="@dimen/primary_font_size" />
+
+    <!--<Button-->
+        <!--android:id="@+id/btn_paste"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:background="?attr/selectableItemBackground"-->
+        <!--android:drawableLeft="@drawable/ic_content_paste_grey_500_18dp"-->
+        <!--android:minWidth="0dp"-->
+        <!--android:text="剪切板"-->
+        <!--android:textColor="@color/text_color_primary_dark"-->
+        <!--android:textSize="@dimen/primary_font_size" />-->
+</RelativeLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_today"
+        android:title="今天"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_today_white_24dp"
+        />
+    <item android:id="@+id/menu_all_event"
+        android:title="所有事件"
+        app:showAsAction="never"
+        />
+
+    <item android:id="@+id/menu_about"
+        android:title="关于"
+        app:showAsAction="never"
+        />
+
+</menu>

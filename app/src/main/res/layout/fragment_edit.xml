@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:navigationIcon="@drawable/ic_clear_white_24dp"
+        app:titleTextColor="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/ib_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_margin="@dimen/normal_margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_done_white_24dp" />
+    </android.support.v7.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:gravity="start"
+        android:padding="16dp"
+        android:textSize="@dimen/primary_font_size" />
+</RelativeLayout>
