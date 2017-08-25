@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         calendar.set(Calendar.YEAR, mYear);
         calendar.set(Calendar.MONTH, mMonth - 1);
         int dayCount = DayUitls.getMonthDayCount(mMonth - 1, mYear);
+
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
@@ -67,24 +69,20 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             boolean isToday = isToday(i);
             String lunar = getLunar(calendar);
             Day day = new Day(mYear, mMonth, lunar, isToday, i + 1, dayOfWeek);
-
-//            String title = new StringBuffer()
-//                    .append(mYear).append("年")
-//                    .append(mMonth).append("月")
-//                    .append(i + 1).append("日")
-//                    .toString();
-//            Log.d(TAG,title);
-//            List<Event> events = mEventDao.query(title.substring(2));
-//            day.setEvents(events);
-
             mDays.add(day);
         }
     }
 
     private String getLunar(Calendar calendar) {
         String result = HolidayUtils.getHolidayOfMonth(calendar);
+
         if (result == null) {
             result = LunarUtils.getLunar(calendar);
+            String lunarHoliday = HolidayUtils.getHolidayOfLunar(result);
+            if (lunarHoliday != null) {
+                return lunarHoliday;
+            }
+            Log.d(TAG, "lunar:" + result);
             int length = result.length();
             if (result.endsWith("初一")) {
                 result = result.substring(0, length - 2);
@@ -111,7 +109,8 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             int position = getArguments().getInt(POSITION);
-            mYear = position / MONTH_COUNT + YEAR_START;
+            mYear = (position - 1) / MONTH_COUNT + YEAR_START;
+            Log.d(TAG,"year:"+mYear);
             mMonth = (position - 1) % MONTH_COUNT + 1;
             mCalendar = (Calendar) getArguments().getSerializable(CALENDAR);
         }

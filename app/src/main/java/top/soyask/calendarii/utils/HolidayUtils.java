@@ -1,11 +1,30 @@
 package top.soyask.calendarii.utils;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by mxf on 2017/8/10.
  */
 public class HolidayUtils {
+
+    private static final Map<String, String> LUNAR_HOLIDAY = new HashMap<>();
+
+    static {
+        if (LUNAR_HOLIDAY.isEmpty()) {
+            LUNAR_HOLIDAY.put("正月初一", "春节");
+            LUNAR_HOLIDAY.put("正月十五", "元宵节");
+            LUNAR_HOLIDAY.put("五月初五", "端午节");
+            LUNAR_HOLIDAY.put("七月初七", "七夕节");
+            LUNAR_HOLIDAY.put("七月十五", "中元节");
+            LUNAR_HOLIDAY.put("八月十五", "中秋节");
+            LUNAR_HOLIDAY.put("九月初九", "重阳节");
+            LUNAR_HOLIDAY.put("腊月初八", "腊八节");
+            LUNAR_HOLIDAY.put("腊月廿九", "除夕");
+            LUNAR_HOLIDAY.put("腊月三十", "除夕");
+        }
+    }
 
     public static final String getHolidayOfMonth(Calendar calendar) {
         int month = calendar.get(Calendar.MONTH);
@@ -63,24 +82,15 @@ public class HolidayUtils {
                     case Calendar.MAY:
                         if (dayOfMonth == 4) {
                             return "青年节";
-                        }
-                        if (dayOfMonth == 12) {
+                        } else if (dayOfMonth == 12) {
                             return "护士节";
-                        }
-                        if (dayOfMonth == 15) {
+                        } else if (dayOfMonth == 15) {
                             return "博物馆日";
                         } else {
                             return calculateHolidayForWeek(calendar);
                         }
                     case Calendar.JUNE:
-                        if (dayOfMonth == 5) {
-                            return "环境日";
-                        }
-                        if (dayOfMonth == 23) {
-                            return "奥林匹克日";
-                        } else {
-                            return calculateHolidayForWeek(calendar);
-                        }
+                        return calculateHolidayForWeek(calendar);
                     case Calendar.JULY:
                         break;
                     case Calendar.AUGUST:
@@ -105,6 +115,10 @@ public class HolidayUtils {
                 }
                 return null;
         }
+    }
+
+    public static String getHolidayOfLunar(String lunar) {
+        return LUNAR_HOLIDAY.get(lunar);
     }
 
     private static String calculateHolidayForWeek(Calendar calendar) {

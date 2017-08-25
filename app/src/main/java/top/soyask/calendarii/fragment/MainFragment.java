@@ -101,7 +101,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public void onPageSelected(int position) {
-        int year = position / 12 + MonthFragmentAdapter.YEAR_START;
+        int year = (position - 1) / 12 + MonthFragmentAdapter.YEAR_START;
         int month = (position - 1) % 12 + 1;
         setToolbarDate(year, month);
     }
