@@ -1,24 +1,23 @@
 package top.soyask.calendarii.fragment;
 
-import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.Toast;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
+import c.b.BP;
+import c.b.PListener;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.fragment.base.BaseFragment;
 
@@ -43,9 +42,11 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
         findToolbar(R.id.toolbar).setNavigationOnClickListener(this);
         findViewById(R.id.rl_qr).setOnClickListener(this);
         findViewById(R.id.rl_email).setOnClickListener(this);
-        findViewById(R.id.rl_info).setOnClickListener(this);
-        findViewById(R.id.btn_qr).setOnClickListener(this);
-        findViewById(R.id.iv_qr).setOnClickListener(this);
+        findViewById(R.id.rl_color).setOnClickListener(this);
+        findViewById(R.id.btn_one).setOnClickListener(this);
+        findViewById(R.id.btn_two).setOnClickListener(this);
+        findViewById(R.id.btn_three).setOnClickListener(this);
+        findViewById(R.id.rl_score).setOnClickListener(this);
         mExpandableLayout = findViewById(R.id.el);
     }
 
@@ -56,17 +57,23 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
             case R.id.rl_qr:
                 mExpandableLayout.toggle();
                 break;
-            case R.id.rl_info:
-                new AlertDialog.Builder(getMainActivity())
-                        .setMessage("亲，小秘密自己去发掘哦。有什么意见或者建议可以发送邮件告诉我哦！")
-                        .show();
+            case R.id.rl_color:
+                setupTheme();
                 break;
             case R.id.rl_email:
                 copy();
                 break;
-            case R.id.btn_qr:
-            case R.id.iv_qr:
-                saveImage();
+            case R.id.rl_score:
+                score();
+                break;
+            case R.id.btn_one:
+                give(0.5f);
+                break;
+            case R.id.btn_two:
+                give(1.2f);
+                break;
+            case R.id.btn_three:
+                give(2.5f);
                 break;
             default:
                 removeFragment(this);
@@ -74,32 +81,104 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 11 && grantResults.length > 0
-                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            saveImage();
-        }
-    }
+    private void score() {
 
-    private void saveImage() {
-        int checkSelfPermission = ContextCompat.checkSelfPermission(getMainActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (checkSelfPermission == PackageManager.PERMISSION_GRANTED) {
-            new Thread(){
-                @Override
-                public void run() {
-                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode);
-                    String uri = MediaStore.Images.Media.insertImage(getMainActivity().getContentResolver(), bitmap, "qrcode", null);
-                    getMainActivity().sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(uri)));
-                }
-            }.start();
-            showSnackbar("二维码已经保存到您的相册中,打开支付宝扫一扫吧。谢谢支持 orz");
+        Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) { //可以接收
+            startActivity(intent);
         } else {
-            ActivityCompat.requestPermissions(getMainActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 11);
+            Toast.makeText(getActivity(), "您的系统中没有安装应用市场", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private static final String APP_ID = "25553c3637dd2ff500393d901326446a";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        BP.init(APP_ID);
+    }
+
+    private void give(float money) {
+        try {
+            Toast.makeText(getMainActivity(), "正在打开支付界面...", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            ComponentName cn = new ComponentName("com.bmob.app.sport", "com.bmob.app.sport.wxapi.BmobActivity");
+            intent.setComponent(cn);
+            startActivity(intent);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
 
+        BP.pay("您的支持是我最大的动力。谢谢orz", "日历打赏", money, true, new PListener() {
+            // 因为网络等原因,支付结果未知(小概率事件),出于保险起见稍后手动查询
+            @Override
+            public void unknow() {
+                Toast.makeText(getMainActivity(), "支付结果未知,请稍后手动查询", Toast.LENGTH_SHORT)
+                        .show();
+            }
+
+            // 支付成功,如果金额较大请手动查询确认
+            @Override
+            public void succeed() {
+                Toast.makeText(getMainActivity(), "谢谢您的支持!", Toast.LENGTH_SHORT).show();
+            }
+
+            // 无论成功与否,返回订单号
+            @Override
+            public void orderId(String orderId) {
+            }
+
+            // 支付失败,原因可能是用户中断支付操作,也可能是网络原因
+            @Override
+            public void fail(int code, String reason) {
+
+                // 当code为-2,意味着用户中断了操作
+                // code为-3意味着没有安装BmobPlugin插件
+                if (code == -3) {
+                    Toast.makeText(getMainActivity(),
+                            "支付失败，但还是谢谢您。",
+                            Toast.LENGTH_SHORT).show();
+
+                } else {
+                    Toast.makeText(getMainActivity(), "支付失败，但还是谢谢您。", Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+            }
+        });
     }
+
+
+    private static final String[] THEME = {
+            "原色", "酷安绿", "哔哩粉", "水鸭青",
+            "知乎蓝", "高端黑", "基佬紫", "中国红"
+    };
+
+    private void setupTheme() {
+        SharedPreferences setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE);
+        int theme = setting.getInt("theme", 0);
+        new AlertDialog.Builder(getActivity()).setSingleChoiceItems(THEME, theme, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences.Editor setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE).edit();
+                setting.putInt("theme", which).commit();
+                dialog.dismiss();
+                getMainActivity().recreate();
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).show();
+    }
+
 
     private void copy() {
         ClipboardManager clipboardManager = (ClipboardManager) getMainActivity().getSystemService(Context.CLIPBOARD_SERVICE);

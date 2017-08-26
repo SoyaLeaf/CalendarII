@@ -3,17 +3,43 @@
     <color name="colorPrimary">#f57f17</color>
     <color name="colorPrimaryDark">#bc5100</color>
     <color name="colorAccent">#ff6040</color>
-    <color name="colorList">#f7943d</color>
+    <color name="colorEvent">#f7943d</color>
 
     <color name="colorPrimary.Pink">#fc97b8</color>
     <color name="colorPrimaryDark.Pink">#fe8bb1</color>
     <color name="colorAccent.Pink">#ffafc3</color>
-    <color name="colorList.Pink">#f1a8bb</color>
+    <color name="colorEvent.Pink">#f1a8bb</color>
 
     <color name="colorPrimary.Green">#55C259</color>
-    <color name="colorPrimaryDark.Green">#55C259</color>
+    <color name="colorPrimaryDark.Green">#44ba49</color>
     <color name="colorAccent.Green">#55C259</color>
-    <color name="colorList.Green">#83e486</color>
+    <color name="colorEvent.Green">#67c66b</color>
+
+    <color name="colorPrimary.Teal">#009587</color>
+    <color name="colorPrimaryDark.Teal">#00897b</color>
+    <color name="colorAccent.Teal">#26A69A</color>
+    <color name="colorEvent.Teal">#26A69A</color>
+
+    <color name="colorPrimary.Blue">#2095F2</color>
+    <color name="colorPrimaryDark.Blue">#138ff1</color>
+    <color name="colorAccent.Blue">#2e9af0</color>
+    <color name="colorEvent.Blue">#319ef5</color>
+
+    <color name="colorPrimary.Black">#202020</color>
+    <color name="colorPrimaryDark.Black">#202020</color>
+    <color name="colorAccent.Black">#747474</color>
+    <color name="colorEvent.Black">#292929</color>
+
+    <color name="colorPrimary.Red">#DA4336</color>
+    <color name="colorPrimaryDark.Red">#db3b2d</color>
+    <color name="colorAccent.Red">#dd4f42</color>
+    <color name="colorEvent.Red">#d94e43</color>
+
+    <color name="colorPrimary.Purple">#6639B6</color>
+    <color name="colorPrimaryDark.Purple">#5e2bb9</color>
+    <color name="colorAccent.Purple">#6c40ba</color>
+    <color name="colorEvent.Purple">#6e42bb</color>
+
 
     <color name="text_color_primary_light">@android:color/white</color>
     <color name="text_color_sub_light">#b2ffffff</color>

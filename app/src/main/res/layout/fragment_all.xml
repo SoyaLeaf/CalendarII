@@ -29,6 +29,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layoutAnimation="@anim/in_from_bottom_layout"
-        android:background="@color/colorList.Pink" >
+        android:background="?attr/eventBackground" >
     </android.support.v7.widget.RecyclerView>
 </LinearLayout>

@@ -33,7 +33,7 @@
             android:id="@+id/rb_comp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/colorPrimary"
+            android:buttonTint="?colorPrimary"
             android:text="删除被划掉的事件"
             android:textColor="@color/text_color_primary_light" />
 
@@ -41,7 +41,7 @@
             android:id="@+id/rb_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/colorPrimary"
+            android:buttonTint="?colorPrimary"
             android:text="删除全部事件"
             android:textColor="@color/text_color_primary_light" />
     </RadioGroup>

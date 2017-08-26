@@ -36,6 +36,8 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final EventViewHolder eventViewHolder = (EventViewHolder) holder;
         Event event = mEvents.get(position);
+        eventViewHolder.tv_title.getPaint().setAntiAlias(true);
+        eventViewHolder.tv_event.getPaint().setAntiAlias(true);
         eventViewHolder.tv_title.getPaint().setFlags(event.isComplete() ? Paint.STRIKE_THRU_TEXT_FLAG : 0);
         eventViewHolder.tv_event.getPaint().setFlags(event.isComplete() ? Paint.STRIKE_THRU_TEXT_FLAG : 0);
         eventViewHolder.tv_title.setText(event.getTitle());
