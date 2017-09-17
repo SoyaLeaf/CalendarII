@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+
         MainFragment mainFragment = MainFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()

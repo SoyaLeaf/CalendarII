@@ -15,7 +15,7 @@ import top.soyask.calendarii.global.Global;
 public class MonthFragmentAdapter extends FragmentPagerAdapter {
 
     public static final int YEAR_END = Global.YEAR_END;
-    public static final int YEAR_START = Global.YEAR_START;
+    public static final int YEAR_START = Global.YEAR_START_REAL;
     //1970-2200
     private Calendar mCalendar;
     private MonthFragment.OnDaySelectListener mOnDaySelectListener;
@@ -35,6 +35,6 @@ public class MonthFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return (YEAR_END - YEAR_START) * Global.MONTH_COUNT;
+        return (YEAR_END - YEAR_START + 1) * Global.MONTH_COUNT;
     }
 }

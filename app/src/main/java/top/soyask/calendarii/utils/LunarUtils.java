@@ -43,7 +43,6 @@ public class LunarUtils {
         int days = 0;
         int offset = (int) ((calendar.getTime().getTime() - BASE_DATE) / 86400000L) + 1; //计算到1900/1/31日的日差
         int lunarYear;
-
         for (lunarYear = YEAR_START; lunarYear < YEAR_END + 1 && offset > 0; lunarYear++) {
             days = daysOfYear(lunarYear);
             offset -= days;
@@ -53,7 +52,6 @@ public class LunarUtils {
             offset += days;
             lunarYear--;
         }
-
         int leapMonth = monthOfLeap(lunarYear);
         boolean leap = false; //是否为闰月
         int lunarMonth;

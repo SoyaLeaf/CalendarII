@@ -20,6 +20,8 @@ import top.soyask.calendarii.fragment.base.BaseFragment;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
+import static top.soyask.calendarii.global.Global.MONTH_COUNT;
+import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
 public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, AddEventFragment.OnAddListener {
@@ -51,7 +53,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void setupViewPager() {
         int item = getCurrentMonth();
         mViewPager = findViewById(R.id.vp);
-        mViewPager.setAdapter(new MonthFragmentAdapter(getChildFragmentManager(), mCalendar, this));
+        MonthFragmentAdapter adapter = new MonthFragmentAdapter(getChildFragmentManager(), mCalendar, this);
+        mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(item);
         mViewPager.addOnPageChangeListener(this);
     }
@@ -64,7 +67,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
 
     private int getCurrentMonth() {
-        return (mCalendar.get(YEAR) - MonthFragmentAdapter.YEAR_START) * 12 + mCalendar.get(MONTH) + 1;
+        return (mCalendar.get(YEAR) - MonthFragmentAdapter.YEAR_START) * 12 + mCalendar.get(MONTH);
     }
 
     private void setToolbarDate(int year, int month) {
@@ -101,8 +104,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public void onPageSelected(int position) {
-        int year = (position - 1) / 12 + MonthFragmentAdapter.YEAR_START;
-        int month = (position - 1) % 12 + 1;
+        int year = position / MONTH_COUNT + YEAR_START_REAL;
+        int month = position % MONTH_COUNT + 1;
         setToolbarDate(year, month);
     }
 

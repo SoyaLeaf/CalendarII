@@ -3,7 +3,6 @@ package top.soyask.calendarii.fragment;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.DatePickerDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -18,7 +17,6 @@ import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.text.ParseException;
@@ -30,9 +28,10 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.fragment.base.BaseFragment;
+import top.soyask.calendarii.fragment.dialog.DateSelectDialog;
 
 
-public class AddEventFragment extends BaseFragment implements View.OnClickListener, Animator.AnimatorListener, DatePickerDialog.OnDateSetListener {
+public class AddEventFragment extends BaseFragment implements View.OnClickListener, Animator.AnimatorListener, DateSelectDialog.DateSelectCallback {
 
     private static final String DATE = "DATE";
     private static final String EVENT = "EVENT";
@@ -41,7 +40,6 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     private Day mDay;
     private Event mEvent;
     private Button mBtnDate;
-    private DatePickerDialog mDatePickerDialog;
     private OnUpdateListener mOnUpdateListener;
     private OnAddListener mOnAddListener;
     private boolean isExiting;
@@ -126,10 +124,9 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_date:
-                if (mDatePickerDialog == null) {
-                    mDatePickerDialog = new DatePickerDialog(getMainActivity(), this, mDay.getYear(), mDay.getMonth() - 1, mDay.getDayOfMonth());
-                }
-                mDatePickerDialog.show();
+                DateSelectDialog dateSelectDialog = DateSelectDialog.newInstance(mDay.getYear(), mDay.getMonth(), mDay.getDayOfMonth());
+                dateSelectDialog.show(getChildFragmentManager(),"");
+                dateSelectDialog.setDateSelectCallback(this);
                 break;
             case R.id.ib_done:
                 done();
@@ -248,12 +245,23 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+    public void onSelectCancel() {
+
+    }
+
+    @Override
+    public void onValueChange(int year, int month, int day) {
         String date = new StringBuffer()
                 .append(year).append("年")
-                .append(month + 1).append("月")
-                .append(dayOfMonth).append("日").toString();
+                .append(month).append("月")
+                .append(day).append("日").toString();
         mBtnDate.setText(date.substring(2));
+    }
+
+    @Override
+    public void onDismiss() {
+        mEditText.requestFocus();
+        mManager.showSoftInput(mEditText, 0);
     }
 
     public interface OnUpdateListener {

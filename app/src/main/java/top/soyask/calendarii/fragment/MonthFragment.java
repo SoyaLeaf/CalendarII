@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +21,10 @@ import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.utils.DayUitls;
 import top.soyask.calendarii.utils.HolidayUtils;
 import top.soyask.calendarii.utils.LunarUtils;
+import top.soyask.calendarii.utils.SolarUtils;
 
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
-import static top.soyask.calendarii.global.Global.YEAR_START;
+import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickListener {
 
@@ -75,14 +75,12 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
     private String getLunar(Calendar calendar) {
         String result = HolidayUtils.getHolidayOfMonth(calendar);
-
         if (result == null) {
             result = LunarUtils.getLunar(calendar);
             String lunarHoliday = HolidayUtils.getHolidayOfLunar(result);
             if (lunarHoliday != null) {
                 return lunarHoliday;
             }
-            Log.d(TAG, "lunar:" + result);
             int length = result.length();
             if (result.endsWith("初一")) {
                 result = result.substring(0, length - 2);
@@ -94,7 +92,10 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
                 result = result.substring(0, 4);
             }
         }
-        return result;
+
+        String solar = SolarUtils.getSolar(calendar);
+
+        return solar == null ? result : solar;
     }
 
     private boolean isToday(int i) {
@@ -109,9 +110,8 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             int position = getArguments().getInt(POSITION);
-            mYear = (position - 1) / MONTH_COUNT + YEAR_START;
-            Log.d(TAG,"year:"+mYear);
-            mMonth = (position - 1) % MONTH_COUNT + 1;
+            mYear = position / MONTH_COUNT + YEAR_START_REAL; //position==0时 1910/1
+            mMonth = position % MONTH_COUNT + 1;
             mCalendar = (Calendar) getArguments().getSerializable(CALENDAR);
         }
     }

@@ -130,7 +130,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
             @Override
             public void onClick(View v) {
                 mEventDao.add(event);
-                mEvents.add(event);
+                mEvents.add(event);  // FIXME: 2017/8/26 这里不能 event id变化了
                 Collections.sort(mEvents, mComparator);
                 mEventAdapter.notifyItemInserted(position);
                 mEventAdapter.notifyItemRangeChanged(position, mEvents.size());

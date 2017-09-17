@@ -1,8 +1,12 @@
 <resources>
     <!--备忘录 事件列表的颜色-->
     <attr name="eventBackground" format="color" />
-
     <!-- Base application theme. -->
+
+    <style name="NumberPicker">
+        <item name="android:textColorSecondary">?attr/colorAccent</item>
+    </style>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
