@@ -15,8 +15,9 @@ public class MainActivity extends AppCompatActivity {
             R.style.AppTheme_Pink,
             R.style.AppTheme_Teal,
             R.style.AppTheme_Blue,
-            R.style.AppTheme_Black,
+            R.style.AppTheme_Red,
             R.style.AppTheme_Purple,
+            R.style.AppTheme_Black,
             R.style.AppTheme_Red
     };
 
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-
         MainFragment mainFragment = MainFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()

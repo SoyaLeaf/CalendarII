@@ -9,10 +9,9 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="?colorPrimary"
-        android:elevation="8dp"
+        style="@style/Toolbar"
+        app:theme="@style/ColorSecondaryWhite"
+        android:theme="@style/ColorSecondaryWhite"
         app:subtitleTextAppearance="@style/SubtitleText"
         app:subtitleTextColor="@android:color/white"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
@@ -21,8 +20,7 @@
         android:id="@+id/vp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp">
-    </android.support.v4.view.ViewPager>
+        android:layout_marginTop="56dp"></android.support.v4.view.ViewPager>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_event"

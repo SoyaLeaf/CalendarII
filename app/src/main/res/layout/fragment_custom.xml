@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        app:navigationIcon="@drawable/ic_clear_white_24dp"
+        app:title="自定义颜色"
+        app:titleTextColor="@android:color/white">
+
+        <ImageButton
+            android:id="@+id/ib_delete_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_margin="@dimen/normal_margin"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_done_white_24dp" />
+    </android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/tv0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="主题色"
+        android:textSize="@dimen/subtitle_font_size" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tv0"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/tv0"
+        android:background="@color/divider_dark" />
+
+    <View
+        android:id="@+id/view_primary"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv0"
+        android:layout_margin="16dp"
+        android:background="?attr/colorPrimary" />
+
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_primary"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="辅助色"
+        android:textSize="@dimen/subtitle_font_size" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tv1"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/tv1"
+        android:background="@color/divider_dark" />
+
+    <View
+        android:id="@+id/view_accent"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_below="@id/tv1"
+        android:layout_margin="16dp"
+        android:background="?attr/colorAccent" />
+</RelativeLayout>

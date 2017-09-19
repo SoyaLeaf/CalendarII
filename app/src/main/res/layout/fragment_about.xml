@@ -8,10 +8,7 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="8dp"
+        style="@style/Toolbar"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:title="关于"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
@@ -125,74 +122,74 @@
             android:text="评分：喜欢的话请打一下分哦" />
     </RelativeLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/divider_dark" />
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:layout_marginRight="16dp"-->
+        <!--android:background="@color/divider_dark" />-->
 
-    <RelativeLayout
-        android:id="@+id/rl_qr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:padding="16dp">
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/rl_qr"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="?attr/selectableItemBackground"-->
+        <!--android:clickable="true"-->
+        <!--android:padding="16dp">-->
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_monetization_on_grey_500_24dp" />
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_monetization_on_grey_500_24dp" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:text="打赏：点击即可打赏" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="40dp"-->
+            <!--android:text="打赏：点击即可打赏" />-->
 
-        <net.cachapa.expandablelayout.ExpandableLayout
-            android:id="@+id/el"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="16dp"
-            android:paddingTop="40dp">
+        <!--<net.cachapa.expandablelayout.ExpandableLayout-->
+            <!--android:id="@+id/el"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingLeft="16dp"-->
+            <!--android:paddingTop="40dp">-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
 
-                <Button
-                    android:id="@+id/btn_one"
-                    android:drawableLeft="@drawable/ic_touch_app_white_24dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="?colorPrimary"
-                    android:text="请开发者一颗棒棒糖(打赏0.5元)"
-                    android:textColor="@color/text_color_primary_light" />
+                <!--<Button-->
+                    <!--android:id="@+id/btn_one"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:backgroundTint="?colorPrimary"-->
+                    <!--android:drawableLeft="@drawable/ic_touch_app_white_24dp"-->
+                    <!--android:text="请开发者一颗棒棒糖(打赏0.5元)"-->
+                    <!--android:textColor="@color/text_color_primary_light" />-->
 
-                <Button
-                    android:id="@+id/btn_two"
-                    android:drawableLeft="@drawable/ic_touch_app_white_24dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="?colorPrimary"
-                    android:text="嚼绿箭,放轻松(打赏1.2元)"
-                    android:textColor="@color/text_color_primary_light" />
+                <!--<Button-->
+                    <!--android:id="@+id/btn_two"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:backgroundTint="?colorPrimary"-->
+                    <!--android:drawableLeft="@drawable/ic_touch_app_white_24dp"-->
+                    <!--android:text="嚼绿箭,放轻松(打赏1.2元)"-->
+                    <!--android:textColor="@color/text_color_primary_light" />-->
 
-                <Button
-                    android:drawableLeft="@drawable/ic_touch_app_white_24dp"
-                    android:id="@+id/btn_three"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="?colorPrimary"
-                    android:text="嗨，你的益达(打赏2.5元)"
-                    android:textColor="@color/text_color_primary_light" />
-            </LinearLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/btn_three"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:backgroundTint="?colorPrimary"-->
+                    <!--android:drawableLeft="@drawable/ic_touch_app_white_24dp"-->
+                    <!--android:text="嗨，你的益达(打赏2.5元)"-->
+                    <!--android:textColor="@color/text_color_primary_light" />-->
+            <!--</LinearLayout>-->
 
-        </net.cachapa.expandablelayout.ExpandableLayout>
-    </RelativeLayout>
+        <!--</net.cachapa.expandablelayout.ExpandableLayout>-->
+    <!--</RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -16,6 +16,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.adapter.MonthFragmentAdapter;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.fragment.base.BaseFragment;
+import top.soyask.calendarii.fragment.setting.AboutFragment;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;

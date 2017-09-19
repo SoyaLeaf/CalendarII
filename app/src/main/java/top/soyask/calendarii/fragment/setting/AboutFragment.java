@@ -1,16 +1,13 @@
-package top.soyask.calendarii.fragment;
+package top.soyask.calendarii.fragment.setting;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,6 +17,7 @@ import c.b.BP;
 import c.b.PListener;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.fragment.base.BaseFragment;
+import top.soyask.calendarii.fragment.setting.theme.ThemeFragment;
 
 
 public class AboutFragment extends BaseFragment implements View.OnClickListener {
@@ -40,12 +38,12 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
     @Override
     protected void setupUI() {
         findToolbar(R.id.toolbar).setNavigationOnClickListener(this);
-        findViewById(R.id.rl_qr).setOnClickListener(this);
+//        findViewById(R.id.rl_qr).setOnClickListener(this);
         findViewById(R.id.rl_email).setOnClickListener(this);
         findViewById(R.id.rl_color).setOnClickListener(this);
-        findViewById(R.id.btn_one).setOnClickListener(this);
-        findViewById(R.id.btn_two).setOnClickListener(this);
-        findViewById(R.id.btn_three).setOnClickListener(this);
+//        findViewById(R.id.btn_one).setOnClickListener(this);
+//        findViewById(R.id.btn_two).setOnClickListener(this);
+//        findViewById(R.id.btn_three).setOnClickListener(this);
         findViewById(R.id.rl_score).setOnClickListener(this);
         mExpandableLayout = findViewById(R.id.el);
     }
@@ -54,9 +52,9 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rl_qr:
-                mExpandableLayout.toggle();
-                break;
+//            case R.id.rl_qr:
+//                mExpandableLayout.toggle();
+//                break;
             case R.id.rl_color:
                 setupTheme();
                 break;
@@ -66,15 +64,15 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
             case R.id.rl_score:
                 score();
                 break;
-            case R.id.btn_one:
-                give(0.5f);
-                break;
-            case R.id.btn_two:
-                give(1.2f);
-                break;
-            case R.id.btn_three:
-                give(2.5f);
-                break;
+//            case R.id.btn_one:
+//                give(0.5f);
+//                break;
+//            case R.id.btn_two:
+//                give(1.2f);
+//                break;
+//            case R.id.btn_three:
+//                give(2.5f);
+//                break;
             default:
                 removeFragment(this);
                 break;
@@ -154,29 +152,14 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
         });
     }
 
-
     private static final String[] THEME = {
             "原色", "酷安绿", "哔哩粉", "水鸭青",
             "知乎蓝", "高端黑", "基佬紫", "中国红"
     };
 
     private void setupTheme() {
-        SharedPreferences setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE);
-        int theme = setting.getInt("theme", 0);
-        new AlertDialog.Builder(getActivity()).setSingleChoiceItems(THEME, theme, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                SharedPreferences.Editor setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE).edit();
-                setting.putInt("theme", which).commit();
-                dialog.dismiss();
-                getMainActivity().recreate();
-            }
-        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        ThemeFragment themeFragment = ThemeFragment.newInstance();
+        addFragment(themeFragment);
     }
 
 
@@ -186,6 +169,5 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
         clipboardManager.setPrimaryClip(data);
         showSnackbar("邮箱地址已经复制到剪切板。");
     }
-
 
 }

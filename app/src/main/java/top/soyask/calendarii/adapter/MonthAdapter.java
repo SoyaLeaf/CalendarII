@@ -96,6 +96,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case VIEW_TODAY:
             case VIEW_EVENT:
                 if (position >= mDateStartPos && position < mEndPosition ) {
+
                     DayViewHolder dayViewHolder = (DayViewHolder) holder;
                     Day day = mDays.get(position - mDateStartPos);
                     dayViewHolder.tvGreg.setText(String.valueOf(day.getDayOfMonth()));
@@ -103,7 +104,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     dayViewHolder.viewGroup.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (position > 7) {
+                            if (position >= 7) {
                                 mSelected = position;
                                 notifyItemChanged(mSelected);
                                 mOnItemClickListener.onDayClick(position, mDays.get(position - mDateStartPos));

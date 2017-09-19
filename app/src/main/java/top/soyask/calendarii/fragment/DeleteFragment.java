@@ -39,17 +39,22 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
             if (msg.what < 150) {
                 mCircleProgressBar.setProgress(msg.what);
             } else {
-                exit(getContentView(), -1, -1);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    exit(getContentView(), -1, -1);
+                } else {
+                    removeFragment(DeleteFragment.this);
+                }
             }
         }
     };
 
-    private Thread mProgress = new Thread() {
+    private Thread mThread;
+    private Runnable mProgress = new Runnable() {
         @Override
         public void run() {
             int i = 0;
             while (i < 100) {
-                if (isInterrupted()){
+                if (Thread.interrupted()) {
                     mHandler.sendEmptyMessage(0);
                     return;
                 }
@@ -80,7 +85,9 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        enter(view);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            enter(view);
+        }
     }
 
     public void setOnDeleteConfirmListener(OnDeleteConfirmListener onDeleteConfirmListener) {
@@ -117,7 +124,11 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
             public boolean onTouch(View v, MotionEvent event) {
                 if (!isExiting) {
                     isExiting = true;
-                    exit(v, (int)event.getX(), (int)event.getY());
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        exit(v, (int) event.getX(), (int) event.getY());
+                    } else {
+                        removeFragment(DeleteFragment.this);
+                    }
                 }
                 return true;
             }
@@ -152,11 +163,14 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                mProgress.start();
+                mThread = new Thread(mProgress);
+                mThread.start();
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mProgress.interrupt();
+                if (mThread != null) {
+                    mThread.interrupt();
+                }
                 break;
         }
         return true;

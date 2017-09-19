@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+        app:title="主题风格"
+        app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/rl_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Green" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Pink" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Teal" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Blue" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Red" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Purple" />
+
+            <View
+                style="@style/ColorSquare"
+                android:background="@color/colorPrimary.Black" />
+
+            <!--<View-->
+                <!--style="@style/ColorSquare"-->
+                <!--android:id="@+id/view_custom"-->
+                <!--android:background="@color/colorPrimary" />-->
+        </LinearLayout>
+
+        <RadioGroup
+            android:id="@+id/rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/rl_color"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/rb_default"
+                style="@style/RadioButton"
+                android:text="原色"
+                android:textColor="@color/colorPrimary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_green"
+                style="@style/RadioButton"
+                android:text="酷安绿"
+                android:textColor="@color/colorPrimary.Green" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_pink"
+                style="@style/RadioButton"
+                android:text="哔哩粉"
+                android:textColor="@color/colorPrimary.Pink" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_teal"
+                style="@style/RadioButton"
+                android:text="水鸭青"
+                android:textColor="@color/colorPrimary.Teal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_blue"
+                style="@style/RadioButton"
+                android:text="知乎蓝"
+                android:textColor="@color/colorPrimary.Blue" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_red"
+                style="@style/RadioButton"
+                android:text="中国红"
+                android:textColor="@color/colorPrimary.Red" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_purple"
+                style="@style/RadioButton"
+                android:text="基佬紫"
+                android:textColor="@color/colorPrimary.Purple" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/divider_dark" />
+
+            <RadioButton
+                android:id="@+id/rb_black"
+                style="@style/RadioButton"
+                android:text="高端黑"
+                android:textColor="@color/colorPrimary.Black" />
+
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1px"-->
+                <!--android:background="@color/divider_dark" />-->
+
+            <!--<RadioButton-->
+                <!--android:id="@+id/rb_custom"-->
+                <!--style="@style/RadioButton"-->
+                <!--android:text="自定义"-->
+                <!--android:textColor="@color/colorPrimary.Black" />-->
+        </RadioGroup>
+    </RelativeLayout>
+</LinearLayout>
