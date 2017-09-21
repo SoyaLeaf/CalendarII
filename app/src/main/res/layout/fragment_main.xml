@@ -10,10 +10,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/Toolbar"
-        app:theme="@style/ColorSecondaryWhite"
         android:theme="@style/ColorSecondaryWhite"
         app:subtitleTextAppearance="@style/SubtitleText"
         app:subtitleTextColor="@android:color/white"
+        app:theme="@style/ColorSecondaryWhite"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
     <android.support.v4.view.ViewPager
@@ -30,4 +30,54 @@
         android:layout_margin="@dimen/normal_margin"
         android:src="@drawable/ic_add_white_24dp" />
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_event"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="88dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:minHeight="128dp"
+        app:cardBackgroundColor="?eventBackground"
+        app:contentPadding="@dimen/normal_margin">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/ib_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_alignParentRight="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_view_list_white_24dp" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="2017年9月20日"
+                android:textColor="@color/text_color_primary_light"
+                android:textSize="@dimen/large_title_font_size" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/tv_title"
+                android:background="@color/divider_light" />
+
+            <TextView
+                android:id="@+id/tv_event"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_title"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:text="这一天并没有添加任何的事件..."
+                android:textColor="@color/text_color_sub_light" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 </android.support.design.widget.CoordinatorLayout>

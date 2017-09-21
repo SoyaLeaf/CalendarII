@@ -34,6 +34,11 @@ public class MonthFragmentAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public long getItemId(int position) {
+        return position + mOnDaySelectListener.hashCode();
+    }
+
+    @Override
     public int getCount() {
         return (YEAR_END - YEAR_START + 1) * Global.MONTH_COUNT;
     }

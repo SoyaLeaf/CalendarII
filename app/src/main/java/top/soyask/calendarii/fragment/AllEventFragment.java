@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -27,11 +28,13 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     private static final int CANCEL = 0x1;
     private static final int DELETE_ALL = 0x2;
     private static final int DELETE_COMP = 0x3;
+    private static final String TITLE = "TITLE";
     private EventAdapter mEventAdapter;
     private EventDao mEventDao;
     private List<Event> mEvents;
     private List<Event> mCompleteEvents;
     private ProgressDialog mProgressDialog;
+    private String mTitle;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -73,11 +76,20 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         super(R.layout.fragment_all);
     }
 
-    public static AllEventFragment newInstance() {
+    public static AllEventFragment newInstance(String title) {
         AllEventFragment fragment = new AllEventFragment();
         Bundle args = new Bundle();
+        args.putString(TITLE, title);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mTitle = getArguments().getString(TITLE);
+        }
     }
 
     @Override
@@ -87,19 +99,28 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mEventAdapter = new EventAdapter(mEvents, this);
         mRecyclerView.setAdapter(mEventAdapter);
+
+        if(mTitle != null){
+            findToolbar().setTitle(mTitle);
+        }
         findToolbar().setNavigationOnClickListener(this);
         findViewById(R.id.ib_delete_all).setOnClickListener(this);
-        if(mEvents.isEmpty()){
+        if (mEvents.isEmpty()) {
             findViewById(R.id.ib_delete_all).setVisibility(View.GONE);
         }
     }
 
     private void loadData() {
         mEventDao = EventDao.getInstance(getMainActivity());
-        mEvents = mEventDao.queryAll();
+
+        if (mTitle == null) {
+            mEvents = mEventDao.queryAll();
+        } else {
+            mEvents = mEventDao.query(mTitle);
+        }
+
         Collections.sort(mEvents, mComparator);
         mCompleteEvents = new ArrayList<>();
-
         for (Event event : mEvents) {
             if (event.isComplete()) {
                 mCompleteEvents.add(event);
@@ -169,7 +190,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
                 .append(event.getTitle())
                 .toString();
         intent.putExtra(Intent.EXTRA_SUBJECT, ".");
-        intent.putExtra(Intent.EXTRA_TEXT,text);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
         startActivity(intent);
     }
@@ -206,7 +227,13 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         temp.addAll(mCompleteEvents);
         mEvents.removeAll(mCompleteEvents);
         mEventAdapter.notifyDataSetChanged();
-        mEventDao.deleteComplete();
+
+        if (mTitle == null) {
+            mEventDao.deleteComplete();
+        } else {
+            mEventDao.deleteComplete(mTitle);
+        }
+
         mCompleteEvents.clear();
         showSnackbar("删除了划掉的事件。", "我要恢复", new View.OnClickListener() {
             @Override
@@ -229,7 +256,13 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         temp.addAll(mEvents);
         mEvents.clear();
         mEventAdapter.notifyDataSetChanged();
-        mEventDao.deleteAll();
+
+        if (mTitle == null) {
+            mEventDao.deleteAll();
+        } else {
+            mEventDao.delete(mTitle);
+        }
+
         showSnackbar("删除了全部的事件。", "我要恢复", new View.OnClickListener() {
             @Override
             public void onClick(View v) {

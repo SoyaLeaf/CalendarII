@@ -2,6 +2,7 @@ package top.soyask.calendarii.database.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -18,16 +19,21 @@ public class EventDao {
     public static final String EVENT = "EVENT";
 
     private DBUtils mDBUtils;
+    private Context mContext;
     private static EventDao mEventDao;
+    public static final String ADD = "add";
+    public static final String DELETE = "delete";
+    public static final String UPDATE = "update";
 
-    public EventDao(DBUtils dBUtils) {
+    public EventDao(DBUtils dBUtils,Context context) {
         this.mDBUtils = dBUtils;
+        this.mContext = context;
     }
 
     public static EventDao getInstance(Context context) {
         if (mEventDao == null) {
             DBUtils dbUtils = DBUtils.getInstance(context);
-            mEventDao = new EventDao(dbUtils);
+            mEventDao = new EventDao(dbUtils,context);
         }
         return mEventDao;
     }
@@ -40,6 +46,14 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         database.insert(EVENT, null, values);
+
+        sendBroadcast(ADD);
+    }
+
+    private void sendBroadcast(String action) {
+        Intent intent = new Intent();
+        intent.setAction(action);
+        mContext.sendBroadcast(intent);
     }
 
     public void update(Event event) {
@@ -50,21 +64,43 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         database.update(EVENT, values, "id = ?", new String[]{String.valueOf(event.getId())});
+
+        sendBroadcast(UPDATE);
     }
 
     public void delete(Event event) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "id = ?", new String[]{String.valueOf(event.getId())});
+
+        sendBroadcast(DELETE);
+    }
+
+    public void delete(String title) {
+        SQLiteDatabase database = mDBUtils.getWritableDatabase();
+        database.delete(EVENT, "title = ?", new String[]{title});
+
+        sendBroadcast(DELETE);
     }
 
     public void deleteAll() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, null, null);
+
+        sendBroadcast(DELETE);
     }
 
     public void deleteComplete() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "isComplete = ?", new String[]{String.valueOf(1)});
+
+        sendBroadcast(DELETE);
+    }
+
+    public void deleteComplete(String title) {
+        SQLiteDatabase database = mDBUtils.getWritableDatabase();
+        database.delete(EVENT, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
+
+        sendBroadcast(DELETE);
     }
 
 
@@ -100,7 +136,6 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
-
         return events;
     }
 

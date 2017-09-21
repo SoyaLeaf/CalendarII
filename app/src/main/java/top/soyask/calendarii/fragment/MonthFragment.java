@@ -1,5 +1,9 @@
 package top.soyask.calendarii.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -18,6 +22,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.adapter.MonthAdapter;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.utils.DayUitls;
 import top.soyask.calendarii.utils.HolidayUtils;
 import top.soyask.calendarii.utils.LunarUtils;
@@ -41,6 +46,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     private int mMonth;
     private OnDaySelectListener mOnDaySelectListener;
     private EventDao mEventDao;
+    private MonthReceiver mMonthReceiver;
 
     public MonthFragment() {
 
@@ -69,6 +75,13 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             boolean isToday = isToday(i);
             String lunar = getLunar(calendar);
             Day day = new Day(mYear, mMonth, lunar, isToday, i + 1, dayOfWeek);
+            try{
+                List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+                day.setEvents(events);
+            }catch (Exception e){
+                e.printStackTrace();
+                day.setEvents(new ArrayList<Event>());
+            }
             mDays.add(day);
         }
     }
@@ -114,6 +127,34 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             mMonth = position % MONTH_COUNT + 1;
             mCalendar = (Calendar) getArguments().getSerializable(CALENDAR);
         }
+        mEventDao = EventDao.getInstance(getActivity());
+
+        setupReceiver();
+    }
+
+    private void setupReceiver() {
+        mMonthReceiver = new MonthReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(EventDao.ADD);
+        filter.addAction(EventDao.UPDATE);
+        filter.addAction(EventDao.DELETE);
+        getActivity().registerReceiver(mMonthReceiver, filter);
+    }
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(mMonthReceiver);
+    }
+
+    public class MonthReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setupData();
+            mMonthAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -145,6 +186,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         recyclerView.setAdapter(mMonthAdapter);
         recyclerView.setItemAnimator(null);
     }
+
 
     <T extends View> T find(@IdRes int id) {
         return (T) mContentView.findViewById(id);

@@ -23,6 +23,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     static final int VIEW_TODAY = 4;
     static final int VIEW_EVENT = 5;
     static final String[] WEEK_ARRAY = {"日", "一", "二", "三", "四", "五", "六",};
+    private static final String TAG = "month";
 
     private List<Day> mDays;
     private OnItemClickListener mOnItemClickListener;
@@ -40,16 +41,17 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
+        int type = VIEW_DAY;
         if (position > mDateStartPos && position < mEndPosition) {
             Day day = mDays.get(position - mDateStartPos);
             if (day.isToday()) {
                 return VIEW_TODAY;
             }
-//            if (!day.getEvents().isEmpty()) {
-//                return VIEW_EVENT;
-//            }
+            if (day.getEvents() != null && !day.getEvents().isEmpty()) {
+                type = VIEW_EVENT;
+            }
         }
-        int type = position < 7 ? VIEW_WEEK : (position == mSelected ? VIEW_SELECTED : VIEW_DAY);
+        type = position < 7 ? VIEW_WEEK : (position == mSelected ? VIEW_SELECTED : type);
         return type;
     }
 
@@ -95,7 +97,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             case VIEW_SELECTED:
             case VIEW_TODAY:
             case VIEW_EVENT:
-                if (position >= mDateStartPos && position < mEndPosition ) {
+                if (position >= mDateStartPos && position < mEndPosition) {
 
                     DayViewHolder dayViewHolder = (DayViewHolder) holder;
                     Day day = mDays.get(position - mDateStartPos);

@@ -1,6 +1,15 @@
 package top.soyask.calendarii.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -8,13 +17,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.adapter.MonthFragmentAdapter;
+import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.fragment.base.BaseFragment;
 import top.soyask.calendarii.fragment.setting.AboutFragment;
 
@@ -31,6 +46,55 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private ViewPager mViewPager;
     private Day mSelectedDay;
     private ActionBar mActionBar;
+    private TextView mTvTitle;
+    private TextView mTvEvent;
+    private View mEventView;
+    private boolean isVisible = true;
+    private int mEventViewWidth;
+    private int mEventViewHeight;
+    private MonthFragmentAdapter mMonthFragmentAdapter;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case View.INVISIBLE:
+                    if (isVisible) {
+                        isVisible = false;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            Animator anim = ViewAnimationUtils.createCircularReveal(mEventView, mEventViewWidth / 2, mEventViewHeight / 2, mEventViewWidth, 0);
+                            anim.setDuration(500);
+                            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+                            anim.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    mEventView.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
+                                }
+                            });
+                            anim.start();
+                        } else {
+                            mEventView.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                    break;
+                case View.VISIBLE:
+                    if (!isVisible) {
+                        isVisible = true;
+                        mEventView.setVisibility(View.VISIBLE);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            Animator anim = ViewAnimationUtils.createCircularReveal(mEventView, mEventViewWidth / 2, mEventViewHeight / 2, 0, mEventViewWidth);
+                            anim.setDuration(500);
+                            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+                            anim.start();
+                        }
+
+                    }
+                    break;
+            }
+        }
+    };
+    private View mIBtnMore;
+    private MainReceiver mMainReceiver;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -45,17 +109,31 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     protected void setupUI() {
+        setupCard();
         setupToolbar();
         setupViewPager();
         findViewById(R.id.add_event).setOnClickListener(this);
         mSelectedDay = new Day(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setEvent(mSelectedDay.getYear() + "年" + mSelectedDay.getMonth() + "月" + mSelectedDay.getDayOfMonth() + "日");
+            }
+        }, 1000);
+    }
+
+    private void setupCard() {
+        mTvTitle = findViewById(R.id.tv_title);
+        mTvEvent = findViewById(R.id.tv_event);
+        mEventView = findViewById(R.id.cv_event);
+        mIBtnMore = findViewById(R.id.ib_more);
     }
 
     private void setupViewPager() {
         int item = getCurrentMonth();
         mViewPager = findViewById(R.id.vp);
-        MonthFragmentAdapter adapter = new MonthFragmentAdapter(getChildFragmentManager(), mCalendar, this);
-        mViewPager.setAdapter(adapter);
+        mMonthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), mCalendar, this);
+        mViewPager.setAdapter(mMonthFragmentAdapter);
         mViewPager.setCurrentItem(item);
         mViewPager.addOnPageChangeListener(this);
     }
@@ -66,6 +144,34 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         setToolbarDate(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1);
     }
 
+    private void setEvent(final String title) {
+        EventDao eventDao = EventDao.getInstance(getMainActivity());
+        List<Event> events = eventDao.query(title);
+        mTvTitle.setText(title);
+        if (mEventViewWidth == 0) {
+            mEventViewWidth = mEventView.getWidth();
+            mEventViewHeight = mEventView.getHeight();
+        }
+        if (!events.isEmpty()) {
+            mTvEvent.setText(events.get(0).getDetail());
+            if (events.size() > 1) {
+                mIBtnMore.setVisibility(View.VISIBLE);
+                mIBtnMore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AllEventFragment allEventFragment = AllEventFragment.newInstance(title);
+                        addFragment(allEventFragment);
+                    }
+                });
+            } else {
+                findViewById(R.id.ib_more).setVisibility(View.GONE);
+            }
+            mHandler.sendEmptyMessage(View.VISIBLE);
+        } else {
+            mTvEvent.setText("这一天并没有添加任何的事件...");
+            mHandler.sendEmptyMessage(View.INVISIBLE);
+        }
+    }
 
     private int getCurrentMonth() {
         return (mCalendar.get(YEAR) - MonthFragmentAdapter.YEAR_START) * 12 + mCalendar.get(MONTH);
@@ -89,7 +195,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         if (item.getItemId() == R.id.menu_today) {
             mViewPager.setCurrentItem(getCurrentMonth());
         } else if (item.getItemId() == R.id.menu_all_event) {
-            AllEventFragment allEventFragment = AllEventFragment.newInstance();
+            AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
             addFragment(allEventFragment);
         } else if (item.getItemId() == R.id.menu_about) {
             AboutFragment aboutFragment = AboutFragment.newInstance();
@@ -101,6 +207,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
     }
 
     @Override
@@ -124,6 +231,35 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     @Override
     public void onSelected(Day day) {
         this.mSelectedDay = day;
+        setEvent(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setupReceiver();
+    }
+
+    private void setupReceiver() {
+        mMainReceiver = new MainReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(EventDao.ADD);
+        filter.addAction(EventDao.UPDATE);
+        filter.addAction(EventDao.DELETE);
+        getMainActivity().registerReceiver(mMainReceiver, filter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getMainActivity().unregisterReceiver(mMainReceiver);
+    }
+
+    public class MainReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setEvent(mSelectedDay.getYear() + "年" + mSelectedDay.getMonth() + "月" + mSelectedDay.getDayOfMonth() + "日");
+        }
     }
 
     @Override
