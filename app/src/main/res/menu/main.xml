@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
-    <item android:id="@+id/menu_today"
-        android:title="今天"
-        app:showAsAction="always"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_today"
         android:icon="@drawable/ic_today_white_24dp"
-        />
-    <item android:id="@+id/menu_all_event"
+        android:title="今天"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_all_event"
+        android:icon="@drawable/ic_assignment_white_24dp"
         android:title="所有事件"
-        app:showAsAction="never"
-        />
+        app:showAsAction="always" />
 
-    <item android:id="@+id/menu_about"
+    <item
+        android:id="@+id/menu_theme"
+        android:title="主题设置"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/menu_score"
+        android:title="去评分"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_about"
         android:title="关于"
-        app:showAsAction="never"
-        />
+        app:showAsAction="never" />
+
 
 </menu>

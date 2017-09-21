@@ -17,12 +17,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="40dp">
 
         <ImageView
             android:id="@+id/iv_logo"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
@@ -36,160 +36,6 @@
             android:padding="8dp"
             android:text="单纯的只是个日历 orz" />
     </RelativeLayout>
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/divider_dark" />
-
-    <RelativeLayout
-        android:id="@+id/rl_color"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_bubble_chart_grey_500_24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
-            android:text="主题：选择一个你喜欢的颜色" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/divider_dark" />
-
-    <RelativeLayout
-        android:id="@+id/rl_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_email_grey_500_24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
-            android:text="邮箱：leaf0x520@gmail.com" />
-    </RelativeLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/divider_dark" />
-
-    <RelativeLayout
-        android:id="@+id/rl_score"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_favorite_border_grey_500_24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="40dp"
-            android:text="评分：喜欢的话请打一下分哦" />
-    </RelativeLayout>
-
-    <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:layout_marginLeft="16dp"-->
-        <!--android:layout_marginRight="16dp"-->
-        <!--android:background="@color/divider_dark" />-->
-
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/rl_qr"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="?attr/selectableItemBackground"-->
-        <!--android:clickable="true"-->
-        <!--android:padding="16dp">-->
-
-        <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/ic_monetization_on_grey_500_24dp" />-->
-
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="40dp"-->
-            <!--android:text="打赏：点击即可打赏" />-->
-
-        <!--<net.cachapa.expandablelayout.ExpandableLayout-->
-            <!--android:id="@+id/el"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:paddingLeft="16dp"-->
-            <!--android:paddingTop="40dp">-->
-
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical">-->
-
-                <!--<Button-->
-                    <!--android:id="@+id/btn_one"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:backgroundTint="?colorPrimary"-->
-                    <!--android:drawableLeft="@drawable/ic_touch_app_white_24dp"-->
-                    <!--android:text="请开发者一颗棒棒糖(打赏0.5元)"-->
-                    <!--android:textColor="@color/text_color_primary_light" />-->
-
-                <!--<Button-->
-                    <!--android:id="@+id/btn_two"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:backgroundTint="?colorPrimary"-->
-                    <!--android:drawableLeft="@drawable/ic_touch_app_white_24dp"-->
-                    <!--android:text="嚼绿箭,放轻松(打赏1.2元)"-->
-                    <!--android:textColor="@color/text_color_primary_light" />-->
-
-                <!--<Button-->
-                    <!--android:id="@+id/btn_three"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:backgroundTint="?colorPrimary"-->
-                    <!--android:drawableLeft="@drawable/ic_touch_app_white_24dp"-->
-                    <!--android:text="嗨，你的益达(打赏2.5元)"-->
-                    <!--android:textColor="@color/text_color_primary_light" />-->
-            <!--</LinearLayout>-->
-
-        <!--</net.cachapa.expandablelayout.ExpandableLayout>-->
-    <!--</RelativeLayout>-->
 
     <RelativeLayout
         android:layout_width="match_parent"

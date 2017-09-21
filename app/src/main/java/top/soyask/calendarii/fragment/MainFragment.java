@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -32,6 +34,7 @@ import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.fragment.base.BaseFragment;
 import top.soyask.calendarii.fragment.setting.AboutFragment;
+import top.soyask.calendarii.fragment.setting.theme.ThemeFragment;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -95,6 +98,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     };
     private View mIBtnMore;
     private MainReceiver mMainReceiver;
+    private MenuItem mItemToday;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -187,23 +191,51 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
+        mItemToday = menu.getItem(0);
+        mItemToday.setVisible(false);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_today) {
-            mViewPager.setCurrentItem(getCurrentMonth());
-        } else if (item.getItemId() == R.id.menu_all_event) {
-            AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
-            addFragment(allEventFragment);
-        } else if (item.getItemId() == R.id.menu_about) {
-            AboutFragment aboutFragment = AboutFragment.newInstance();
-            addFragment(aboutFragment);
+
+        switch (item.getItemId()) {
+            case R.id.menu_today:
+                mViewPager.setCurrentItem(getCurrentMonth());
+                break;
+            case R.id.menu_all_event:
+                AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
+                addFragment(allEventFragment);
+                break;
+            case R.id.menu_theme:
+                ThemeFragment themeFragment = ThemeFragment.newInstance();
+                addFragment(themeFragment);
+                break;
+            case R.id.menu_score:
+                score();
+                break;
+            case R.id.menu_about:
+                AboutFragment aboutFragment = AboutFragment.newInstance();
+                addFragment(aboutFragment);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+
+    private void score() {
+
+        Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) { //可以接收
+            startActivity(intent);
+        } else {
+            Toast.makeText(getActivity(), "您的系统中没有安装应用市场", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -215,6 +247,16 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         int year = position / MONTH_COUNT + YEAR_START_REAL;
         int month = position % MONTH_COUNT + 1;
         setToolbarDate(year, month);
+
+        if(getCurrentMonth() == position){
+            if (mItemToday.isVisible()) {
+                mItemToday.setVisible(false);
+            }
+        }else {
+            if (!mItemToday.isVisible()) {
+                mItemToday.setVisible(true);
+            }
+        }
     }
 
     @Override
