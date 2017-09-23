@@ -40,5 +40,12 @@
     <!--文字到屏幕左边的距离-->
     <dimen name="text_left_margin">72dp</dimen>
     <dimen name="item_day_size">40dp</dimen>
+    <dimen name="item_widget_day_size">36dp</dimen>
     <dimen name="card_float_elevation">8dp</dimen>
+
+    <!--
+Refer to App Widget Documentation for margin information
+http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
+    -->
+    <dimen name="widget_margin">8dp</dimen>
 </resources>

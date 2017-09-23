@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
-import top.soyask.calendarii.fragment.MainFragment;
+import top.soyask.calendarii.ui.fragment.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
 

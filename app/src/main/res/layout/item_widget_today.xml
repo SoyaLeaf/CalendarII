@@ -4,13 +4,13 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="@dimen/item_day_size"
-        android:layout_height="@dimen/item_day_size"
+        android:layout_width="@dimen/item_widget_day_size"
+        android:layout_height="@dimen/item_widget_day_size"
         android:id="@+id/rl"
         android:paddingTop="2dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:background="@drawable/bg_primary_r60"
+        android:background="@drawable/bg_widget_r60"
       >
 
         <TextView

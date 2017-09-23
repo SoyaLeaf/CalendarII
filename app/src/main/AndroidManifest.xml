@@ -23,6 +23,23 @@
         </activity>
         <activity android:name="cn.bmob.pay.v3.act.PayAct" />
 
+        <receiver android:name=".ui.widget.MonthWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="next" />
+                <action android:name="prev" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/month_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".ui.widget.service.MonthService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
