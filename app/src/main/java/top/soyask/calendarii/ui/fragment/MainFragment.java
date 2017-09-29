@@ -23,16 +23,18 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.ui.adapter.MonthFragmentAdapter;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.ui.adapter.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 import top.soyask.calendarii.ui.fragment.setting.AboutFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 
@@ -43,7 +45,9 @@ import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
-public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, AddEventFragment.OnAddListener {
+public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, AddEventFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
+
+    public static final String SKIP = "skip";
 
     private Calendar mCalendar = Calendar.getInstance(Locale.CHINA);
     private ViewPager mViewPager;
@@ -150,7 +154,13 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setEvent(final String title) {
         EventDao eventDao = EventDao.getInstance(getMainActivity());
-        List<Event> events = eventDao.query(title);
+        List<Event> events = new ArrayList<>();
+        try {
+            events = eventDao.query(title);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         mTvTitle.setText(title);
         if (mEventViewWidth == 0) {
             mEventViewWidth = mEventView.getWidth();
@@ -192,7 +202,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
         mItemToday = menu.getItem(0);
-        mItemToday.setVisible(false);
+        toggleItemToday(mViewPager.getCurrentItem());
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -201,11 +211,15 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
         switch (item.getItemId()) {
             case R.id.menu_today:
-                mViewPager.setCurrentItem(getCurrentMonth());
+//                mViewPager.setCurrentItem(getCurrentMonth());
+                skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
                 break;
             case R.id.menu_all_event:
                 AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
                 addFragment(allEventFragment);
+                break;
+            case R.id.menu_select:
+                showSelectDialog();
                 break;
             case R.id.menu_theme:
                 ThemeFragment themeFragment = ThemeFragment.newInstance();
@@ -222,6 +236,11 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         return super.onOptionsItemSelected(item);
     }
 
+    private void showSelectDialog() {
+        DateSelectDialog dateSelectDialog = DateSelectDialog.newInstance(mSelectedDay.getYear(), mSelectedDay.getMonth(), mSelectedDay.getDayOfMonth());
+        dateSelectDialog.show(getChildFragmentManager(), "");
+        dateSelectDialog.setDateSelectCallback(this);
+    }
 
     private void score() {
 
@@ -248,12 +267,16 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         int month = position % MONTH_COUNT + 1;
         setToolbarDate(year, month);
 
-        if(getCurrentMonth() == position){
-            if (mItemToday.isVisible()) {
+        toggleItemToday(position);
+    }
+
+    private void toggleItemToday(int position) {
+        if (getCurrentMonth() == position) {
+            if (mItemToday != null && mItemToday.isVisible()) {
                 mItemToday.setVisible(false);
             }
-        }else {
-            if (!mItemToday.isVisible()) {
+        } else {
+            if (mItemToday != null && !mItemToday.isVisible()) {
                 mItemToday.setVisible(true);
             }
         }
@@ -297,7 +320,34 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         getMainActivity().unregisterReceiver(mMainReceiver);
     }
 
-    public class MainReceiver extends BroadcastReceiver{
+    @Override
+    public void onSelectCancel() {
+    }
+
+    @Override
+    public void onDismiss() {
+    }
+
+    @Override
+    public void onValueChange(int year, int month, int day) {
+    }
+
+    @Override
+    public void onSelectConfirm(int year, int month, int day) {
+        skipToOneDay(year, month, day);
+    }
+
+    private void skipToOneDay(int year, int month, int day) {
+        int position = (year - MonthFragmentAdapter.YEAR_START) * 12 + month - 1;
+        mViewPager.setCurrentItem(position);
+        Intent intent = new Intent(SKIP);
+        intent.putExtra("year", year);
+        intent.putExtra("month", month);
+        intent.putExtra("day", day);
+        getMainActivity().sendBroadcast(intent);
+    }
+
+    public class MainReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             setEvent(mSelectedDay.getYear() + "年" + mSelectedDay.getMonth() + "月" + mSelectedDay.getDayOfMonth() + "日");

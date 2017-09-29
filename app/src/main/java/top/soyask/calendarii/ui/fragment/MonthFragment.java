@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
     }
 
-
     public static MonthFragment newInstance(Calendar calendar, int position) {
         MonthFragment fragment = new MonthFragment();
         Bundle args = new Bundle();
@@ -75,10 +75,10 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             boolean isToday = isToday(i);
             String lunar = getLunar(calendar);
             Day day = new Day(mYear, mMonth, lunar, isToday, i + 1, dayOfWeek);
-            try{
+            try {
                 List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
                 day.setEvents(events);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 day.setEvents(new ArrayList<Event>());
             }
@@ -107,7 +107,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         }
 
         String solar = SolarUtils.getSolar(calendar);
-
         return solar == null ? result : solar;
     }
 
@@ -129,7 +128,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         }
         mEventDao = EventDao.getInstance(getActivity());
 
-        setupReceiver();
+//        setupReceiver();
     }
 
     private void setupReceiver() {
@@ -138,22 +137,42 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         filter.addAction(EventDao.ADD);
         filter.addAction(EventDao.UPDATE);
         filter.addAction(EventDao.DELETE);
+        filter.addAction(MainFragment.SKIP);
         getActivity().registerReceiver(mMonthReceiver, filter);
+        Log.d(TAG,"onCreate and registerReceiver");
     }
 
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupReceiver();
+    }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG,"onDestroyView and unregisterReceiver");
         getActivity().unregisterReceiver(mMonthReceiver);
     }
 
-    public class MonthReceiver extends BroadcastReceiver{
+    public class MonthReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            setupData();
-            mMonthAdapter.notifyDataSetChanged();
+
+            if (mMonthAdapter != null) {
+                if (MainFragment.SKIP.equals(intent.getAction())) {
+                    int year = intent.getIntExtra("year", 0);
+                    int month = intent.getIntExtra("month", 0);
+                    int day = intent.getIntExtra("day", 0);
+                    if (year == mYear && month == mMonth) {
+                        mMonthAdapter.setSelectedDay(day);
+                    }
+                }
+                setupData();
+                mMonthAdapter.notifyDataSetChanged();
+
+            }
         }
     }
 

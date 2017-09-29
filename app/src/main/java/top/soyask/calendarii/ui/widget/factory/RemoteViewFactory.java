@@ -2,6 +2,7 @@ package top.soyask.calendarii.ui.widget.factory;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -20,6 +21,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
     static final int VIEW_TODAY = 4;
     static final int VIEW_EVENT = 5;
     static final String[] WEEK_ARRAY = {"日", "一", "二", "三", "四", "五", "六",};
+    private static final String TAG = "RemoteViewFactory";
 
     private List<Day> mDays;
     private int mDateStartPos = 0;
@@ -33,6 +35,9 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
         this.mEndPosition = mDateStartPos + mDays.size();
     }
 
+    public void setDays(List<Day> days) {
+        this.mDays = days;
+    }
 
     @Override
     public void onCreate() {
@@ -40,7 +45,13 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
 
     @Override
     public void onDataSetChanged() {
-
+        if (mDays.size() > 0) {
+            this.mDateStartPos = mDays.get(0).getDayOfWeek() + 6;
+        } else {
+            this.mDateStartPos = 6;
+        }
+        Log.d(TAG, "mDateStartPos:" + mDateStartPos);
+        this.mEndPosition = mDateStartPos + mDays.size();
     }
 
     @Override
@@ -55,6 +66,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
 
     @Override
     public RemoteViews getViewAt(int position) {
+
         RemoteViews remoteViews = null;
         switch (getItemViewType(position)) {
             case VIEW_WEEK:
@@ -65,32 +77,34 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
                 remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_today);
                 break;
             case VIEW_DAY:
+                Log.d(TAG, "position:" + position);
                 remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_day);
+                remoteViews.setTextViewText(R.id.tv_greg, "");
+                remoteViews.setTextViewText(R.id.tv_lunar, "");
                 break;
         }
 
-        if (position >= mDateStartPos && position < mEndPosition) {
+        if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
             Day day = mDays.get(position - mDateStartPos);
             remoteViews.setTextViewText(R.id.tv_greg, "" + day.getDayOfMonth());
             remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar());
+            Log.d(TAG, "position:" + day.getLunar());
         }
         return remoteViews;
     }
 
     @Override
     public RemoteViews getLoadingView() {
-        return null;
+        RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_day);
+        return remoteViews;
     }
 
     public int getItemViewType(int position) {
         int type = VIEW_DAY;
-        if (position > mDateStartPos && position < mEndPosition) {
+        if (position > mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
             Day day = mDays.get(position - mDateStartPos);
             if (day.isToday()) {
                 return VIEW_TODAY;
-            }
-            if (day.getEvents() != null && !day.getEvents().isEmpty()) {
-                type = VIEW_EVENT;
             }
         }
         type = position < 7 ? VIEW_WEEK : type;

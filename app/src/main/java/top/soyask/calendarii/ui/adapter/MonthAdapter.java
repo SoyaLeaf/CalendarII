@@ -38,6 +38,11 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.mEndPosition = mDateStartPos + mDays.size();
     }
 
+    public void setSelectedDay(int day) {
+        this.mSelected = this.mDateStartPos + day - 1;
+        mOnItemClickListener.onDayClick(mSelected, mDays.get(mSelected - mDateStartPos));
+    }
+
 
     @Override
     public int getItemViewType(int position) {

@@ -11,13 +11,15 @@
         android:icon="@drawable/ic_assignment_white_24dp"
         android:title="所有事件"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_select"
+        android:title="跳转到指定日期"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_theme"
         android:title="主题设置"
         app:showAsAction="never" />
-
-
     <item
         android:id="@+id/menu_score"
         android:title="去评分"

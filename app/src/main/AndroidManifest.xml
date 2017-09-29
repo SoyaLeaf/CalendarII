@@ -28,6 +28,7 @@
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="next" />
                 <action android:name="prev" />
+                <action android:name="reset" />
             </intent-filter>
 
             <meta-data
@@ -37,9 +38,9 @@
 
         <service
             android:name=".ui.widget.service.MonthService"
-            android:permission="android.permission.BIND_REMOTEVIEWS"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

@@ -254,9 +254,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onSelectCancel() {
-
-    }
+    public void onSelectCancel() { }
 
     @Override
     public void onValueChange(int year, int month, int day) {
@@ -266,6 +264,9 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
                 .append(day).append("日").toString();
         mBtnDate.setText(date.substring(2));
     }
+
+    @Override
+    public void onSelectConfirm(int year, int month, int day) {}
 
     @Override
     public void onDismiss() {

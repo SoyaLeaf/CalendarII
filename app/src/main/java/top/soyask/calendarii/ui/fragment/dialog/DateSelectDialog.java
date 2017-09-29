@@ -13,6 +13,7 @@ import android.widget.NumberPicker;
 import java.lang.reflect.Method;
 
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.utils.DayUitls;
 
 
 public class DateSelectDialog extends DialogFragment implements View.OnClickListener, NumberPicker.OnValueChangeListener {
@@ -80,6 +81,7 @@ public class DateSelectDialog extends DialogFragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_confirm:
+                mDateSelectCallback.onSelectConfirm(mNpYear.getValue(), mNpMonth.getValue(), mNpDay.getValue());
                 dismiss();
                 break;
             case R.id.btn_cancel:
@@ -92,7 +94,15 @@ public class DateSelectDialog extends DialogFragment implements View.OnClickList
 
     @Override
     public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-        mDateSelectCallback.onValueChange(mNpYear.getValue(), mNpMonth.getValue(), mNpDay.getValue());
+        int year = mNpYear.getValue();
+        int month = mNpMonth.getValue();
+        mDateSelectCallback.onValueChange(year, month, mNpDay.getValue());
+        updateDayCount(year, month);
+    }
+
+    private void updateDayCount(int year, int month) {
+        int dayCount = DayUitls.getMonthDayCount(month - 1, year);
+        mNpDay.setMaxValue(dayCount);
     }
 
     public interface DateSelectCallback {
@@ -100,19 +110,21 @@ public class DateSelectDialog extends DialogFragment implements View.OnClickList
 
         void onValueChange(int year, int month, int day);
 
+        void onSelectConfirm(int year, int month, int day);
+
         void onDismiss();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.e("","onDestroyView");
+        Log.e("", "onDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("","onDestroy");
+        Log.e("", "onDestroy");
 
     }
 
@@ -142,7 +154,7 @@ public class DateSelectDialog extends DialogFragment implements View.OnClickList
             Method method = mNpMonth.getClass().getDeclaredMethod("changeValueByOne", boolean.class);
             method.setAccessible(true);
             method.invoke(mNpMonth, true);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
