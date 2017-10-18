@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.fragment.setting;
+package top.soyask.calendarii.ui.fragment;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

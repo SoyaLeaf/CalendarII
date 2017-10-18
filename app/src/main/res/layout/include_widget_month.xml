@@ -1,0 +1,53 @@
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_column="7"
+    android:layout_row="7"
+    android:columnCount="7">
+
+
+    <TextView android:text="日" />
+
+    <TextView android:text="一" />
+
+    <TextView android:text="二" />
+
+    <TextView android:text="三" />
+
+    <TextView android:text="四" />
+
+    <TextView android:text="五" />
+
+    <TextView android:text="六" />
+
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="@dimen/item_widget_day_size"
+        android:layout_height="@dimen/item_widget_day_size"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:paddingTop="2dp">
+
+        <TextView
+            android:id="@+id/tv_greg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal|bottom"
+            android:padding="0dp"
+            android:textColor="@color/text_color_primary_light"
+            android:textSize="14dp" />
+
+        <TextView
+            android:id="@+id/tv_lunar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_greg"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal|top"
+            android:textColor="@color/text_color_primary_light"
+            android:textSize="10dp" />
+    </RelativeLayout>
+
+</GridLayout>

@@ -20,10 +20,11 @@ import java.util.Calendar;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.ui.adapter.MonthAdapter;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.ui.adapter.MonthAdapter;
+import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUitls;
 import top.soyask.calendarii.utils.HolidayUtils;
 import top.soyask.calendarii.utils.LunarUtils;
@@ -73,6 +74,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             boolean isToday = isToday(i);
+
             String lunar = getLunar(calendar);
             Day day = new Day(mYear, mMonth, lunar, isToday, i + 1, dayOfWeek);
             try {
@@ -91,6 +93,9 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         if (result == null) {
             result = LunarUtils.getLunar(calendar);
             String lunarHoliday = HolidayUtils.getHolidayOfLunar(result);
+            if ("除夕".equals(lunarHoliday)) {
+                lunarHoliday = checkNextDayIsChuxi(calendar, lunarHoliday);
+            }
             if (lunarHoliday != null) {
                 return lunarHoliday;
             }
@@ -108,6 +113,23 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
         String solar = SolarUtils.getSolar(calendar);
         return solar == null ? result : solar;
+    }
+
+    /**
+     * 判断是否有大年三十
+     * @param calendar
+     * @param lunarHoliday
+     * @return
+     */
+    private String checkNextDayIsChuxi(Calendar calendar, String lunarHoliday) {
+        Calendar next = Calendar.getInstance();
+        next.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
+        next.add(Calendar.DATE, 1);
+        String lunar = HolidayUtils.getHolidayOfLunar(LunarUtils.getLunar(next));
+        if ("除夕".equals(lunar)) {
+            lunarHoliday = null;
+        }
+        return lunarHoliday;
     }
 
     private boolean isToday(int i) {
@@ -138,8 +160,9 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         filter.addAction(EventDao.UPDATE);
         filter.addAction(EventDao.DELETE);
         filter.addAction(MainFragment.SKIP);
+        filter.addAction(SettingFragment.WEEK_SETTING);
         getActivity().registerReceiver(mMonthReceiver, filter);
-        Log.d(TAG,"onCreate and registerReceiver");
+        Log.d(TAG, "onCreate and registerReceiver");
     }
 
     @Override
@@ -151,7 +174,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG,"onDestroyView and unregisterReceiver");
+        Log.d(TAG, "onDestroyView and unregisterReceiver");
         getActivity().unregisterReceiver(mMonthReceiver);
     }
 
@@ -161,17 +184,24 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         public void onReceive(Context context, Intent intent) {
 
             if (mMonthAdapter != null) {
-                if (MainFragment.SKIP.equals(intent.getAction())) {
-                    int year = intent.getIntExtra("year", 0);
-                    int month = intent.getIntExtra("month", 0);
-                    int day = intent.getIntExtra("day", 0);
-                    if (year == mYear && month == mMonth) {
-                        mMonthAdapter.setSelectedDay(day);
-                    }
+                switch (intent.getAction()) {
+                    case MainFragment.SKIP:
+                        int year = intent.getIntExtra("year", 0);
+                        int month = intent.getIntExtra("month", 0);
+                        int day = intent.getIntExtra("day", 0);
+                        if (year == mYear && month == mMonth) {
+                            mMonthAdapter.setSelectedDay(day);
+                        }
+                        break;
+                    case SettingFragment.WEEK_SETTING:
+                        mMonthAdapter.updateStartDate();
+                    case EventDao.UPDATE:
+                    case EventDao.ADD:
+                    case EventDao.DELETE:
+                        setupData();
+                        mMonthAdapter.notifyDataSetChanged();
+                        break;
                 }
-                setupData();
-                mMonthAdapter.notifyDataSetChanged();
-
             }
         }
     }
@@ -193,7 +223,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
     private void setupUI() {
         initDateView();
-//        initEventView();
     }
 
 

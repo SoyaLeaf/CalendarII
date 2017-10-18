@@ -8,4 +8,7 @@ public class Global {
     public static final int YEAR_START_REAL = 1910; //日历上显示的最小年份
     public static final int YEAR_END = 2100;
     public static final int MONTH_COUNT = 12;
+
+    public static final String SETTING_THEME = "theme";
+    public static final String SETTING_DATE_OFFSET = "date_offset";
 }

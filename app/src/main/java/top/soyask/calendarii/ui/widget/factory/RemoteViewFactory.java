@@ -101,7 +101,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
 
     public int getItemViewType(int position) {
         int type = VIEW_DAY;
-        if (position > mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
+        if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
             Day day = mDays.get(position - mDateStartPos);
             if (day.isToday()) {
                 return VIEW_TODAY;

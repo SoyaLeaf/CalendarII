@@ -11,6 +11,7 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.global.Setting;
 
 /**
  * Created by mxf on 2017/8/8.
@@ -23,7 +24,6 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     static final int VIEW_TODAY = 4;
     static final int VIEW_EVENT = 5;
     static final String[] WEEK_ARRAY = {"日", "一", "二", "三", "四", "五", "六",};
-    private static final String TAG = "month";
 
     private List<Day> mDays;
     private OnItemClickListener mOnItemClickListener;
@@ -34,20 +34,25 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public MonthAdapter(@NonNull List<Day> mDays, @NonNull OnItemClickListener mOnItemClickListener) {
         this.mDays = mDays;
         this.mOnItemClickListener = mOnItemClickListener;
-        this.mDateStartPos = mDays.get(0).getDayOfWeek() + 6;
+        this.mDateStartPos = (mDays.get(0).getDayOfWeek() + 6 - Setting.date_offset) % 7 + 7;
+        this.mEndPosition = mDateStartPos + mDays.size();
+    }
+
+    public void updateStartDate(){
+        this.mDateStartPos = (mDays.get(0).getDayOfWeek() + 6 - Setting.date_offset) % 7 + 7;
         this.mEndPosition = mDateStartPos + mDays.size();
     }
 
     public void setSelectedDay(int day) {
         this.mSelected = this.mDateStartPos + day - 1;
+        notifyItemChanged(mSelected);
         mOnItemClickListener.onDayClick(mSelected, mDays.get(mSelected - mDateStartPos));
     }
-
 
     @Override
     public int getItemViewType(int position) {
         int type = VIEW_DAY;
-        if (position > mDateStartPos && position < mEndPosition) {
+        if (position >= mDateStartPos && position < mEndPosition) {
             Day day = mDays.get(position - mDateStartPos);
             if (day.isToday()) {
                 return VIEW_TODAY;
@@ -96,7 +101,8 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (getItemViewType(position)) {
             case VIEW_WEEK:
                 TextView tv = (TextView) holder.itemView;
-                tv.setText(WEEK_ARRAY[position]);
+                int index = (position + Setting.date_offset) % WEEK_ARRAY.length;
+                tv.setText(WEEK_ARRAY[index]);
                 break;
             case VIEW_DAY:
             case VIEW_SELECTED:
@@ -120,14 +126,12 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     });
                 }
                 break;
-
         }
     }
 
     @Override
     public int getItemCount() {
         return 49;
-//        return mDays.size() + mDateStartPos;
     }
 
     public interface OnItemClickListener {

@@ -1,0 +1,94 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1e000000"
+    android:padding="@dimen/widget_margin">
+
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/normal_margin"
+
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="@dimen/normal_margin"
+        android:paddingLeft="@dimen/normal_space"
+        android:paddingRight="@dimen/normal_space"
+        android:textColor="@color/text_color_primary_light"
+        android:textSize="@dimen/large_font_size_34" />
+
+    <TextView
+        android:id="@+id/tv_year"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/normal_margin"
+        android:layout_toRightOf="@id/tv_date"
+        android:paddingTop="@dimen/normal_space"
+        android:textColor="@color/text_color_primary_light"
+        android:textSize="@dimen/subtitle_font_size" />
+
+    <TextView
+        android:id="@+id/tv_lunar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_year"
+        android:layout_toRightOf="@id/tv_date"
+        android:textColor="@color/text_color_primary_light"
+        android:textSize="@dimen/hint_font_size" />
+
+    <TextView
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tv_date"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="@color/text_color_sub_light" />
+
+    <include
+        layout="@layout/include_widget_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_date"
+        android:padding="@dimen/normal_margin" />
+
+    <ImageButton
+        android:id="@+id/ib_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="@drawable/bg_widget_r30"
+        android:padding="8dp"
+        android:src="@drawable/ic_keyboard_arrow_right_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/ib_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="@drawable/bg_widget_r30"
+        android:padding="8dp"
+        android:src="@drawable/ic_keyboard_arrow_left_white_24dp" />
+
+    <ImageButton
+        android:id="@+id/ib_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="@dimen/normal_margin"
+        android:layout_marginRight="@dimen/normal_margin"
+        android:background="@drawable/bg_widget_r30"
+        android:padding="8dp"
+        android:src="@drawable/ic_compare_arrows_white_24dp" />
+
+</RelativeLayout>

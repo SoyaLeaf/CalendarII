@@ -71,14 +71,12 @@ public class EventDao {
     public void delete(Event event) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "id = ?", new String[]{String.valueOf(event.getId())});
-
         sendBroadcast(DELETE);
     }
 
     public void delete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "title = ?", new String[]{title});
-
         sendBroadcast(DELETE);
     }
 

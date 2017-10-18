@@ -20,6 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +38,10 @@ import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.adapter.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
-import top.soyask.calendarii.ui.fragment.setting.AboutFragment;
+import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
+import top.soyask.calendarii.utils.EraUtils;
+import top.soyask.calendarii.utils.LunarUtils;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -55,33 +60,75 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private ActionBar mActionBar;
     private TextView mTvTitle;
     private TextView mTvEvent;
+    private TextView mTvDayCount;
+    private TextView mTvDayCountM;
+    private TextView mTvLunar;
+    private TextView mTvLunarYear;
     private View mEventView;
+    private View mPoint;
+    private ImageView mIvYear;
+
     private boolean isVisible = true;
     private int mEventViewWidth;
     private int mEventViewHeight;
     private MonthFragmentAdapter mMonthFragmentAdapter;
 
-    private Handler mHandler = new Handler() {
+    private Handler mAnimatorHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            if (mEventViewAnimator != null) {
+                mEventViewAnimator.cancel();
+                mEventViewAnimator = null;
+            }
+
             switch (msg.what) {
                 case View.INVISIBLE:
                     if (isVisible) {
                         isVisible = false;
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                            Animator anim = ViewAnimationUtils.createCircularReveal(mEventView, mEventViewWidth / 2, mEventViewHeight / 2, mEventViewWidth, 0);
-                            anim.setDuration(500);
-                            anim.setInterpolator(new AccelerateDecelerateInterpolator());
-                            anim.addListener(new AnimatorListenerAdapter() {
+
+                            mEventViewAnimator = ViewAnimationUtils.createCircularReveal(mEventView, mEventViewWidth / 2, mEventViewHeight / 2, mEventViewWidth, 0);
+                            mEventViewAnimator.setDuration(500);
+                            mEventViewAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+                            mEventViewAnimator.addListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
                                     mEventView.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
                                 }
                             });
-                            anim.start();
+                            mEventViewAnimator.start();
                         } else {
                             mEventView.setVisibility(View.INVISIBLE);
                         }
+
+                        mLeftBottom.setVisibility(View.VISIBLE);
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            Animator animator = ViewAnimationUtils.createCircularReveal(mLeftBottom, 0, mLeftBottom.getHeight(), 0, mLeftBottom.getHeight());
+                            animator.setDuration(500);
+                            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                            animator.start();
+                        }
+
+                        Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.point);
+                        animation.setDuration(800);
+                        mPoint.startAnimation(animation);
+                        animation.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                animation = AnimationUtils.loadAnimation(getContext(), R.anim.point_2);
+                                animation.setDuration(300);
+                                mPoint.startAnimation(animation);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+                            }
+                        });
+
                     }
                     break;
                 case View.VISIBLE:
@@ -95,6 +142,20 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                             anim.start();
                         }
 
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            Animator animator = ViewAnimationUtils.createCircularReveal(mLeftBottom, 0, mLeftBottom.getHeight(), mLeftBottom.getHeight(), 0);
+                            animator.setDuration(500);
+                            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                            animator.addListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    mLeftBottom.setVisibility(!isVisible ? View.VISIBLE : View.INVISIBLE);
+                                }
+                            });
+                            animator.start();
+                        } else {
+                            mLeftBottom.setVisibility(View.INVISIBLE);
+                        }
                     }
                     break;
             }
@@ -103,6 +164,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private View mIBtnMore;
     private MainReceiver mMainReceiver;
     private MenuItem mItemToday;
+    private Animator mEventViewAnimator;
+    private View mLeftBottom;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -120,14 +183,26 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         setupCard();
         setupToolbar();
         setupViewPager();
-        findViewById(R.id.add_event).setOnClickListener(this);
+        setupOtherView();
+
         mSelectedDay = new Day(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
-        mHandler.postDelayed(new Runnable() {
+        mAnimatorHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 setEvent(mSelectedDay.getYear() + "年" + mSelectedDay.getMonth() + "月" + mSelectedDay.getDayOfMonth() + "日");
             }
         }, 1000);
+    }
+
+    private void setupOtherView() {
+        findViewById(R.id.add_event).setOnClickListener(this);
+        mPoint = findViewById(R.id.point);
+        mTvDayCount = findViewById(R.id.tv_day_count);
+        mTvDayCountM = findViewById(R.id.tv_day_count_m);
+        mLeftBottom = findViewById(R.id.rl_leftbottom);
+        mTvLunar = findViewById(R.id.tv_lunar);
+        mTvLunarYear = findViewById(R.id.tv_lunar_year);
+        mIvYear = findViewById(R.id.iv_year);
     }
 
     private void setupCard() {
@@ -180,10 +255,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             } else {
                 findViewById(R.id.ib_more).setVisibility(View.GONE);
             }
-            mHandler.sendEmptyMessage(View.VISIBLE);
+            mAnimatorHandler.sendEmptyMessage(View.VISIBLE);
         } else {
             mTvEvent.setText("这一天并没有添加任何的事件...");
-            mHandler.sendEmptyMessage(View.INVISIBLE);
+            mAnimatorHandler.sendEmptyMessage(View.INVISIBLE);
         }
     }
 
@@ -211,7 +286,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
         switch (item.getItemId()) {
             case R.id.menu_today:
-//                mViewPager.setCurrentItem(getCurrentMonth());
                 skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
                 break;
             case R.id.menu_all_event:
@@ -231,6 +305,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             case R.id.menu_about:
                 AboutFragment aboutFragment = AboutFragment.newInstance();
                 addFragment(aboutFragment);
+                break;
+            case R.id.menu_setting:
+                SettingFragment settingFragment = SettingFragment.newInstance();
+                addFragment(settingFragment);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -266,7 +344,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         int year = position / MONTH_COUNT + YEAR_START_REAL;
         int month = position % MONTH_COUNT + 1;
         setToolbarDate(year, month);
-
         toggleItemToday(position);
     }
 
@@ -297,6 +374,50 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public void onSelected(Day day) {
         this.mSelectedDay = day;
         setEvent(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+        setLunarInfo();
+        calculateDelta_T();
+    }
+
+    private void setLunarInfo() {
+        Calendar selectDay = Calendar.getInstance();
+        selectDay.set(YEAR, mSelectedDay.getYear());
+        selectDay.set(MONTH, mSelectedDay.getMonth() - 1);
+        selectDay.set(DAY_OF_MONTH, mSelectedDay.getDayOfMonth());
+        String lunar = LunarUtils.getLunar(selectDay);
+        String branches = EraUtils.getYearForEarthlyBranches(mSelectedDay.getYear());
+        String stems = EraUtils.getYearForHeavenlyStems(mSelectedDay.getYear());
+        int img = EraUtils.getYearForTwelveZodiacImage(mSelectedDay.getYear());
+
+        mTvLunar.setText(lunar);
+        mTvLunarYear.setText(stems + branches + "年");
+        mIvYear.setImageDrawable(getResources().getDrawable(img));
+    }
+
+    // 计算所选的天数到今天的时间差
+    private void calculateDelta_T() {
+        Calendar selectDay = Calendar.getInstance();
+        selectDay.set(YEAR, mSelectedDay.getYear());
+        selectDay.set(MONTH, mSelectedDay.getMonth() - 1);
+        selectDay.set(DAY_OF_MONTH, mSelectedDay.getDayOfMonth());
+
+        Calendar today = Calendar.getInstance();
+        today.set(YEAR, mCalendar.get(YEAR));
+        today.set(MONTH, mCalendar.get(MONTH));
+        today.set(DAY_OF_MONTH, mCalendar.get(DAY_OF_MONTH));
+
+        long time = selectDay.getTime().getTime();
+        long todayTime = today.getTime().getTime();
+        int dayCount = (int) ((time - todayTime) / (1000 * 60 * 60 * 24));
+
+        if (dayCount > 0) {
+            mTvDayCount.setText("距今还有" + String.format("%04d", dayCount) + "天");
+            mTvDayCountM.setText(dayCount + "天之后");
+        } else if (dayCount < 0) {
+            mTvDayCount.setText("距今已过" + String.format("%04d", -dayCount) + "天");
+            mTvDayCountM.setText(-dayCount + "天之前");
+        } else {
+            mTvDayCount.setText("今日事,今日毕");
+        }
     }
 
     @Override

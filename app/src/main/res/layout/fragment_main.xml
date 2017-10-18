@@ -48,19 +48,19 @@
 
             <ImageButton
                 android:id="@+id/ib_more"
+                android:visibility="invisible"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:layout_alignParentRight="true"
+                android:layout_marginTop="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_view_list_white_24dp" />
 
             <TextView
                 android:id="@+id/tv_title"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="2017年9月20日"
                 android:textColor="@color/text_color_primary_light"
                 android:textSize="@dimen/large_title_font_size" />
 
@@ -78,6 +78,76 @@
                 android:layout_marginTop="@dimen/normal_margin"
                 android:text="这一天并没有添加任何的事件..."
                 android:textColor="@color/text_color_sub_light" />
+
+            <TextView
+                android:id="@+id/tv_day_count_m"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/tv_event"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_toRightOf="@id/tv_title"
+                android:textColor="@color/text_color_primary_light"
+                android:textSize="@dimen/subtitle_font_size" />
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
+
+    <View
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_gravity="left|bottom"
+        android:background="@drawable/bg_primary_half" />
+    <View
+        android:id="@+id/point"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="left|bottom"
+        android:background="@drawable/bg_primary_r60" />
+    <RelativeLayout
+        android:id="@+id/rl_leftbottom"
+        android:visibility="invisible"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="left|bottom"
+        android:background="@drawable/bg_primary_half"
+        android:paddingBottom="@dimen/normal_margin"
+        >
+
+        <TextView
+            android:id="@+id/tv_day_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:text="今日事,今日毕"
+            android:textColor="@color/text_color_primary_light"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/iv_year"
+            android:layout_above="@id/tv_day_count"
+            android:src="@drawable/ji"
+            android:layout_width="64dp"
+            android:layout_height="64dp" />
+
+        <TextView
+            android:id="@+id/tv_lunar"
+            android:layout_toRightOf="@id/iv_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tv_day_count"
+            android:textColor="@color/text_color_primary_light"
+           />
+        <TextView
+            android:layout_toRightOf="@id/iv_year"
+            android:id="@+id/tv_lunar_year"
+            android:text="丙申年"
+            android:textSize="@dimen/subtitle_font_size"
+            android:textColor="@color/text_color_primary_light"
+            android:layout_above="@id/tv_lunar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
 </android.support.design.widget.CoordinatorLayout>
