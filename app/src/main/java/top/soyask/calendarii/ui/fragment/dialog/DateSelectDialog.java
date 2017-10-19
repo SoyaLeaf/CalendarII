@@ -13,7 +13,7 @@ import android.widget.NumberPicker;
 import java.lang.reflect.Method;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.utils.DayUitls;
+import top.soyask.calendarii.utils.DayUtils;
 
 
 public class DateSelectDialog extends DialogFragment implements View.OnClickListener, NumberPicker.OnValueChangeListener {
@@ -101,7 +101,7 @@ public class DateSelectDialog extends DialogFragment implements View.OnClickList
     }
 
     private void updateDayCount(int year, int month) {
-        int dayCount = DayUitls.getMonthDayCount(month - 1, year);
+        int dayCount = DayUtils.getMonthDayCount(month - 1, year);
         mNpDay.setMaxValue(dayCount);
     }
 

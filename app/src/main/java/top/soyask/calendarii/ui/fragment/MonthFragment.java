@@ -25,7 +25,7 @@ import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.adapter.MonthAdapter;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
-import top.soyask.calendarii.utils.DayUitls;
+import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.HolidayUtils;
 import top.soyask.calendarii.utils.LunarUtils;
 import top.soyask.calendarii.utils.SolarUtils;
@@ -67,7 +67,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, mYear);
         calendar.set(Calendar.MONTH, mMonth - 1);
-        int dayCount = DayUitls.getMonthDayCount(mMonth - 1, mYear);
+        int dayCount = DayUtils.getMonthDayCount(mMonth - 1, mYear);
 
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {

@@ -8,8 +8,8 @@ android {
         applicationId "top.soyask.calendarii"
         minSdkVersion 18
         targetSdkVersion 25
-        versionCode 7
-        versionName "单纯的就是个日历.单纯的就"
+        versionCode 8
+        versionName "单纯的就是个日历.单纯的就.单"
     }
     buildTypes {
         release {

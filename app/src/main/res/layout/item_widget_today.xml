@@ -4,8 +4,8 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="@dimen/item_widget_day_size"
-        android:layout_height="@dimen/item_widget_day_size"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:id="@+id/rl"
         android:paddingTop="2dp"
         android:layout_gravity="center_horizontal"

@@ -5,7 +5,7 @@ import java.util.Calendar;
 /**
  * Created by mxf on 2017/8/10.
  */
-public class DayUitls {
+public class DayUtils {
 
     public static int getMonthDayCount(int month, int year) {
         switch (month) {

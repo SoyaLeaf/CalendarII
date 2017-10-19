@@ -122,17 +122,17 @@ public class HolidayUtils {
     }
 
     private static String calculateHolidayForWeek(Calendar calendar) {
-        int dayForWeek = DayUitls.getDayForWeek(calendar);
+        int dayForWeek = DayUtils.getDayForWeek(calendar);
         String holiday = null;
         if (dayForWeek == 0) {
             switch (calendar.get(Calendar.MONTH)) {
                 case Calendar.MAY:
-                    if (DayUitls.getWeekForMonth(calendar) == 3) {
+                    if (DayUtils.getWeekForMonth(calendar) == 3) {
                         holiday = "母亲节";
                     }
                     break;
                 case Calendar.JUNE:
-                    if (DayUitls.getWeekForMonth(calendar) == 4) {
+                    if (DayUtils.getWeekForMonth(calendar) == 4) {
                         holiday = "父亲节";
                     }
                     break;
