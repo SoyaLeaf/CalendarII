@@ -67,7 +67,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
     private synchronized void setupData() {
 
         Calendar calendar = Calendar.getInstance();
-        int month = calendar.get(Calendar.MONTH) - 1;
+        int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
         int dayCount = DayUtils.getMonthDayCount(month, year);
         mDays.clear();

@@ -28,6 +28,11 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     public EventViewHolder(View itemView) {
         super(itemView);
+        findView(itemView);
+        init();
+    }
+
+    private void findView(View itemView) {
         el = (ExpandableLayout) itemView.findViewById(R.id.el);
         ib_down = (ImageButton) itemView.findViewById(R.id.ib_down);
         ib_up = (ImageButton) itemView.findViewById(R.id.ib_up);
@@ -36,13 +41,9 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
         ib_share = (ImageButton) itemView.findViewById(R.id.ib_share);
         tv_title = (TextView) itemView.findViewById(R.id.tv_title);
         tv_event = (TextView) itemView.findViewById(R.id.tv_event);
-        init();
     }
 
     private void init() {
-
-//        tv_title.setOnTouchListener(this);
-//        tv_event.setOnTouchListener(this);
         itemView.setOnTouchListener(this);
         ib_down.setOnClickListener(this);
         ib_up.setOnClickListener(this);
@@ -92,21 +93,29 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                itemView.setAlpha(1f);
-                float rawX = event.getRawX();
-                int width = tv_title.getWidth() / 4;
-                if (rawX - startX > width) {
-                    if(mOnTextPressListener != null){
-                        mOnTextPressListener.onCross();
-                    }
-                } else if (startX - rawX > width) {
-                    if(mOnTextPressListener != null){
-                        mOnTextPressListener.onLineClear();
-                    }
-                }
+                onTouchCancel(event);
                 break;
         }
         return true;
+    }
+
+
+    /*
+        滑动结束后，在文字上添加一条直线
+     */
+    private void onTouchCancel(MotionEvent event) {
+        itemView.setAlpha(1f);
+        float rawX = event.getRawX();
+        int width = tv_title.getWidth() / 4;
+        if (rawX - startX > width) {
+            if(mOnTextPressListener != null){
+                mOnTextPressListener.onCross();
+            }
+        } else if (startX - rawX > width) {
+            if(mOnTextPressListener != null){
+                mOnTextPressListener.onLineClear();
+            }
+        }
     }
 
     public interface OnTextPressListener{

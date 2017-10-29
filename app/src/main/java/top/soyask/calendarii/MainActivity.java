@@ -1,13 +1,11 @@
 package top.soyask.calendarii;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
-import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
-import top.soyask.calendarii.ui.fragment.MainFragment;
+import top.soyask.calendarii.ui.fragment.main.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,18 +31,10 @@ public class MainActivity extends AppCompatActivity {
             init();
         }
     }
-
     private void setupTheme() {
-        setTheme(THEMES[ Setting.theme ]);
+        int theme = THEMES[Setting.theme];
+        setTheme(theme);
     }
-
-    @Deprecated
-    private void loadSetting(){
-        SharedPreferences setting = getSharedPreferences("setting", MODE_PRIVATE);
-        Setting.theme = setting.getInt(Global.SETTING_THEME, 0);
-        Setting.date_offset = setting.getInt(Global.SETTING_DATE_OFFSET, 0);
-    }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {

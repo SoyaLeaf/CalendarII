@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by mxf on 2017/8/8.
  */
-public class Day implements Serializable{
+public class Day implements Serializable {
     private int dayOfMonth;
     private String lunar;
     private boolean isToday;
@@ -15,7 +15,7 @@ public class Day implements Serializable{
     private int month;
     private List<Event> events;
 
-    public Day(int year,int month,String lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
+    public Day(int year, int month, String lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
         this.year = year;
         this.month = month;
         this.lunar = lunar;
@@ -24,7 +24,8 @@ public class Day implements Serializable{
         this.dayOfWeek = dayOfWeek;
     }
 
-    public Day(){}
+    public Day() {
+    }
 
     public Day(int year, int month, int dayOfMonth) {
         this.year = year;

@@ -1,9 +1,11 @@
-package top.soyask.calendarii.ui.fragment;
+package top.soyask.calendarii.ui.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -26,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -36,6 +39,10 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.adapter.MonthFragmentAdapter;
+import top.soyask.calendarii.ui.fragment.about.AboutFragment;
+import top.soyask.calendarii.ui.fragment.event.AddEventFragment;
+import top.soyask.calendarii.ui.fragment.event.AllEventFragment;
+import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
@@ -166,6 +173,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private MenuItem mItemToday;
     private Animator mEventViewAnimator;
     private View mLeftBottom;
+    private static final String INTENT_FULL_URL = "intent://platformapi/startapp?saId=10000007&" +
+            "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2FFKX01613AS644I1LR9US96%3F_s" +
+            "%3Dweb-other&_t=1472443966571#Intent;" +
+            "scheme=alipayqr;package=com.eg.android.AlipayGphone;end";
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -283,7 +294,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         switch (item.getItemId()) {
             case R.id.menu_today:
                 skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
@@ -310,8 +320,42 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 SettingFragment settingFragment = SettingFragment.newInstance();
                 addFragment(settingFragment);
                 break;
+            case R.id.menu_donate:
+                donate();
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void donate() {
+        new AlertDialog.Builder(getMainActivity())
+                .setTitle("捐赠")
+                .setMessage("首先感谢你点击了这个按钮。" +
+                        "\n我也不是奢求很多这样，5毛一块的棒棒糖，" +
+                        "就当请开发者吃个棒棒糖这样。" +
+                        "如果，您觉得这个app 5毛也不值的话，那还是感谢使用。饭饭会努力去做更好的app，请也一定要喜欢哦。")
+                .setNegativeButton("没兴趣", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(getMainActivity(), "还是谢谢支持！我会更加努力的。", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setPositiveButton("捐赠一点", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            toDonate();
+                            Toast.makeText(getMainActivity(), "万分感谢！我会更加努力的。", Toast.LENGTH_SHORT).show();
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).show();
+    }
+
+    private void toDonate() throws URISyntaxException {
+        Intent intent = Intent.parseUri(INTENT_FULL_URL, Intent.URI_INTENT_SCHEME);
+        startActivity(intent);
     }
 
     private void showSelectDialog() {
@@ -321,7 +365,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void score() {
-
         Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(uri);

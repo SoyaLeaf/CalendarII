@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.fragment;
+package top.soyask.calendarii.ui.fragment.month;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,6 +24,7 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.adapter.MonthAdapter;
+import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.HolidayUtils;
