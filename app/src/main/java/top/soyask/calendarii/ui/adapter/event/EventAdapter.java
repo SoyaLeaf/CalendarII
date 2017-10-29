@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.adapter;
+package top.soyask.calendarii.ui.adapter.event;
 
 import android.graphics.Paint;
 import android.support.v7.widget.RecyclerView;

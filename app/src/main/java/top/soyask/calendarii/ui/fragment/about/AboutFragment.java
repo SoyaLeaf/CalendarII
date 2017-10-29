@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.ui.fragment.about.opensource.OpenSourceFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 
 
@@ -24,12 +25,17 @@ public class AboutFragment extends BaseFragment implements View.OnClickListener 
     @Override
     protected void setupUI() {
         findToolbar().setNavigationOnClickListener(this);
+        findViewById(R.id.btn_os).setOnClickListener(this);
     }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.btn_os:
+                OpenSourceFragment openSourceFragment = OpenSourceFragment.newInstance();
+                addFragment(openSourceFragment);
+                break;
             default:
                 removeFragment(this);
                 break;

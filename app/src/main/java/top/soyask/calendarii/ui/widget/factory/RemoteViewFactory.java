@@ -14,9 +14,7 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.utils.DayUtils;
-import top.soyask.calendarii.utils.HolidayUtils;
-import top.soyask.calendarii.utils.LunarUtils;
-import top.soyask.calendarii.utils.SolarUtils;
+import top.soyask.calendarii.utils.MonthUtils;
 
 /**
  * Created by mxf on 2017/9/21.
@@ -75,7 +73,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             boolean isToday = isToday(i);
-            String lunar = getLunar(calendar);
+            String lunar = MonthUtils.getLunar(calendar);
             Day day = new Day(year, month, lunar, isToday, i + 1, dayOfWeek);
             try {
                 List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
@@ -92,31 +90,6 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
     private boolean isToday(int i) {
         Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.DAY_OF_MONTH) == i + 1;
-    }
-
-    private String getLunar(Calendar calendar) {
-        String result = HolidayUtils.getHolidayOfMonth(calendar);
-        if (result == null) {
-            result = LunarUtils.getLunar(calendar);
-            String lunarHoliday = HolidayUtils.getHolidayOfLunar(result);
-            if (lunarHoliday != null) {
-                return lunarHoliday;
-            }
-            int length = result.length();
-            if (result.endsWith("初一")) {
-                result = result.substring(0, length - 2);
-            } else {
-                result = result.substring(length - 2, length);
-            }
-        } else {
-            if (result.length() > 4) {
-                result = result.substring(0, 4);
-            }
-        }
-
-        String solar = SolarUtils.getSolar(calendar);
-
-        return solar == null ? result : solar;
     }
 
 

@@ -46,6 +46,7 @@ public class MonthWidget extends AppWidgetProvider {
         int alpha = context.getSharedPreferences("setting", Context.MODE_PRIVATE).getInt(Global.SETTING_WIDGET_ALPHA, 33);
         int month = calendar.get(Calendar.MONTH) + 1;
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
+
         views.setOnClickPendingIntent(R.id.iv_launch, pendingIntent);
         views.setInt(R.id.widget, "setBackgroundColor", Color.argb(alpha, 0, 0, 0));
         views.setRemoteAdapter(R.id.gv_month, intent);

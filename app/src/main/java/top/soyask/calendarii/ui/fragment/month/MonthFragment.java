@@ -23,13 +23,11 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.ui.adapter.MonthAdapter;
+import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUtils;
-import top.soyask.calendarii.utils.HolidayUtils;
-import top.soyask.calendarii.utils.LunarUtils;
-import top.soyask.calendarii.utils.SolarUtils;
+import top.soyask.calendarii.utils.MonthUtils;
 
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
@@ -76,7 +74,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             boolean isToday = isToday(i);
 
-            String lunar = getLunar(calendar);
+            String lunar = MonthUtils.getLunar(calendar);
             Day day = new Day(mYear, mMonth, lunar, isToday, i + 1, dayOfWeek);
             try {
                 List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
@@ -89,49 +87,8 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         }
     }
 
-    private String getLunar(Calendar calendar) {
-        String result = HolidayUtils.getHolidayOfMonth(calendar);
-        if (result == null) {
-            result = LunarUtils.getLunar(calendar);
-            String lunarHoliday = HolidayUtils.getHolidayOfLunar(result);
-            if ("除夕".equals(lunarHoliday)) {
-                lunarHoliday = checkNextDayIsChuxi(calendar, lunarHoliday);
-            }
-            if (lunarHoliday != null) {
-                return lunarHoliday;
-            }
-            int length = result.length();
-            if (result.endsWith("初一")) {
-                result = result.substring(0, length - 2);
-            } else {
-                result = result.substring(length - 2, length);
-            }
-        } else {
-            if (result.length() > 4) {
-                result = result.substring(0, 4);
-            }
-        }
 
-        String solar = SolarUtils.getSolar(calendar);
-        return solar == null ? result : solar;
-    }
 
-    /**
-     * 判断是否有大年三十
-     * @param calendar
-     * @param lunarHoliday
-     * @return
-     */
-    private String checkNextDayIsChuxi(Calendar calendar, String lunarHoliday) {
-        Calendar next = Calendar.getInstance();
-        next.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE));
-        next.add(Calendar.DATE, 1);
-        String lunar = HolidayUtils.getHolidayOfLunar(LunarUtils.getLunar(next));
-        if ("除夕".equals(lunar)) {
-            lunarHoliday = null;
-        }
-        return lunarHoliday;
-    }
 
     private boolean isToday(int i) {
         return mCalendar.get(Calendar.DAY_OF_MONTH) == i + 1

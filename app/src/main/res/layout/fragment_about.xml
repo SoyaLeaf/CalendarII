@@ -29,6 +29,7 @@
             android:src="@mipmap/ic_launcher" />
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/iv_logo"
@@ -42,11 +43,21 @@
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/tv_cp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_margin="16dp"
+            android:layout_marginBottom="16dp"
             android:text="Copyright© 2017 米小饭" />
+        <Button
+            android:id="@+id/btn_os"
+            android:layout_above="@id/tv_cp"
+            android:layout_centerHorizontal="true"
+            android:text="开源相关"
+            android:autoLink="all"
+            android:background="?selectableItemBackgroundBorderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
 </LinearLayout>

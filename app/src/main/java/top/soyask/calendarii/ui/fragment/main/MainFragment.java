@@ -38,7 +38,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.ui.adapter.MonthFragmentAdapter;
+import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.event.AddEventFragment;
 import top.soyask.calendarii.ui.fragment.event.AllEventFragment;

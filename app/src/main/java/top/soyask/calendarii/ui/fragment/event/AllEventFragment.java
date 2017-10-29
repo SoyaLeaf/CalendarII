@@ -16,7 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.ui.adapter.EventAdapter;
+import top.soyask.calendarii.ui.adapter.event.EventAdapter;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
