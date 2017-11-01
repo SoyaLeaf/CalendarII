@@ -1,5 +1,6 @@
 package top.soyask.calendarii.ui.fragment.setting;
 
+import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,8 +12,12 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.util.HashSet;
+
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.global.Global;
+import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
@@ -21,7 +26,7 @@ import top.soyask.calendarii.ui.fragment.setting.widget.AlphaSetFragment;
 import top.soyask.calendarii.ui.widget.MonthWidget;
 
 
-public class SettingFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, AlphaSetFragment.OnAlphaSetListener {
+public class SettingFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, AlphaSetFragment.OnAlphaSetListener, GlobalData.LoadCallBack {
 
     private static final int WAIT = 0;
     private static final int CANCEL = 1;
@@ -37,10 +42,20 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 case UPDATE:
                     getMainActivity().sendBroadcast(new Intent(WEEK_SETTING));
                     break;
+                case WAIT:
+                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "请稍等...");
+                    break;
+                case CANCEL:
+                    if(mProgressDialog != null){
+                        mProgressDialog.cancel();
+                        mProgressDialog = null;
+                    }
+                    break;
             }
         }
     };
     private TextView mTvAlpha;
+    private ProgressDialog mProgressDialog;
 
     public SettingFragment() {
         super(R.layout.fragment_setting);
@@ -57,6 +72,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         setupSwitchStart();
         setupWidgetAlpha();
         findViewById(R.id.rl_theme).setOnClickListener(this);
+        findViewById(R.id.rl_holiday).setOnClickListener(this);
     }
 
     private void setupWidgetAlpha() {
@@ -94,9 +110,17 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 BirthFragment birthFragment = BirthFragment.newInstance();
                 addFragment(birthFragment);
                 break;
+            case R.id.rl_holiday:
+                synHoliday();
+                break;
             default:
                 removeFragment(this);
         }
+    }
+
+    private void synHoliday() {
+        mHandler.sendEmptyMessage(WAIT);
+        GlobalData.synHoliday(this);
     }
 
     @Override
@@ -129,5 +153,19 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 MonthWidget.updateAppWidget(getMainActivity(), appWidgetManager, appWidgetId);
             }
         }
+    }
+
+    @Override
+    public void onSuccess() {
+        showSnackbar("同步成功！");
+        getMainActivity().sendBroadcast(new Intent(EventDao.UPDATE));
+        Setting.setting(getMainActivity(),Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
+        mHandler.sendEmptyMessage(CANCEL);
+    }
+
+    @Override
+    public void onFail() {
+        showSnackbar("同步失败了，请联系开发者！");
+        mHandler.sendEmptyMessage(CANCEL);
     }
 }

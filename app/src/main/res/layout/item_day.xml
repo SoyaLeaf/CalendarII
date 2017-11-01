@@ -45,14 +45,32 @@
             android:background="@drawable/bg_primary_border_r60"
             android:visibility="gone"></FrameLayout>
 
-        <ImageView
+        <TextView
+            android:id="@+id/tv_holiday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:text="假"
+            android:textColor="?colorAccent"
+            android:textSize="5sp"
+            android:visibility="gone" />
+
+        <FrameLayout
             android:id="@+id/iv_birth"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:alpha="0.8"
-            android:src="@drawable/ic_action_birth"
-            android:visibility="gone" />
+            android:layout_margin="2dp"
+            android:background="@drawable/bg_birth_r60"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="4dp"
+                android:layout_gravity="right"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_left_bottom" />
+        </FrameLayout>
     </RelativeLayout>
 </FrameLayout>
 

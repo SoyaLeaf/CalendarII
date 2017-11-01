@@ -24,6 +24,7 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
@@ -40,6 +41,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     private static final String CALENDAR = "calendar";
     private static final String POSITION = "position";
     private static final String TAG = "MonthFragment";
+    private static final String DATE_SP = "-";
 
     private View mContentView;
     private List<Day> mDays = new ArrayList<>();
@@ -64,7 +66,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         return fragment;
     }
 
-    private void setupData() {
+    private synchronized void setupData() {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, mYear);
         calendar.set(Calendar.MONTH, mMonth - 1);
@@ -76,15 +78,23 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-            boolean isToday = isToday(i);
+            boolean isToday = isToday(dayOfMonth);
 
             String lunar = MonthUtils.getLunar(calendar);
             String lunarDay = LunarUtils.getLunar(calendar);
-            List<Birthday> birthday0 = MainFragment.BIRTHDAY.get(lunarDay);
-            List<Birthday> birthday1 = MainFragment.BIRTHDAY.get(mMonth + "月" + dayOfMonth + "日");
+            List<Birthday> birthday0 = GlobalData.BIRTHDAY.get(lunarDay);
+            List<Birthday> birthday1 = GlobalData.BIRTHDAY.get(mMonth + "月" + dayOfMonth + "日");
             Day day = new Day(mYear, mMonth, lunar, isToday, dayOfMonth, dayOfWeek);
             day.addBirthday(birthday0);
             day.addBirthday(birthday1);
+            String str = new StringBuffer()
+                    .append(mYear)
+                    .append(DATE_SP)
+                    .append(mMonth)
+                    .append(DATE_SP)
+                    .append(dayOfMonth)
+                    .toString();
+            day.setHoliday(GlobalData.HOLIDAY.contains(str));
             try {
                 List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
                 day.setEvents(events);
@@ -97,7 +107,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     }
 
     private boolean isToday(int i) {
-        return mCalendar.get(Calendar.DAY_OF_MONTH) == i + 1
+        return mCalendar.get(Calendar.DAY_OF_MONTH) == i
                 && mCalendar.get(Calendar.YEAR) == mYear
                 && mCalendar.get(Calendar.MONTH) + 1 == mMonth;
     }

@@ -114,13 +114,14 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void setupViewOfDay(DayViewHolder holder, final int position) {
         DayViewHolder dayViewHolder = holder;
         Day day = mDays.get(position - mDateStartPos);
+
         dayViewHolder.event.setVisibility(getEventVisibility(day));
         dayViewHolder.selected.setVisibility(position == mSelected ? View.VISIBLE : View.INVISIBLE);
+        dayViewHolder.birth.setVisibility(day.hasBirthday() ? View.VISIBLE : View.INVISIBLE);
+        dayViewHolder.holiday.setVisibility(day.isHoliday() ? View.VISIBLE : View.INVISIBLE);
 
         dayViewHolder.tvGreg.setText(String.valueOf(day.getDayOfMonth()));
         dayViewHolder.tvLunar.setText(day.hasBirthday() ? "生日" : day.getLunar());
-        dayViewHolder.birth.setVisibility(day.hasBirthday() ? View.VISIBLE : View.INVISIBLE);
-
         setTextColor(position, dayViewHolder, day);
         dayViewHolder.viewGroup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,6 +177,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         View selected;
         View event;
         View birth;
+        View holiday;
 
         public DayViewHolder(View itemView) {
             super(itemView);
@@ -185,6 +187,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             selected = itemView.findViewById(R.id.fl_select);
             event = itemView.findViewById(R.id.fl_event);
             birth = itemView.findViewById(R.id.iv_birth);
+            holiday = itemView.findViewById(R.id.tv_holiday);
         }
     }
 }

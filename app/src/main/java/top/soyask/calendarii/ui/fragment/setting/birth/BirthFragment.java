@@ -12,6 +12,7 @@ import java.util.List;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.BirthdayDao;
 import top.soyask.calendarii.domain.Birthday;
+import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.birth.BirthdayAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 
@@ -73,6 +74,7 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
                         mBirthdays.remove(birthday);
                         mBirthdayAdapter.notifyItemRemoved(position);
                         mBirthdayAdapter.notifyItemRangeChanged(0, position);
+                        GlobalData.loadBirthday(getMainActivity());
                     }
                 }).show();
     }
@@ -89,5 +91,6 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
         mBirthdays.clear();
         mBirthdays.addAll(mBirthdayDao.queryAll());
         mBirthdayAdapter.notifyDataSetChanged();
+        GlobalData.loadBirthday(getMainActivity());
     }
 }

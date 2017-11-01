@@ -77,7 +77,6 @@ public class BirthdayDao {
             birthday.setLunar(isLunar == 1);
             birthdays.add(birthday);
         }
-
         return birthdays;
     }
 }

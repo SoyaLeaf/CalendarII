@@ -32,17 +32,14 @@ import android.widget.Toast;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.BirthdayDao;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
@@ -84,7 +81,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private int mEventViewHeight;
     private MonthFragmentAdapter mMonthFragmentAdapter;
 
-    public static final Map<String,List<Birthday>> BIRTHDAY = new HashMap<>();
 
 
     private Handler mAnimatorHandler = new Handler() {
@@ -455,8 +451,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         mIvYear.setImageDrawable(getResources().getDrawable(img));
     }
 
-
-
     // 计算所选的天数到今天的时间差
     private void calculateDelta_T() {
         Calendar selectDay = getSelectedCalendar();
@@ -467,10 +461,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         int dayCount = (int) ((time - todayTime) / (1000 * 60 * 60 * 24));
 
         if (dayCount > 0) {
-            mTvDayCount.setText("距今还有" + String.format("%04d", dayCount) + "天");
+            mTvDayCount.setText("距今还有" + String.format("%4d", dayCount) + "天");
             mTvDayCountM.setText(dayCount + "天之后");
         } else if (dayCount < 0) {
-            mTvDayCount.setText("距今已过" + String.format("%04d", -dayCount) + "天");
+            mTvDayCount.setText("距今已过" + String.format("%4d", -dayCount) + "天");
             mTvDayCountM.setText(-dayCount + "天之前");
         } else {
             mTvDayCount.setText("今日事,今日毕");
@@ -500,23 +494,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupReceiver();
-        loadBirthday();
+        GlobalData.loadBirthday(getMainActivity());
+        GlobalData.loadHoliday(getMainActivity());
     }
 
-    private void loadBirthday() {
-        BirthdayDao birthdayDao = BirthdayDao.getInstance(getMainActivity());
-        List<Birthday> birthdays = birthdayDao.queryAll();
-        for (Birthday birthday : birthdays) {
-            String when = birthday.getWhen();
-            if(BIRTHDAY.containsKey(when)) {
-                BIRTHDAY.get(when).add(birthday);
-            }else {
-                List<Birthday> birthdayList = new ArrayList<>();
-                birthdayList.add(birthday);
-                BIRTHDAY.put(when,birthdayList);
-            }
-        }
-    }
 
     private void setupReceiver() {
         mMainReceiver = new MainReceiver();

@@ -30,8 +30,8 @@ public class MonthUtils {
     public static final String getLunar(Calendar calendar) {
         String holidayOfMonth = getHolidayOfMonth(calendar);
         String solar = SolarUtils.getSolar(calendar);
-        String lunar = getLunarSimple(calendar);
-        String lunarHoliday = getLunarHoliday(calendar, lunar);
+        String lunar = LunarUtils.getLunar(calendar);
+        String lunarHoliday = getLunarHoliday(calendar,lunar);
 
         if(lunarHoliday != null){
             return lunarHoliday;
@@ -40,7 +40,7 @@ public class MonthUtils {
         }else if(solar != null){
             return solar;
         }else {
-            return lunar;
+            return getLunarSimple(lunar);
         }
     }
 
@@ -53,8 +53,7 @@ public class MonthUtils {
     }
 
     @NonNull
-    private static String getLunarSimple(Calendar calendar) {
-        String lunar = LunarUtils.getLunar(calendar);
+    private static String getLunarSimple(String lunar) {
         int length = lunar.length();
         if (lunar.endsWith("初一")) {
             lunar = lunar.substring(0, length - 2);

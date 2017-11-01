@@ -66,5 +66,17 @@ public class OpenSourceFragment extends BaseFragment implements OpenSourceAdapte
         os1.setUrl("https://github.com/dinuscxj/CircleProgressBar");
         mOpenSources.add(os1);
 
+        OpenSource os2 = new OpenSource();
+        os2.setTitle("OkHttp");
+        os2.setDetail("HTTP is the way modern applications network. It’s how we exchange data & media.");
+        os2.setUrl("http://square.github.io/okhttp/");
+        mOpenSources.add(os2);
+
+        OpenSource os3 = new OpenSource();
+        os3.setTitle("Gson");
+        os3.setDetail("Gson is a Java library that can be used to convert Java Objects into their JSON representation. ");
+        os3.setUrl("https://github.com/google/gson/blob/master/LICENSE");
+        mOpenSources.add(os3);
+
     }
 }

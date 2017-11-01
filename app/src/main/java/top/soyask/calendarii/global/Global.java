@@ -12,4 +12,6 @@ public class Global {
     public static final String SETTING_THEME = "theme";
     public static final String SETTING_DATE_OFFSET = "date_offset";
     public static final String SETTING_WIDGET_ALPHA = "widget_alpha";
+
+    public static final String SETTING_HOLIDAY = "holiday";
 }
