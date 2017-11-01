@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,12 @@ public class OpenSourceFragment extends BaseFragment implements OpenSourceAdapte
         OpenSourceAdapter openSourceAdapter = new OpenSourceAdapter(mOpenSources, this);
         rv.setAdapter(openSourceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));
+        findToolbar().setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeFragment(OpenSourceFragment.this);
+            }
+        });
     }
 
     @Override

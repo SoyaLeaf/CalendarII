@@ -32,6 +32,27 @@
             android:gravity="center_horizontal|top"
             android:textColor="@android:color/white"
             android:textSize="10sp" />
+        <FrameLayout
+            android:id="@+id/fl_event"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_sub_r60"
+            android:visibility="gone"></FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_select"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/bg_primary_border_r60"
+            android:visibility="gone"></FrameLayout>
+        <ImageView
+            android:id="@+id/iv_birth"
+            android:src="@drawable/ic_action_birth"
+            android:visibility="gone"
+            android:layout_width="6dp"
+            android:layout_height="6dp" />
     </RelativeLayout>
 </FrameLayout>
 

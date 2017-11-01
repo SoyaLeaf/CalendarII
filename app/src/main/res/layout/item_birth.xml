@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
+
+    <RelativeLayout
+        android:background="?selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_who"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="我的生日" />
+        <TextView
+            android:id="@+id/tv_when"
+            android:layout_margin="@dimen/normal_margin"
+            android:padding="@dimen/normal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_who"
+            android:layout_centerHorizontal="true"
+            android:text="1996年11月05日"
+            android:textSize="@dimen/large_font_size_34" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.SwitchCompat;
@@ -16,6 +15,8 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
+import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.AlphaSetFragment;
 import top.soyask.calendarii.ui.widget.MonthWidget;
 
@@ -47,8 +48,6 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
 
     public static SettingFragment newInstance() {
         SettingFragment fragment = new SettingFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -57,12 +56,14 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         findToolbar().setNavigationOnClickListener(this);
         setupSwitchStart();
         setupWidgetAlpha();
+        findViewById(R.id.rl_theme).setOnClickListener(this);
     }
 
     private void setupWidgetAlpha() {
         mTvAlpha = findViewById(R.id.tv_alpha);
         mTvAlpha.setText(String.valueOf(Setting.widget_alpha));
         findViewById(R.id.rl_alpha).setOnClickListener(this);
+        findViewById(R.id.rl_birth).setOnClickListener(this);
     }
 
     private void setupSwitchStart() {
@@ -84,6 +85,14 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 AlphaSetFragment alphaSetFragment = AlphaSetFragment.newInstance();
                 alphaSetFragment.setOnAlphaSetListener(this);
                 addFragment(alphaSetFragment);
+                break;
+            case R.id.rl_theme:
+                ThemeFragment themeFragment = ThemeFragment.newInstance();
+                addFragment(themeFragment);
+                break;
+            case R.id.rl_birth:
+                BirthFragment birthFragment = BirthFragment.newInstance();
+                addFragment(birthFragment);
                 break;
             default:
                 removeFragment(this);

@@ -15,11 +15,6 @@
         android:id="@+id/menu_select"
         android:title="跳转到指定日期"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/menu_theme"
-        android:title="主题风格"
-        app:showAsAction="never" />
     <item
         android:id="@+id/menu_score"
         android:title="去评分"

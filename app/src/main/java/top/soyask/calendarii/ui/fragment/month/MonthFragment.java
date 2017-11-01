@@ -21,12 +21,14 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUtils;
+import top.soyask.calendarii.utils.LunarUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
@@ -70,12 +72,19 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
-            calendar.set(Calendar.DAY_OF_MONTH, i + 1);
+            int dayOfMonth = i + 1;
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             boolean isToday = isToday(i);
 
             String lunar = MonthUtils.getLunar(calendar);
-            Day day = new Day(mYear, mMonth, lunar, isToday, i + 1, dayOfWeek);
+            String lunarDay = LunarUtils.getLunar(calendar);
+            List<Birthday> birthday0 = MainFragment.BIRTHDAY.get(lunarDay);
+            List<Birthday> birthday1 = MainFragment.BIRTHDAY.get(mMonth + "月" + dayOfMonth + "日");
+            Day day = new Day(mYear, mMonth, lunar, isToday, dayOfMonth, dayOfWeek);
+            day.addBirthday(birthday0);
+            day.addBirthday(birthday1);
             try {
                 List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
                 day.setEvents(events);
@@ -86,9 +95,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
             mDays.add(day);
         }
     }
-
-
-
 
     private boolean isToday(int i) {
         return mCalendar.get(Calendar.DAY_OF_MONTH) == i + 1
@@ -101,14 +107,16 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            int position = getArguments().getInt(POSITION);
-            mYear = position / MONTH_COUNT + YEAR_START_REAL; //position==0时 1910/1
-            mMonth = position % MONTH_COUNT + 1;
-            mCalendar = (Calendar) getArguments().getSerializable(CALENDAR);
+            initArguments();
         }
         mEventDao = EventDao.getInstance(getActivity());
+    }
 
-//        setupReceiver();
+    private void initArguments() {
+        int position = getArguments().getInt(POSITION);
+        mYear = position / MONTH_COUNT + YEAR_START_REAL; //position==0时 1910/1
+        mMonth = position % MONTH_COUNT + 1;
+        mCalendar = (Calendar) getArguments().getSerializable(CALENDAR);
     }
 
     private void setupReceiver() {
@@ -185,10 +193,10 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
 
     private void initDateView() {
-        RecyclerView recyclerView;
-        recyclerView = find(R.id.rv_date);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 7));
         mMonthAdapter = new MonthAdapter(mDays, this);
+
+        RecyclerView recyclerView = find(R.id.rv_date);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 7));
         recyclerView.setAdapter(mMonthAdapter);
         recyclerView.setItemAnimator(null);
     }

@@ -33,9 +33,9 @@ public class LunarUtils {
             0x0e968, 0x0d520, 0x0daa0, 0x16aa6, 0x056d0, 0x04ae0, 0x0a9d4, 0x0a2d0, 0x0d150, 0x0f252,//2090-2099
             0x0d520};//2100
 
-    static final String[] LUNAR_MONTH = {"正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "腊月"};
-    static final String[] CHINESE_TEN = {"初", "十", "廿", "三"};
-    static final String[] LUNAR_DAY = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
+    public static final String[] LUNAR_MONTH = {"正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "腊月"};
+    public static final String[] CHINESE_TEN = {"初", "十", "廿", "三"};
+    public static final String[] LUNAR_DAY = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
     static final Long BASE_DATE = new Date(0, 0, 31).getTime();
 
 
@@ -84,7 +84,7 @@ public class LunarUtils {
         return (leap ? "闰" : "") + LUNAR_MONTH[month - 1]+ getLunarDay(day);
     }
 
-    private static final String getLunarDay(int day) {
+    public static final String getLunarDay(int day) {
         if (day > 30) {
             return "";
         }

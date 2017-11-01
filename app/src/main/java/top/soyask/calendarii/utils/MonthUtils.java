@@ -1,5 +1,7 @@
 package top.soyask.calendarii.utils;
 
+import android.support.annotation.NonNull;
+
 import java.util.Calendar;
 
 /**
@@ -26,29 +28,47 @@ public class MonthUtils {
     }
 
     public static final String getLunar(Calendar calendar) {
-        String result = HolidayUtils.getHolidayOfMonth(calendar);
-        if (result == null) {
-            result = LunarUtils.getLunar(calendar);
-            String lunarHoliday = HolidayUtils.getHolidayOfLunar(result);
-            if ("除夕".equals(lunarHoliday)) {
-                lunarHoliday = checkNextDayIsChuxi(calendar, lunarHoliday);
-            }
-            if (lunarHoliday != null) {
-                return lunarHoliday;
-            }
-            int length = result.length();
-            if (result.endsWith("初一")) {
-                result = result.substring(0, length - 2);
-            } else {
-                result = result.substring(length - 2, length);
-            }
-        } else {
-            if (result.length() > 4) {
-                result = result.substring(0, 4);
-            }
-        }
-
+        String holidayOfMonth = getHolidayOfMonth(calendar);
         String solar = SolarUtils.getSolar(calendar);
-        return solar == null ? result : solar;
+        String lunar = getLunarSimple(calendar);
+        String lunarHoliday = getLunarHoliday(calendar, lunar);
+
+        if(lunarHoliday != null){
+            return lunarHoliday;
+        }else if(holidayOfMonth != null){
+            return holidayOfMonth;
+        }else if(solar != null){
+            return solar;
+        }else {
+            return lunar;
+        }
+    }
+
+    private static String getLunarHoliday(Calendar calendar, String lunar) {
+        String lunarHoliday = HolidayUtils.getHolidayOfLunar(lunar);
+        if ("除夕".equals(lunarHoliday)) {
+            lunarHoliday = checkNextDayIsChuxi(calendar, lunarHoliday);
+        }
+        return lunarHoliday;
+    }
+
+    @NonNull
+    private static String getLunarSimple(Calendar calendar) {
+        String lunar = LunarUtils.getLunar(calendar);
+        int length = lunar.length();
+        if (lunar.endsWith("初一")) {
+            lunar = lunar.substring(0, length - 2);
+        } else {
+            lunar = lunar.substring(length - 2, length);
+        }
+        return lunar;
+    }
+
+    private static String getHolidayOfMonth(Calendar calendar) {
+        String holidayOfMonth = HolidayUtils.getHolidayOfMonth(calendar);
+        if (holidayOfMonth != null && holidayOfMonth.length() > 4) {
+            holidayOfMonth = holidayOfMonth.substring(0, 4);
+        }
+        return holidayOfMonth;
     }
 }

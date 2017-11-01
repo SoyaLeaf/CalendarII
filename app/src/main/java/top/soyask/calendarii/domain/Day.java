@@ -1,18 +1,22 @@
 package top.soyask.calendarii.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by mxf on 2017/8/8.
  */
 public class Day implements Serializable {
+
     private int dayOfMonth;
     private String lunar;
     private boolean isToday;
     private int dayOfWeek;
     private int year;
     private int month;
+    private boolean isHoliday;
+    private List<Birthday> birthdays;
     private List<Event> events;
 
     public Day(int year, int month, String lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
@@ -24,7 +28,30 @@ public class Day implements Serializable {
         this.dayOfWeek = dayOfWeek;
     }
 
+
     public Day() {
+    }
+
+    public void addBirthday(Birthday birthday) {
+        if (birthday != null) {
+            if (birthdays == null) {
+                birthdays = new ArrayList<>();
+            }
+            birthdays.add(birthday);
+        }
+    }
+
+    public void addBirthday(List<Birthday> birthday) {
+        if (birthday != null) {
+            if (birthdays == null) {
+                birthdays = new ArrayList<>();
+            }
+            birthdays.addAll(birthday);
+        }
+    }
+
+    public List<Birthday> getBirthdays() {
+        return birthdays;
     }
 
     public Day(int year, int month, int dayOfMonth) {
@@ -100,5 +127,21 @@ public class Day implements Serializable {
 
     public void setMonth(int month) {
         this.month = month;
+    }
+
+    public boolean isHoliday() {
+        return isHoliday;
+    }
+
+    public void setHoliday(boolean holiday) {
+        isHoliday = holiday;
+    }
+
+    public boolean hasBirthday(){
+        return birthdays != null && !birthdays.isEmpty();
+    }
+
+    public boolean hasEvent(){
+        return events != null && !events.isEmpty();
     }
 }

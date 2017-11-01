@@ -2,4 +2,16 @@
     <string name="app_name">日历Mini</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <array name="who">
+        <item>我</item>
+        <item>爸爸</item>
+        <item>妈妈</item>
+        <item>女票</item>
+        <item>男票</item>
+        <item>老公</item>
+        <item>老婆</item>
+        <item>儿子</item>
+        <item>女儿</item>
+        <item>其他</item>
+    </array>
 </resources>

@@ -7,7 +7,6 @@
         android:id="@+id/rl"
         android:layout_width="@dimen/item_day_size"
         android:layout_height="@dimen/item_day_size"
-        android:paddingTop="2dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp">
 
@@ -16,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
             android:gravity="center_horizontal|bottom"
             android:padding="0dp"
             android:textSize="14dp" />
@@ -28,6 +28,31 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|top"
             android:textSize="10dp" />
+
+        <FrameLayout
+            android:id="@+id/fl_event"
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:layout_above="@id/tv_lunar"
+            android:layout_toRightOf="@id/tv_greg"
+            android:background="@drawable/bg_primary_left_bottom_r10"
+            android:visibility="gone"></FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_select"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_primary_border_r60"
+            android:visibility="gone"></FrameLayout>
+
+        <ImageView
+            android:id="@+id/iv_birth"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:alpha="0.8"
+            android:src="@drawable/ic_action_birth"
+            android:visibility="gone" />
     </RelativeLayout>
 </FrameLayout>
 

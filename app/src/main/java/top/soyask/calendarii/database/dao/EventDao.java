@@ -46,7 +46,6 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         database.insert(EVENT, null, values);
-
         sendBroadcast(ADD);
     }
 
@@ -97,7 +96,6 @@ public class EventDao {
     public void deleteComplete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
-
         sendBroadcast(DELETE);
     }
 
