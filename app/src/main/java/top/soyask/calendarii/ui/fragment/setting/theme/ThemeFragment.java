@@ -31,7 +31,7 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case WAIT:
-                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "更换中...", true);
+                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "请稍等...", true);
                     break;
                 case CANCEL:
                     if(mProgressDialog != null){

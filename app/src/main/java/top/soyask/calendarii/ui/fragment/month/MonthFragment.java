@@ -21,15 +21,11 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUtils;
-import top.soyask.calendarii.utils.LunarUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
@@ -38,15 +34,12 @@ import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickListener {
 
 
-    private static final String CALENDAR = "calendar";
     private static final String POSITION = "position";
     private static final String TAG = "MonthFragment";
-    private static final String DATE_SP = "-";
 
     private View mContentView;
     private List<Day> mDays = new ArrayList<>();
     private MonthAdapter mMonthAdapter;
-    private Calendar mCalendar;
     private int mYear;
     private int mMonth;
     private OnDaySelectListener mOnDaySelectListener;
@@ -57,10 +50,9 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
     }
 
-    public static MonthFragment newInstance(Calendar calendar, int position) {
+    public static MonthFragment newInstance(int position) {
         MonthFragment fragment = new MonthFragment();
         Bundle args = new Bundle();
-        args.putSerializable(CALENDAR, calendar);
         args.putInt(POSITION, position);
         fragment.setArguments(args);
         return fragment;
@@ -74,42 +66,10 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
-            int dayOfMonth = i + 1;
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-            boolean isToday = isToday(dayOfMonth);
-
-            String lunar = MonthUtils.getLunar(calendar);
-            String lunarDay = LunarUtils.getLunar(calendar);
-            List<Birthday> birthday0 = GlobalData.BIRTHDAY.get(lunarDay);
-            List<Birthday> birthday1 = GlobalData.BIRTHDAY.get(mMonth + "月" + dayOfMonth + "日");
-            Day day = new Day(mYear, mMonth, lunar, isToday, dayOfMonth, dayOfWeek);
-            day.addBirthday(birthday0);
-            day.addBirthday(birthday1);
-            String str = new StringBuffer()
-                    .append(mYear)
-                    .append(DATE_SP)
-                    .append(mMonth)
-                    .append(DATE_SP)
-                    .append(dayOfMonth)
-                    .toString();
-            day.setHoliday(GlobalData.HOLIDAY.contains(str));
-            try {
-                List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
-                day.setEvents(events);
-            } catch (Exception e) {
-                e.printStackTrace();
-                day.setEvents(new ArrayList<Event>());
-            }
+            calendar.set(Calendar.DAY_OF_MONTH,i + 1);
+            Day day = MonthUtils.generateDay(calendar, mEventDao);
             mDays.add(day);
         }
-    }
-
-    private boolean isToday(int i) {
-        return mCalendar.get(Calendar.DAY_OF_MONTH) == i
-                && mCalendar.get(Calendar.YEAR) == mYear
-                && mCalendar.get(Calendar.MONTH) + 1 == mMonth;
     }
 
 
@@ -126,7 +86,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         int position = getArguments().getInt(POSITION);
         mYear = position / MONTH_COUNT + YEAR_START_REAL; //position==0时 1910/1
         mMonth = position % MONTH_COUNT + 1;
-        mCalendar = (Calendar) getArguments().getSerializable(CALENDAR);
     }
 
     private void setupReceiver() {

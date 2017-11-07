@@ -4,10 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import java.util.Calendar;
-
-import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.global.Global;
+import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 
 /**
  * Created by mxf on 2017/8/8.
@@ -17,18 +15,16 @@ public class MonthFragmentAdapter extends FragmentPagerAdapter {
     public static final int YEAR_END = Global.YEAR_END;
     public static final int YEAR_START = Global.YEAR_START_REAL;
     //1970-2200
-    private Calendar mCalendar;
     private MonthFragment.OnDaySelectListener mOnDaySelectListener;
 
-    public MonthFragmentAdapter(FragmentManager fm, Calendar calendar, MonthFragment.OnDaySelectListener onDaySelectListener) {
+    public MonthFragmentAdapter(FragmentManager fm, MonthFragment.OnDaySelectListener onDaySelectListener) {
         super(fm);
-        this.mCalendar = calendar;
         this.mOnDaySelectListener = onDaySelectListener;
     }
 
     @Override
     public Fragment getItem(int position) {
-        MonthFragment monthFragment = MonthFragment.newInstance(mCalendar, position);
+        MonthFragment monthFragment = MonthFragment.newInstance(position);
         monthFragment.setOnDaySelectListener(mOnDaySelectListener);
         return monthFragment;
     }

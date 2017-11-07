@@ -56,7 +56,5 @@ public class MainActivity extends AppCompatActivity {
 /*
 TODO 自定义颜色
 TODO 小部件面积缩小
-TODO 节假日
 TODO 接入系统日程
-TODO 生日设置
  */

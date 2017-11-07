@@ -39,6 +39,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.domain.LunarDay;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
@@ -49,7 +50,7 @@ import top.soyask.calendarii.ui.fragment.event.AllEventFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.EraUtils;
-import top.soyask.calendarii.utils.LunarUtils;
+import top.soyask.calendarii.utils.MonthUtils;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -80,7 +81,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private int mEventViewWidth;
     private int mEventViewHeight;
     private MonthFragmentAdapter mMonthFragmentAdapter;
-
 
 
     private Handler mAnimatorHandler = new Handler() {
@@ -214,11 +214,12 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         setupViewPager();
         setupOtherView();
 
-        mSelectedDay = new Day(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
+        mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(getMainActivity()));
         mAnimatorHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 setEvent(mSelectedDay.getYear() + "年" + mSelectedDay.getMonth() + "月" + mSelectedDay.getDayOfMonth() + "日");
+                setLunarInfo();
             }
         }, 1000);
     }
@@ -244,7 +245,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void setupViewPager() {
         int item = getCurrentMonth();
         mViewPager = findViewById(R.id.vp);
-        mMonthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), mCalendar, this);
+        mMonthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), this);
         mViewPager.setAdapter(mMonthFragmentAdapter);
         mViewPager.setCurrentItem(item);
         mViewPager.addOnPageChangeListener(this);
@@ -440,14 +441,11 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setLunarInfo() {
-        Calendar selectDay = getSelectedCalendar();
-        String lunar = LunarUtils.getLunar(selectDay);
-        String branches = EraUtils.getYearForEarthlyBranches(mSelectedDay.getYear());
-        String stems = EraUtils.getYearForHeavenlyStems(mSelectedDay.getYear());
-        int img = EraUtils.getYearForTwelveZodiacImage(mSelectedDay.getYear());
-
-        mTvLunar.setText(lunar);
-        mTvLunarYear.setText(stems + branches + "年");
+        LunarDay lunar = mSelectedDay.getLunar();
+        String era = lunar.getEra();
+        int img = EraUtils.getYearForTwelveZodiacImage(lunar.getYear());
+        mTvLunar.setText(lunar.getLunarDate());
+        mTvLunarYear.setText(era + "年");
         mIvYear.setImageDrawable(getResources().getDrawable(img));
     }
 

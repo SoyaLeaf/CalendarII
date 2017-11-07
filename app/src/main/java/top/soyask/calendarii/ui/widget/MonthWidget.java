@@ -15,6 +15,7 @@ import java.util.Locale;
 
 import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.domain.LunarDay;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.ui.widget.service.MonthService;
 import top.soyask.calendarii.utils.LunarUtils;
@@ -39,7 +40,7 @@ public class MonthWidget extends AppWidgetProvider {
     private static RemoteViews setupRemoteViews(Context context, Calendar calendar) {
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.month_widget);
-        String lunar = LunarUtils.getLunar(calendar);
+        LunarDay lunarDay = LunarUtils.getLunar(calendar);
 
         Intent intent = new Intent(context, MonthService.class);
 
@@ -50,7 +51,7 @@ public class MonthWidget extends AppWidgetProvider {
         views.setOnClickPendingIntent(R.id.iv_launch, pendingIntent);
         views.setInt(R.id.widget, "setBackgroundColor", Color.argb(alpha, 0, 0, 0));
         views.setRemoteAdapter(R.id.gv_month, intent);
-        views.setTextViewText(R.id.tv_lunar, lunar);
+        views.setTextViewText(R.id.tv_lunar, lunarDay.getLunarDate());
         views.setTextViewText(R.id.tv_year, "" + calendar.get(Calendar.YEAR));
         views.setTextViewText(R.id.tv_date, (month < 10 ? "0" : "") + month + "月");
 

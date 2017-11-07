@@ -10,7 +10,7 @@ import java.util.List;
 public class Day implements Serializable {
 
     private int dayOfMonth;
-    private String lunar;
+    private LunarDay lunar;
     private boolean isToday;
     private int dayOfWeek;
     private int year;
@@ -19,7 +19,7 @@ public class Day implements Serializable {
     private List<Birthday> birthdays;
     private List<Event> events;
 
-    public Day(int year, int month, String lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
+    public Day(int year, int month, LunarDay lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
         this.year = year;
         this.month = month;
         this.lunar = lunar;
@@ -93,11 +93,11 @@ public class Day implements Serializable {
         this.dayOfWeek = dayOfWeek;
     }
 
-    public void setLunar(String lunar) {
+    public void setLunar(LunarDay lunar) {
         this.lunar = lunar;
     }
 
-    public String getLunar() {
+    public LunarDay getLunar() {
         return lunar;
     }
 

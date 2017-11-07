@@ -13,6 +13,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.domain.LunarDay;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
@@ -73,7 +74,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
             int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
             boolean isToday = isToday(i);
-            String lunar = MonthUtils.getLunar(calendar);
+            LunarDay lunar = MonthUtils.getLunar(calendar);
             Day day = new Day(year, month, lunar, isToday, i + 1, dayOfWeek);
             try {
                 List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
@@ -124,7 +125,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
         if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
             Day day = mDays.get(position - mDateStartPos);
             remoteViews.setTextViewText(R.id.tv_greg, "" + day.getDayOfMonth());
-            remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar());
+            remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar().getSimpleLunar());
             Log.d(TAG, "position:" + day.getLunar());
         }
         return remoteViews;

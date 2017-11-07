@@ -121,7 +121,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         dayViewHolder.holiday.setVisibility(day.isHoliday() ? View.VISIBLE : View.INVISIBLE);
 
         dayViewHolder.tvGreg.setText(String.valueOf(day.getDayOfMonth()));
-        dayViewHolder.tvLunar.setText(day.hasBirthday() ? "生日" : day.getLunar());
+        dayViewHolder.tvLunar.setText(day.hasBirthday() ? "生日" : day.getLunar().getSimpleLunar());
         setTextColor(position, dayViewHolder, day);
         dayViewHolder.viewGroup.setOnClickListener(new View.OnClickListener() {
             @Override
