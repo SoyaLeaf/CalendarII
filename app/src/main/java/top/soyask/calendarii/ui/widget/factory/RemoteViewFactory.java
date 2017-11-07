@@ -76,13 +76,8 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
             boolean isToday = isToday(i);
             LunarDay lunar = MonthUtils.getLunar(calendar);
             Day day = new Day(year, month, lunar, isToday, i + 1, dayOfWeek);
-            try {
-                List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
-                day.setEvents(events);
-            } catch (Exception e) {
-                e.printStackTrace();
-                day.setEvents(new ArrayList<Event>());
-            }
+            List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+            day.setEvents(events);
             mDays.add(day);
         }
     }

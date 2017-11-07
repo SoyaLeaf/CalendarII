@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +121,18 @@ public class EventDao {
 
 
     public List<Event> query(String title) {
+        List<Event> events = new ArrayList<>();
+        try {
+            events.addAll(queryByTitle(title));
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            return events;
+        }
+    }
+
+    @NonNull
+    private List<Event> queryByTitle(String title) {
         SQLiteDatabase database = mDBUtils.getReadableDatabase();
         Cursor cursor = database.query(EVENT, null, "title = ?", new String[]{title}, null, null, "title");
         List<Event> events = new ArrayList<>();

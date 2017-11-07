@@ -2,6 +2,10 @@
     <string name="app_name">日历Mini</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="nothing">这一天并没有添加任何的事件...</string>
+    <string name="is_today">今日事,今日毕</string>
+    <string name="zodiac">生肖</string>
+    <string name="more_event">更多事件</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

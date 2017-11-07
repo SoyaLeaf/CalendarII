@@ -2,7 +2,6 @@ package top.soyask.calendarii.utils;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -132,13 +131,8 @@ public class MonthUtils {
     }
 
     private static void setEvent(EventDao eventDao, Day day) {
-        try {
-            List<Event> events = eventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
-            day.setEvents(events);
-        } catch (Exception e) {
-            e.printStackTrace();
-            day.setEvents(new ArrayList<Event>());
-        }
+        List<Event> events = eventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+        day.setEvents(events);
     }
 
     private static boolean isToday(int dayOfMonth, int year, int month) {
