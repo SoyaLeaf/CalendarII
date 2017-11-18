@@ -17,6 +17,7 @@ import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.domain.LunarDay;
 import top.soyask.calendarii.global.Global;
+import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.service.MonthService;
 import top.soyask.calendarii.utils.LunarUtils;
 
@@ -30,6 +31,7 @@ public class MonthWidget extends AppWidgetProvider {
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                        int appWidgetId) {
         Log.i(TAG, "updateAppWidget");
+        Setting.loadSetting(context);
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
         RemoteViews views = setupRemoteViews(context, calendar);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gv_month);

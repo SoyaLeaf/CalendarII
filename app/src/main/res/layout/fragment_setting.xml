@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tv_start"
-            android:text="每周从周一开始计..."
+            android:text="每周从周一开始计"
             android:textSize="@dimen/hint_font_size" />
 
         <android.support.v7.widget.SwitchCompat

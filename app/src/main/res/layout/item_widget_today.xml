@@ -12,7 +12,13 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_widget_r60"
       >
-
+        <ImageView
+            android:id="@+id/iv_birth"
+            android:layout_alignParentRight="true"
+            android:visibility="invisible"
+            android:src="@drawable/ic_svg_birthday"
+            android:layout_width="10dp"
+            android:layout_height="10dp" />
         <TextView
             android:id="@+id/tv_greg"
             android:layout_width="wrap_content"
@@ -32,6 +38,15 @@
             android:gravity="center_horizontal|top"
             android:textColor="@android:color/white"
             android:textSize="10sp" />
+
+        <FrameLayout
+            android:id="@+id/fl_event"
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:layout_above="@id/tv_lunar"
+            android:layout_toRightOf="@id/tv_greg"
+            android:background="#fff"
+            android:visibility="gone"></FrameLayout>
     </RelativeLayout>
 </FrameLayout>
 

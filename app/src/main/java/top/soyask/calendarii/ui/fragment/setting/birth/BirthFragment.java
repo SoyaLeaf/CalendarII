@@ -15,6 +15,7 @@ import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.birth.BirthdayAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.ui.widget.WidgetManager;
 
 public class BirthFragment extends BaseFragment implements View.OnClickListener, BirthdayAdapter.OnBirthdayClickListener, AddFragment.OnDoneClickListener {
 
@@ -75,6 +76,7 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
                         mBirthdayAdapter.notifyItemRemoved(position);
                         mBirthdayAdapter.notifyItemRangeChanged(0, position);
                         GlobalData.loadBirthday(getMainActivity());
+                        WidgetManager.updateMonthWidget(getMainActivity());
                     }
                 }).show();
     }
@@ -92,5 +94,6 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
         mBirthdays.addAll(mBirthdayDao.queryAll());
         mBirthdayAdapter.notifyDataSetChanged();
         GlobalData.loadBirthday(getMainActivity());
+        WidgetManager.updateMonthWidget(getMainActivity());
     }
 }

@@ -2,6 +2,7 @@ package top.soyask.calendarii.ui.widget.factory;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -12,8 +13,7 @@ import java.util.List;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
@@ -41,6 +41,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
         this.mEventDao = EventDao.getInstance(context);
         setupData();
         updateCount();
+
     }
 
     @Override
@@ -55,7 +56,7 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
 
     private void updateCount() {
         if (mDays.size() > 0) {
-            this.mDateStartPos = mDays.get(0).getDayOfWeek() + 6;
+            this.mDateStartPos = (mDays.get(0).getDayOfWeek() + 6 - Setting.date_offset) % 7 + 7;
         } else {
             this.mDateStartPos = 6;
         }
@@ -72,12 +73,13 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-            boolean isToday = isToday(i);
-            LunarDay lunar = MonthUtils.getLunar(calendar);
-            Day day = new Day(year, month, lunar, isToday, i + 1, dayOfWeek);
-            List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
-            day.setEvents(events);
+            Day day = MonthUtils.generateDay(calendar, mEventDao);
+//            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+//            boolean isToday = isToday(i);
+//            LunarDay lunar = MonthUtils.getLunar(calendar);
+//            Day day = new Day(year, month, lunar, isToday, i + 1, dayOfWeek);
+//            List<Event> events = mEventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+//            day.setEvents(events);
             mDays.add(day);
         }
     }
@@ -103,8 +105,9 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
         RemoteViews remoteViews = null;
         switch (getItemViewType(position)) {
             case VIEW_WEEK:
+                int index = (position + Setting.date_offset) % WEEK_ARRAY.length;
                 remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_week);
-                remoteViews.setTextViewText(R.id.tv, WEEK_ARRAY[position]);
+                remoteViews.setTextViewText(R.id.tv, WEEK_ARRAY[index]);
                 break;
             case VIEW_TODAY:
                 remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_today);
@@ -120,7 +123,19 @@ public class RemoteViewFactory implements RemoteViewsService.RemoteViewsFactory 
         if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
             Day day = mDays.get(position - mDateStartPos);
             remoteViews.setTextViewText(R.id.tv_greg, "" + day.getDayOfMonth());
-            remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar().getSimpleLunar());
+            if (day.hasBirthday()) {
+                remoteViews.setTextViewText(R.id.tv_lunar, "生日");
+                remoteViews.setInt(R.id.iv_birth,"setVisibility", View.VISIBLE);
+            }else {
+                remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar().getSimpleLunar());
+                remoteViews.setInt(R.id.iv_birth,"setVisibility", View.INVISIBLE);
+            }
+
+            if(day.hasEvent()){
+                remoteViews.setInt(R.id.fl_event,"setVisibility", View.VISIBLE);
+            }else {
+                remoteViews.setInt(R.id.fl_event,"setVisibility", View.INVISIBLE);
+            }
             Log.d(TAG, "position:" + day.getLunar());
         }
         return remoteViews;

@@ -12,6 +12,7 @@ import java.util.List;
 
 import top.soyask.calendarii.database.DBUtils;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.ui.widget.WidgetManager;
 
 /**
  * Created by mxf on 2017/8/16.
@@ -54,6 +55,7 @@ public class EventDao {
         Intent intent = new Intent();
         intent.setAction(action);
         mContext.sendBroadcast(intent);
+        WidgetManager.updateMonthWidget(mContext);
     }
 
     public void update(Event event) {

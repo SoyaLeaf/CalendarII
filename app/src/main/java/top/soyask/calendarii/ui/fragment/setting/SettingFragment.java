@@ -1,9 +1,6 @@
 package top.soyask.calendarii.ui.fragment.setting;
 
 import android.app.ProgressDialog;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -23,7 +20,7 @@ import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.AlphaSetFragment;
-import top.soyask.calendarii.ui.widget.MonthWidget;
+import top.soyask.calendarii.ui.widget.WidgetManager;
 
 
 public class SettingFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, AlphaSetFragment.OnAlphaSetListener, GlobalData.LoadCallBack {
@@ -129,10 +126,12 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             Setting.date_offset = 1;
             Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
             mHandler.sendEmptyMessageDelayed(UPDATE, 500);
+            WidgetManager.updateMonthWidget(getMainActivity());
         } else if (!isChecked && Setting.date_offset == 1) {
             Setting.date_offset = 0;
             Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
             mHandler.sendEmptyMessageDelayed(UPDATE, 500);
+
         }
     }
 
@@ -141,19 +140,9 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         Setting.widget_alpha = alpha;
         Setting.setting(getMainActivity(), Global.SETTING_WIDGET_ALPHA, alpha);
         mTvAlpha.setText(String.valueOf(alpha));
-        updateWidget();
+        WidgetManager.updateMonthWidget(getMainActivity());
     }
 
-    private void updateWidget() {
-        AppWidgetManager appWidgetManager =
-                (AppWidgetManager) getMainActivity().getSystemService(Context.APPWIDGET_SERVICE);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getMainActivity(), MonthWidget.class));
-        if (appWidgetIds != null) {
-            for (int appWidgetId : appWidgetIds) {
-                MonthWidget.updateAppWidget(getMainActivity(), appWidgetManager, appWidgetId);
-            }
-        }
-    }
 
     @Override
     public void onSuccess() {

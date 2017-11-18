@@ -136,12 +136,12 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     private void setTextColor(int position, DayViewHolder dayViewHolder, Day day) {
-        if (isWeekend(day.getDayOfWeek())) {
-            dayViewHolder.tvGreg.setTextColor(Color.parseColor("#FC9883"));
-            dayViewHolder.tvLunar.setTextColor(Color.parseColor("#FC9883"));
-        } else if (isToday(position)) {
+        if (isToday(position)) {
             dayViewHolder.tvGreg.setTextColor(Color.parseColor("#FFFFFF"));
             dayViewHolder.tvLunar.setTextColor(Color.parseColor("#FFFFFF"));
+        } else if (isWeekend(day.getDayOfWeek())) {
+            dayViewHolder.tvGreg.setTextColor(Color.parseColor("#FC9883"));
+            dayViewHolder.tvLunar.setTextColor(Color.parseColor("#FC9883"));
         } else {
             dayViewHolder.tvGreg.setTextColor(Color.parseColor("#dd000000"));
             dayViewHolder.tvLunar.setTextColor(Color.parseColor("#dd000000"));
