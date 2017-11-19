@@ -1,6 +1,8 @@
 package top.soyask.calendarii.ui.fragment.setting;
 
 import android.app.ProgressDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +22,7 @@ import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.AlphaSetFragment;
+import top.soyask.calendarii.ui.fragment.setting.widget.PicSetFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
 
 
@@ -43,7 +46,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                     mProgressDialog = ProgressDialog.show(getMainActivity(), null, "请稍等...");
                     break;
                 case CANCEL:
-                    if(mProgressDialog != null){
+                    if (mProgressDialog != null) {
                         mProgressDialog.cancel();
                         mProgressDialog = null;
                     }
@@ -70,6 +73,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         setupWidgetAlpha();
         findViewById(R.id.rl_theme).setOnClickListener(this);
         findViewById(R.id.rl_holiday).setOnClickListener(this);
+        findViewById(R.id.rl_widget_pic).setOnClickListener(this);
     }
 
     private void setupWidgetAlpha() {
@@ -88,7 +92,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        mTvAlpha.setText(Setting.widget_alpha+"");
+        mTvAlpha.setText(Setting.widget_alpha + "");
     }
 
     @Override
@@ -110,6 +114,10 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             case R.id.rl_holiday:
                 synHoliday();
                 break;
+            case R.id.rl_widget_pic:
+                PicSetFragment picSetFragment = PicSetFragment.newInstance();
+                addFragment(picSetFragment);
+                break;
             default:
                 removeFragment(this);
         }
@@ -126,12 +134,12 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             Setting.date_offset = 1;
             Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
             mHandler.sendEmptyMessageDelayed(UPDATE, 500);
-            WidgetManager.updateMonthWidget(getMainActivity());
+            WidgetManager.updateAllWidget(getMainActivity());
         } else if (!isChecked && Setting.date_offset == 1) {
             Setting.date_offset = 0;
             Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
             mHandler.sendEmptyMessageDelayed(UPDATE, 500);
-
+            WidgetManager.updateAllWidget(getMainActivity());
         }
     }
 
@@ -140,7 +148,9 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         Setting.widget_alpha = alpha;
         Setting.setting(getMainActivity(), Global.SETTING_WIDGET_ALPHA, alpha);
         mTvAlpha.setText(String.valueOf(alpha));
-        WidgetManager.updateMonthWidget(getMainActivity());
+        AppWidgetManager appWidgetManager =
+                (AppWidgetManager) getMainActivity().getSystemService(Context.APPWIDGET_SERVICE);
+        WidgetManager.updateMonthWidget(getMainActivity(),appWidgetManager);
     }
 
 
@@ -148,7 +158,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     public void onSuccess() {
         showSnackbar("同步成功！");
         getMainActivity().sendBroadcast(new Intent(EventDao.UPDATE));
-        Setting.setting(getMainActivity(),Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
+        Setting.setting(getMainActivity(), Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
         mHandler.sendEmptyMessage(CANCEL);
     }
 

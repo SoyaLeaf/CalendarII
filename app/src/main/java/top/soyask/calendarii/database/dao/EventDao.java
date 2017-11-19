@@ -55,7 +55,7 @@ public class EventDao {
         Intent intent = new Intent();
         intent.setAction(action);
         mContext.sendBroadcast(intent);
-        WidgetManager.updateMonthWidget(mContext);
+        WidgetManager.updateAllWidget(mContext);
     }
 
     public void update(Event event) {

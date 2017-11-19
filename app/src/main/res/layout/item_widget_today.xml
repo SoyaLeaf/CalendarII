@@ -4,21 +4,21 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:layout_width="40dp"
-        android:layout_height="40dp"
         android:id="@+id/rl"
-        android:paddingTop="2dp"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_widget_r60"
-      >
+        android:layout_marginTop="4dp"
+        android:background="@drawable/bg_widget_r60">
+
         <ImageView
             android:id="@+id/iv_birth"
-            android:layout_alignParentRight="true"
-            android:visibility="invisible"
-            android:src="@drawable/ic_svg_birthday"
             android:layout_width="10dp"
-            android:layout_height="10dp" />
+            android:layout_height="10dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_svg_birthday"
+            android:visibility="invisible" />
+
         <TextView
             android:id="@+id/tv_greg"
             android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|top"
             android:textColor="@android:color/white"
-            android:textSize="10sp" />
+            android:textSize="8sp" />
 
         <FrameLayout
             android:id="@+id/fl_event"

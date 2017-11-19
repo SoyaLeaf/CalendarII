@@ -11,21 +11,21 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/normal_margin"
         android:layout_marginRight="4dp"
-        android:layout_marginTop="@dimen/normal_margin"
+        android:layout_marginTop="8dp"
         android:paddingLeft="@dimen/normal_space"
         android:paddingRight="@dimen/normal_space"
         android:textColor="@color/text_color_primary_light"
-        android:textSize="@dimen/large_font_size_34" />
+        android:textSize="28sp" />
 
     <TextView
         android:id="@+id/tv_year"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/normal_margin"
+        android:layout_marginTop="8dp"
         android:layout_toRightOf="@id/tv_date"
         android:paddingTop="@dimen/normal_space"
         android:textColor="@color/text_color_primary_light"
-        android:textSize="@dimen/subtitle_font_size" />
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tv_lunar"
@@ -34,7 +34,7 @@
         android:layout_below="@id/tv_year"
         android:layout_toRightOf="@id/tv_date"
         android:textColor="@color/text_color_primary_light"
-        android:textSize="@dimen/hint_font_size" />
+        android:textSize="10sp" />
 
     <ImageView
         android:id="@+id/iv_launch"
@@ -59,6 +59,9 @@
         android:layout_height="match_parent"
         android:layout_below="@id/tv_date"
         android:numColumns="7"
-        android:padding="@dimen/normal_margin"></GridView>
+        android:paddingTop="6dp"
+        android:paddingLeft="@dimen/normal_margin"
+        android:paddingRight="@dimen/normal_margin"
+        ></GridView>
 
 </RelativeLayout>

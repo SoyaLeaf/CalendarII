@@ -9,16 +9,18 @@ import java.util.Set;
  * Created by mxf on 2017/10/11.
  */
 public final class Setting {
-    private static final String SETTING = "setting";
+    public static final String SETTING = "setting";
     public static int date_offset = 1;
     public static int theme = 0;
     public static int widget_alpha = 33;
+    public static String white_widget_pic = "";
 
     public static void loadSetting(Context context){
         SharedPreferences setting = context.getSharedPreferences(SETTING,Context.MODE_PRIVATE);
         Setting.theme = setting.getInt(Global.SETTING_THEME, 0);
         Setting.date_offset = setting.getInt(Global.SETTING_DATE_OFFSET, 0);
         Setting.widget_alpha = setting.getInt(Global.SETTING_WIDGET_ALPHA, 0);
+        Setting.white_widget_pic = setting.getString(Global.SETTING_WHITE_WIDGET_PIC,null);
     }
 
     public static void setting(Context context,String name,int value){
@@ -41,5 +43,8 @@ public final class Setting {
         editor.putStringSet(name,value).commit();
     }
 
-
+    public static void remove(Context context,String name){
+        SharedPreferences.Editor editor = context.getSharedPreferences(Setting.SETTING, Context.MODE_PRIVATE).edit();
+        editor.remove(name).commit();
+    }
 }

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:initialKeyguardLayout="@layout/month_widget"
-    android:initialLayout="@layout/month_widget"
-    android:minHeight="180dp"
+    android:initialKeyguardLayout="@layout/white_widget"
+    android:initialLayout="@layout/white_widget"
+    android:minHeight="110dp"
     android:minWidth="180dp"
-    android:minResizeWidth="180dp"
-    android:minResizeHeight="180dp"
-    android:previewImage="@drawable/month_widget"
+    android:previewImage="@drawable/white_widget"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen"></appwidget-provider>

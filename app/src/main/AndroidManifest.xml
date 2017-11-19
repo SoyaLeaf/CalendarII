@@ -23,7 +23,7 @@
         </activity>
         <activity android:name="cn.bmob.pay.v3.act.PayAct" />
 
-        <receiver android:name=".ui.widget.MonthWidget">
+        <receiver android:name=".ui.widget.transparent.MonthWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="next" />
@@ -37,10 +37,26 @@
         </receiver>
 
         <service
-            android:name=".ui.widget.service.MonthService"
+            android:name=".ui.widget.transparent.service.MonthService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <receiver android:name=".ui.widget.white.WhiteWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/white_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".ui.widget.white.service.WhiteWidgetService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS"></service>
     </application>
 
 </manifest>

@@ -76,7 +76,7 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
                         mBirthdayAdapter.notifyItemRemoved(position);
                         mBirthdayAdapter.notifyItemRangeChanged(0, position);
                         GlobalData.loadBirthday(getMainActivity());
-                        WidgetManager.updateMonthWidget(getMainActivity());
+                        WidgetManager.updateAllWidget(getMainActivity());
                     }
                 }).show();
     }
@@ -94,6 +94,6 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
         mBirthdays.addAll(mBirthdayDao.queryAll());
         mBirthdayAdapter.notifyDataSetChanged();
         GlobalData.loadBirthday(getMainActivity());
-        WidgetManager.updateMonthWidget(getMainActivity());
+        WidgetManager.updateAllWidget(getMainActivity());
     }
 }

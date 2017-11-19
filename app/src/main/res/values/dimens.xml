@@ -41,6 +41,7 @@
     <dimen name="text_left_margin">72dp</dimen>
     <dimen name="item_day_size">40dp</dimen>
     <dimen name="item_widget_day_size">36dp</dimen>
+    <dimen name="item_white_widget_day_size">28dp</dimen>
     <dimen name="card_float_elevation">8dp</dimen>
     <dimen name="card_normal_elevation">3dp</dimen>
 

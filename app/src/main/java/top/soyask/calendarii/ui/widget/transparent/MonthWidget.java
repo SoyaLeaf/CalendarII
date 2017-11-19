@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.widget;
+package top.soyask.calendarii.ui.widget.transparent;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -16,9 +16,8 @@ import java.util.Locale;
 import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.domain.LunarDay;
-import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
-import top.soyask.calendarii.ui.widget.service.MonthService;
+import top.soyask.calendarii.ui.widget.transparent.service.MonthService;
 import top.soyask.calendarii.utils.LunarUtils;
 
 /**
@@ -46,17 +45,15 @@ public class MonthWidget extends AppWidgetProvider {
 
         Intent intent = new Intent(context, MonthService.class);
 
-        int alpha = context.getSharedPreferences("setting", Context.MODE_PRIVATE).getInt(Global.SETTING_WIDGET_ALPHA, 33);
         int month = calendar.get(Calendar.MONTH) + 1;
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
 
         views.setOnClickPendingIntent(R.id.iv_launch, pendingIntent);
-        views.setInt(R.id.widget, "setBackgroundColor", Color.argb(alpha, 0, 0, 0));
+        views.setInt(R.id.widget, "setBackgroundColor", Color.argb(Setting.widget_alpha, 0, 0, 0));
         views.setRemoteAdapter(R.id.gv_month, intent);
         views.setTextViewText(R.id.tv_lunar, lunarDay.getLunarDate());
         views.setTextViewText(R.id.tv_year, "" + calendar.get(Calendar.YEAR));
         views.setTextViewText(R.id.tv_date, (month < 10 ? "0" : "") + month + "月");
-
         return views;
     }
 

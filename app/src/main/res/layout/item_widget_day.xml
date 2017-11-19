@@ -8,8 +8,7 @@
         android:layout_width="@dimen/item_widget_day_size"
         android:layout_height="@dimen/item_widget_day_size"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:paddingTop="2dp">
+        android:layout_marginTop="4dp">
         <ImageView
             android:id="@+id/iv_birth"
             android:visibility="invisible"
@@ -35,7 +34,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|top"
             android:textColor="@color/text_color_primary_light"
-            android:textSize="10sp" />
+            android:textSize="8sp" />
 
         <FrameLayout
             android:id="@+id/fl_event"
