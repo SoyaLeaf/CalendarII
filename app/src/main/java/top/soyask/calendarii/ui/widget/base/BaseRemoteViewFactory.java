@@ -34,12 +34,12 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
     protected EventDao mEventDao;
 
     public BaseRemoteViewFactory(Context context) {
+        Setting.loadSetting(context);
         this.mContext = context;
         this.mDays = new ArrayList<>();
         this.mEventDao = EventDao.getInstance(context);
         setupData();
         updateCount();
-
     }
 
     @Override

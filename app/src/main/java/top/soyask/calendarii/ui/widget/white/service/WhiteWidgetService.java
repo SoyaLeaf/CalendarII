@@ -20,7 +20,6 @@ public class WhiteWidgetService extends RemoteViewsService {
         return new RemoteViewFactory(this);
     }
 
-
     private class RemoteViewFactory extends BaseRemoteViewFactory {
         public RemoteViewFactory(Context context) {
             super(context);
