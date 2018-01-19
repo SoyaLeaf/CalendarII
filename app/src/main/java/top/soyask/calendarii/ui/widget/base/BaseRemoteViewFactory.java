@@ -48,6 +48,7 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
 
     @Override
     public void onDataSetChanged() {
+        Setting.loadSetting(mContext);
         setupData();
         updateCount();
     }

@@ -423,23 +423,20 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void donate() {
         new AlertDialog.Builder(getMainActivity())
-                .setTitle("捐赠")
-                .setMessage("首先感谢你点击了这个按钮。" +
-                        "\n我也不是奢求很多这样，5毛一块的就当请开发者吃个棒棒糖这样。" +
-                        "如果，您觉得这个app 5毛也不值的话...emmm..那还是感谢使用。" +
-                        "\n饭饭会努力去做更好的app，请也一定要喜欢哦。")
-                .setNegativeButton("没兴趣", new DialogInterface.OnClickListener() {
+                .setTitle(R.string.donate)
+                .setMessage(R.string.thank_you)
+                .setNegativeButton(R.string.not_interested, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getMainActivity(), "还是谢谢支持！我会更加努力的。", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getMainActivity(), R.string.howerver_thanks, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .setPositiveButton("捐赠一点", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.donate_little, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
                             toDonate();
-                            Toast.makeText(getMainActivity(), "万分感谢！我会更加努力的。", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getMainActivity(), R.string.thanks_very_much, Toast.LENGTH_SHORT).show();
                         } catch (URISyntaxException e) {
                             e.printStackTrace();
                         }
@@ -467,7 +464,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) { //可以接收
             startActivity(intent);
         } else {
-            Toast.makeText(getActivity(), "您的系统中没有安装应用市场", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.no_market, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -543,13 +540,13 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         int dayCount = (int) ((time - todayTime) / (1000 * 60 * 60 * 24));
 
         if (dayCount > 0) {
-            mTvDayCount.setText("距今还有" + String.format("%4d", dayCount) + "天");
-            mTvDayCountM.setText(dayCount + "天之后");
+            mTvDayCount.setText("距今还有" + String.format("%4d", dayCount) + getString(R.string.day));
+            mTvDayCountM.setText(dayCount + getString(R.string.later));
         } else if (dayCount < 0) {
-            mTvDayCount.setText("距今已过" + String.format("%4d", -dayCount) + "天");
-            mTvDayCountM.setText(-dayCount + "天之前");
+            mTvDayCount.setText("距今已过" + String.format("%4d", -dayCount) + getString(R.string.day));
+            mTvDayCountM.setText(-dayCount + getString(R.string.before));
         } else {
-            mTvDayCount.setText("今日事,今日毕");
+            mTvDayCount.setText(R.string.today_thins);
         }
     }
 
