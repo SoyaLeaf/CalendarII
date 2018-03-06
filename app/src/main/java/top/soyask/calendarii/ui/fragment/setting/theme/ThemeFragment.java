@@ -2,6 +2,7 @@ package top.soyask.calendarii.ui.fragment.setting.theme;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,8 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.global.Setting;
+import top.soyask.calendarii.ui.activity.LaunchActivity;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 
 
@@ -78,18 +81,16 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
     private void setupTheme(int theme) {
         SharedPreferences.Editor setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE).edit();
         setting.putInt("theme", theme).commit();
-        mHandler.sendEmptyMessage(CANCEL);
-        getMainActivity().recreate();
+        Setting.theme = theme;
+        Intent intent = new Intent(getMainActivity(), LaunchActivity.class);
+        startActivity(intent);
+        getMainActivity().finish();
     }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-//            case R.id.view_custom:
-//                CustomColorFragment customColorFragment = CustomColorFragment.newInstance();
-//                addFragment(customColorFragment);
-//                break;
             default:
                 removeFragment(this);
                 break;
@@ -99,7 +100,6 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (RADIO_BUTTON[mCurrentTheme] != buttonView.getId() && isChecked) {
-            mHandler.sendEmptyMessage(WAIT);
             for (int i = 0; i < RADIO_BUTTON.length; i++) {
                 if (buttonView.getId() == RADIO_BUTTON[i]) {
                     final int finalI = i;
@@ -109,7 +109,7 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
                             Message obtain = Message.obtain();
                             obtain.what = UPDATE;
                             obtain.arg1 = finalI;
-                            mHandler.sendMessageDelayed(obtain,1000);
+                            mHandler.sendMessage(obtain);
                         }
                     }.start();
                     break;

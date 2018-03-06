@@ -13,6 +13,7 @@ public final class Setting {
     public static int date_offset = 1;
     public static int theme = 0;
     public static int widget_alpha = 33;
+    public static int density_dpi = -1;
     public static String white_widget_pic = "";
 
     public static void loadSetting(Context context){
@@ -21,6 +22,7 @@ public final class Setting {
         Setting.date_offset = setting.getInt(Global.SETTING_DATE_OFFSET, 0);
         Setting.widget_alpha = setting.getInt(Global.SETTING_WIDGET_ALPHA, 0);
         Setting.white_widget_pic = setting.getString(Global.SETTING_WHITE_WIDGET_PIC,null);
+        Setting.density_dpi = setting.getInt(Global.SETTING_DENSITY_DPI,-1);
     }
 
     public static void setting(Context context,String name,int value){

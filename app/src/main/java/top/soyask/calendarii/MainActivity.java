@@ -1,16 +1,18 @@
 package top.soyask.calendarii;
 
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int[] THEMES = {
+    public static final int[] THEMES = {
             R.style.AppTheme,
             R.style.AppTheme_Green,
             R.style.AppTheme_Pink,
@@ -25,11 +27,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Setting.loadSetting(this);
+        checkAndUpdateDpi();
         setupTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             init();
+        }
+    }
+
+    private void checkAndUpdateDpi() {
+        if (Setting.density_dpi != -1) {
+            Resources resources = getResources();
+            Configuration configuration = new Configuration();
+            configuration.setToDefaults();
+            configuration.densityDpi = Setting.density_dpi;
+            resources.updateConfiguration(configuration,resources.getDisplayMetrics());
+            Toast.makeText(this,""+Setting.density_dpi,Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -51,12 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    @Override
-    public Resources getResources() {
-        Resources res = super.getResources();
-        
-        return res;
-    }
 }
 
 /*

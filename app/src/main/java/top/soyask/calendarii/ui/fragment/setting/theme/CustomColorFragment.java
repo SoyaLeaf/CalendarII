@@ -6,7 +6,7 @@ import android.view.View;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 
-
+@Deprecated
 public class CustomColorFragment extends BaseFragment implements View.OnClickListener {
 
     public CustomColorFragment() {

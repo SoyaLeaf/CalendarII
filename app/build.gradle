@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "top.soyask.calendarii"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 25
         versionCode 15
         versionName "1.0"
@@ -25,6 +25,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:25.1.1'

@@ -18,6 +18,7 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
+import top.soyask.calendarii.ui.activity.ZoomActivity;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
@@ -74,6 +75,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         findViewById(R.id.rl_theme).setOnClickListener(this);
         findViewById(R.id.rl_holiday).setOnClickListener(this);
         findViewById(R.id.rl_widget_pic).setOnClickListener(this);
+        findViewById(R.id.rl_ui).setOnClickListener(this);
     }
 
     private void setupWidgetAlpha() {
@@ -118,6 +120,10 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 PicSetFragment picSetFragment = PicSetFragment.newInstance();
                 addFragment(picSetFragment);
                 break;
+            case R.id.rl_ui:
+                Intent intent = new Intent(getMainActivity(), ZoomActivity.class);
+                startActivity(intent);
+                break;
             default:
                 removeFragment(this);
         }
@@ -150,7 +156,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         mTvAlpha.setText(String.valueOf(alpha));
         AppWidgetManager appWidgetManager =
                 (AppWidgetManager) getMainActivity().getSystemService(Context.APPWIDGET_SERVICE);
-        WidgetManager.updateMonthWidget(getMainActivity(),appWidgetManager);
+        WidgetManager.updateMonthWidget(getMainActivity(), appWidgetManager);
     }
 
 
