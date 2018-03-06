@@ -33,6 +33,8 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     private static final int UPDATE = 3;
     private static final int RESTART = 4;
     public static final String WEEK_SETTING = "week_setting";
+    private TextView mTvAlpha;
+    private ProgressDialog mProgressDialog;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -54,8 +56,6 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             }
         }
     };
-    private TextView mTvAlpha;
-    private ProgressDialog mProgressDialog;
 
     public SettingFragment() {
         super(R.layout.fragment_setting);

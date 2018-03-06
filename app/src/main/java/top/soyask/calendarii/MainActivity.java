@@ -1,5 +1,6 @@
 package top.soyask.calendarii;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +51,12 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-
+    @Override
+    public Resources getResources() {
+        Resources res = super.getResources();
+        
+        return res;
+    }
 }
 
 /*

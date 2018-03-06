@@ -146,7 +146,7 @@
             android:layout_marginLeft="@dimen/normal_margin"
             android:text="@string/is_today"
             android:textColor="@color/text_color_primary_light"
-            android:textSize="17sp" />
+            android:textSize="17dp" />
 
         <ImageView
             android:id="@+id/iv_year"

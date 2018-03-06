@@ -21,7 +21,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -59,7 +59,7 @@
     <RelativeLayout
         android:id="@+id/rl_theme"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -91,7 +91,7 @@
     <RelativeLayout
         android:id="@+id/rl_birth"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -123,7 +123,7 @@
     <RelativeLayout
         android:id="@+id/rl_holiday"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -161,7 +161,7 @@
     <RelativeLayout
         android:id="@+id/rl_alpha"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -203,7 +203,7 @@
     <RelativeLayout
         android:id="@+id/rl_widget_pic"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:paddingBottom="8dp"
         android:paddingLeft="@dimen/normal_margin"
         android:paddingRight="@dimen/normal_margin"
@@ -226,33 +226,4 @@
             android:textSize="@dimen/hint_font_size" />
     </RelativeLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="@dimen/normal_margin"
-        android:layout_marginRight="@dimen/normal_margin"
-        android:background="@color/divider_dark" />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="@dimen/normal_margin"
-        android:paddingRight="@dimen/normal_margin"
-        android:paddingTop="8dp">
-
-        <TextView
-            android:id="@+id/tv_other"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="下面没有了"
-            android:textColor="@color/text_color_primary_dark"
-            android:textSize="@dimen/primary_font_size" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_other"
-            android:text="暂时没有其他可以设置的..."
-            android:textSize="@dimen/hint_font_size" />
-    </RelativeLayout>
 </LinearLayout>

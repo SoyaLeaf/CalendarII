@@ -35,7 +35,7 @@
             android:layout_height="3dp"
             android:layout_above="@id/tv_lunar"
             android:layout_toRightOf="@id/tv_greg"
-            android:background="@drawable/bg_primary_left_bottom_r10"
+            android:background="@drawable/bg_primary_left_top_r10"
             android:visibility="gone"></FrameLayout>
 
         <FrameLayout
@@ -53,7 +53,7 @@
             android:layout_marginRight="5dp"
             android:text="假"
             android:textColor="?colorAccent"
-            android:textSize="5sp"
+            android:textSize="5dp"
             android:visibility="gone" />
 
         <FrameLayout
