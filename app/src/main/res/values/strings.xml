@@ -9,14 +9,16 @@
     <string name="donate">捐赠</string>
     <string name="thank_you">谢谢你</string>
     <string name="not_interested">没兴趣</string>
-    <string name="howerver_thanks">还是谢谢支持！我会s更加努力的。</string>
+    <string name="howerver_thanks">还是谢谢支持！我会更加努力的。</string>
     <string name="thanks_very_much">万分感谢！我会更加努力的。</string>
     <string name="donate_little">捐赠一点</string>
     <string name="no_market">您的系统中没有安装应用市场</string>
-    <string name="today_thins">今日事,今日毕</string>
+    <string name="today_things">今日事,今日毕</string>
     <string name="day">天</string>
-    <string name="later">天之后</string>
-    <string name="before">天之前</string>
+    <string name="till_xx_days_ago">距今还有%4d天</string>
+    <string name="it_has_been_xx_days">距今已过%4d天</string>
+    <string name="xx_later">%d天之后</string>
+    <string name="xx_before">%d天之前</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

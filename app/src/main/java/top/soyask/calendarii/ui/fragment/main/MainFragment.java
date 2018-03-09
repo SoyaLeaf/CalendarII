@@ -118,7 +118,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                     break;
                 case BIRTHDAY_VISIBLE:
                     if (!isBirthday && !isEventViewVisible) {
-                        if(!mSelectedDay.hasEvent()){
+                        if (!mSelectedDay.hasEvent()) {
                             showFlBirth();
                         }
                     }
@@ -181,9 +181,12 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             animation.setDuration(800);
             animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
-                public void onAnimationStart(Animation animation) {  }
+                public void onAnimationStart(Animation animation) {
+                }
+
                 @Override
-                public void onAnimationRepeat(Animation animation) { }
+                public void onAnimationRepeat(Animation animation) {
+                }
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
@@ -329,7 +332,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setEvent(final String title) {
         EventDao eventDao = EventDao.getInstance(getMainActivity());
-        List<Event>  events = eventDao.query(title);
+        List<Event> events = eventDao.query(title);
         mTvTitle.setText(title);
         if (mEventViewWidth == 0) {
             mEventViewWidth = mEventView.getWidth();
@@ -344,10 +347,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setupEventView(final String title, List<Event> events) {
-        if(mSelectedDay.hasBirthday()){
+        if (mSelectedDay.hasBirthday()) {
             StringBuffer buffer = getBirthdayStr();
             mTvEvent.setText(buffer.toString());
-        }else {
+        } else {
             mTvEvent.setText(events.get(0).getDetail());
         }
         mIBtnMore.setOnClickListener(new View.OnClickListener() {
@@ -469,7 +472,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
 
     @Override
     public void onPageSelected(int position) {
@@ -503,7 +507,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     @Override
-    public void onSelected(Day day) {
+    public synchronized void onSelected(Day day) {
         this.mSelectedDay = day;
         setBirthday(day);
         setEvent(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
@@ -535,18 +539,18 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         Calendar selectDay = getSelectedCalendar();
         Calendar today = getTodayCalendar();
 
-        long time = selectDay.getTime().getTime();
-        long todayTime = today.getTime().getTime();
-        int dayCount = (int) ((time - todayTime) / (1000 * 60 * 60 * 24));
-
+        long todayTime = today.getTime().getTime() / 86400000;
+        long time = selectDay.getTime().getTime() / 86400000;
+        Long l = time - todayTime;
+        int dayCount = l.intValue();
         if (dayCount > 0) {
-            mTvDayCount.setText("距今还有" + String.format("%4d", dayCount) + getString(R.string.day));
-            mTvDayCountM.setText(dayCount + getString(R.string.later));
+            mTvDayCount.setText(getString(R.string.till_xx_days_ago, dayCount));
+            mTvDayCountM.setText(getString(R.string.xx_later, dayCount));
         } else if (dayCount < 0) {
-            mTvDayCount.setText("距今已过" + String.format("%4d", -dayCount) + getString(R.string.day));
-            mTvDayCountM.setText(-dayCount + getString(R.string.before));
+            mTvDayCount.setText(getString(R.string.it_has_been_xx_days, -dayCount));
+            mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
         } else {
-            mTvDayCount.setText(R.string.today_thins);
+            mTvDayCount.setText(R.string.today_things);
         }
     }
 
