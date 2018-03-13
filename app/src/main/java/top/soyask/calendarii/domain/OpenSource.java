@@ -1,10 +1,12 @@
 package top.soyask.calendarii.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by mxf on 2017/10/29.
  */
 
-public class OpenSource {
+public class OpenSource implements Serializable {
 
     private String title;
     private String detail;

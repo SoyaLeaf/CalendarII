@@ -1,10 +1,12 @@
 package top.soyask.calendarii.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by mxf on 2017/11/6.
  */
 
-public class LunarDay {
+public class LunarDay implements Serializable {
 
     private String dayOfMonth;
     private int year;
