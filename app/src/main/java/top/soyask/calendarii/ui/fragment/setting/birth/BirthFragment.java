@@ -36,7 +36,7 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
 
     @Override
     protected void setupUI() {
-        mBirthdayDao = BirthdayDao.getInstance(getMainActivity());
+        mBirthdayDao = BirthdayDao.getInstance(mHostActivity);
         findToolbar().setNavigationOnClickListener(this);
         setupRecycleView();
     }
@@ -66,8 +66,8 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onBirthdayLongClick(final int position, final Birthday birthday) {
         new AlertDialog
-                .Builder(getMainActivity())
-                .setItems(new String[]{"删除"}, new DialogInterface.OnClickListener() {
+                .Builder(mHostActivity)
+                .setItems(new String[]{getString(R.string.delete)}, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         int id = birthday.getId();
@@ -75,8 +75,8 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
                         mBirthdays.remove(birthday);
                         mBirthdayAdapter.notifyItemRemoved(position);
                         mBirthdayAdapter.notifyItemRangeChanged(0, position);
-                        GlobalData.loadBirthday(getMainActivity());
-                        WidgetManager.updateAllWidget(getMainActivity());
+                        GlobalData.loadBirthday(mHostActivity);
+                        WidgetManager.updateAllWidget(mHostActivity);
                     }
                 }).show();
     }
@@ -93,7 +93,7 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
         mBirthdays.clear();
         mBirthdays.addAll(mBirthdayDao.queryAll());
         mBirthdayAdapter.notifyDataSetChanged();
-        GlobalData.loadBirthday(getMainActivity());
-        WidgetManager.updateAllWidget(getMainActivity());
+        GlobalData.loadBirthday(mHostActivity);
+        WidgetManager.updateAllWidget(mHostActivity);
     }
 }

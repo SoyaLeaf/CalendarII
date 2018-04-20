@@ -18,7 +18,7 @@
             android:layout_marginTop="2dp"
             android:gravity="center_horizontal|bottom"
             android:padding="0dp"
-            android:textSize="14dp" />
+            android:textSize="@dimen/greg_text_size" />
 
         <TextView
             android:id="@+id/tv_lunar"
@@ -27,7 +27,7 @@
             android:layout_below="@id/tv_greg"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|top"
-            android:textSize="10dp" />
+            android:textSize="@dimen/lunar_text_size" />
 
         <FrameLayout
             android:id="@+id/fl_event"
@@ -53,9 +53,18 @@
             android:layout_marginRight="5dp"
             android:text="假"
             android:textColor="?colorAccent"
-            android:textSize="5dp"
+            android:textSize="@dimen/holiday_text_size"
             android:visibility="gone" />
-
+        <TextView
+            android:id="@+id/tv_work"
+            android:textSize="5dp"
+            android:text="班"
+            android:textColor="#f00"
+            android:layout_marginRight="5dp"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <FrameLayout
             android:id="@+id/iv_birth"
             android:layout_width="match_parent"

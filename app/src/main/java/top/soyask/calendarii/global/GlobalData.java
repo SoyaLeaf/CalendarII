@@ -29,6 +29,10 @@ public class GlobalData {
 
     public static final Map<String, List<Birthday>> BIRTHDAY = new HashMap<>();
     public static final List<String> HOLIDAY = new ArrayList<>();
+    /**
+     * 调休的日子
+     */
+    public static final List<String> WORKDAY = new ArrayList<>();
 
     public synchronized static final void loadBirthday(Context context) {
         BirthdayDao birthdayDao = BirthdayDao.getInstance(context);
@@ -47,12 +51,19 @@ public class GlobalData {
         context.sendBroadcast(new Intent(EventDao.UPDATE));
     }
 
-    private static final String URL = "http://owvj0u2dq.bkt.clouddn.com/holiday.json";
+    private static final String URL_HOLIDAY = "http://owvj0u2dq.bkt.clouddn.com/holiday.json";
+    private static final String URL_WORKDAY = "http://owvj0u2dq.bkt.clouddn.com/workday.json";
 
-    public synchronized static final void loadHoliday(Context context){
+    public synchronized static final void loadHoliday(Context context) {
         SharedPreferences setting = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
-        Set<String> holiday = setting.getStringSet(Global.SETTING_HOLIDAY, new HashSet<String>());
+        Set<String> holiday = setting.getStringSet(Global.SETTING_HOLIDAY, new HashSet<>());
         GlobalData.HOLIDAY.addAll(holiday);
+    }
+
+    public synchronized static final void loadWorkday(Context context) {
+        SharedPreferences setting = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
+        Set<String> workday = setting.getStringSet(Global.SETTING_WORKDAY, new HashSet<>());
+        GlobalData.WORKDAY.addAll(workday);
     }
 
     public synchronized static final void synHoliday(final LoadCallBack callBack) {
@@ -60,7 +71,8 @@ public class GlobalData {
             @Override
             public void run() {
                 try {
-                    loadData(URL);
+                    loadData(URL_HOLIDAY, HOLIDAY);
+                    loadData(URL_WORKDAY, WORKDAY);
                     callBack.onSuccess();
                 } catch (Exception e) {
                     callBack.onFail();
@@ -72,10 +84,11 @@ public class GlobalData {
 
     public interface LoadCallBack {
         void onSuccess();
+
         void onFail();
     }
 
-    private static void loadData(String url) throws Exception {
+    private static void loadData(String url, List<String> container) throws Exception {
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Response response = okHttpClient.newCall(request).execute();
@@ -83,6 +96,7 @@ public class GlobalData {
         Gson gson = new Gson();
         List<String> list = gson.fromJson(json, new TypeToken<ArrayList<String>>() {
         }.getType());
-        HOLIDAY.addAll(list);
+        container.clear();
+        container.addAll(list);
     }
 }

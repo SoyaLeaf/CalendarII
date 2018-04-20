@@ -58,21 +58,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         return fragment;
     }
 
-    private synchronized void setupData() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, mYear);
-        calendar.set(Calendar.MONTH, mMonth - 1);
-        int dayCount = DayUtils.getMonthDayCount(mMonth - 1, mYear);
-
-        mDays.clear();
-        for (int i = 0; i < dayCount; i++) {
-            calendar.set(Calendar.DAY_OF_MONTH,i + 1);
-            Day day = MonthUtils.generateDay(calendar, mEventDao);
-            mDays.add(day);
-        }
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +69,14 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
 
     private void initArguments() {
         int position = getArguments().getInt(POSITION);
-        mYear = position / MONTH_COUNT + YEAR_START_REAL; //position==0时 1910/1
+        mYear = position / MONTH_COUNT + YEAR_START_REAL;
         mMonth = position % MONTH_COUNT + 1;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupReceiver();
     }
 
     private void setupReceiver() {
@@ -98,12 +89,6 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         filter.addAction(SettingFragment.WEEK_SETTING);
         getActivity().registerReceiver(mMonthReceiver, filter);
         Log.d(TAG, "onCreate and registerReceiver");
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupReceiver();
     }
 
     @Override
@@ -155,21 +140,26 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         setupUI();
     }
 
-
-    private void setupUI() {
-        initDateView();
+    private synchronized void setupData() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, mYear);
+        calendar.set(Calendar.MONTH, mMonth - 1);
+        int dayCount = DayUtils.getMonthDayCount(mMonth - 1, mYear);
+        mDays.clear();
+        for (int i = 0; i < dayCount; i++) {
+            calendar.set(Calendar.DAY_OF_MONTH,i + 1);
+            Day day = MonthUtils.generateDay(calendar, mEventDao);
+            mDays.add(day);
+        }
     }
 
-
-    private void initDateView() {
+    private void setupUI() {
         mMonthAdapter = new MonthAdapter(mDays, this);
-
         RecyclerView recyclerView = find(R.id.rv_date);
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 7));
         recyclerView.setAdapter(mMonthAdapter);
         recyclerView.setItemAnimator(null);
     }
-
 
     <T extends View> T find(@IdRes int id) {
         return (T) mContentView.findViewById(id);

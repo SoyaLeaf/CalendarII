@@ -4,14 +4,13 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
+        android:id="@+id/rl"
         android:layout_width="@dimen/item_day_size"
         android:layout_height="@dimen/item_day_size"
-        android:id="@+id/rl"
-        android:paddingTop="2dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_primary_r60"
-      >
+        android:paddingTop="2dp">
 
         <TextView
             android:id="@+id/tv_greg"
@@ -51,13 +50,25 @@
 
         <TextView
             android:id="@+id/tv_holiday"
-            android:textSize="5dp"
-            android:text="假"
-            android:layout_marginRight="5dp"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:text="假"
+            android:textSize="5dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_work"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:text="班"
+            android:textColor="@color/text_color_primary_dark"
+            android:textSize="5dp"
+            android:visibility="gone" />
+
         <FrameLayout
             android:id="@+id/iv_birth"
             android:layout_width="match_parent"

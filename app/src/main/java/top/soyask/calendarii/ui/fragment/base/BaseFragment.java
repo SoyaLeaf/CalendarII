@@ -24,9 +24,9 @@ import top.soyask.calendarii.R;
  */
 public abstract class BaseFragment extends Fragment {
 
-    private View mContentView;
+    protected View mContentView;
     private int mLayout;
-    private MainActivity mMainActivity;
+    protected MainActivity mHostActivity;
 
     protected BaseFragment(@LayoutRes int layout) {
         mLayout = layout;
@@ -47,7 +47,7 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof MainActivity) {
-            mMainActivity = (MainActivity) context;
+            mHostActivity = (MainActivity) context;
         }
     }
 
@@ -113,21 +113,11 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void showSnackbar(final String tip) {
-        getMainActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Snackbar.make(mContentView, tip, Snackbar.LENGTH_SHORT).show();
-            }
-        });
+        mHostActivity.runOnUiThread(() -> Snackbar.make(mContentView, tip, Snackbar.LENGTH_SHORT).show());
     }
 
     protected void showSnackbar(final String tip, final String action, final View.OnClickListener listener) {
-        getMainActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Snackbar.make(mContentView, tip, Snackbar.LENGTH_SHORT).setAction(action,listener).show();
-            }
-        });
+        mHostActivity.runOnUiThread(() -> Snackbar.make(mContentView, tip, Snackbar.LENGTH_SHORT).setAction(action,listener).show());
     }
 
     /**
@@ -135,12 +125,5 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void setupUI();
 
-    public View getContentView() {
-        return mContentView;
-    }
-
-    public MainActivity getMainActivity() {
-        return mMainActivity;
-    }
 
 }

@@ -43,10 +43,10 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             super.handleMessage(msg);
             switch (msg.what) {
                 case UPDATE:
-                    getMainActivity().sendBroadcast(new Intent(WEEK_SETTING));
+                    mHostActivity.sendBroadcast(new Intent(WEEK_SETTING));
                     break;
                 case WAIT:
-                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "请稍等...");
+                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "请稍等...");
                     break;
                 case CANCEL:
                     if (mProgressDialog != null) {
@@ -121,7 +121,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 addFragment(picSetFragment);
                 break;
             case R.id.rl_ui:
-                Intent intent = new Intent(getMainActivity(), ZoomActivity.class);
+                Intent intent = new Intent(mHostActivity, ZoomActivity.class);
                 startActivity(intent);
                 break;
             default:
@@ -140,31 +140,32 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             Setting.date_offset = 1;
             Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
             mHandler.sendEmptyMessageDelayed(UPDATE, 500);
-            WidgetManager.updateAllWidget(getMainActivity());
+            WidgetManager.updateAllWidget(mHostActivity);
         } else if (!isChecked && Setting.date_offset == 1) {
             Setting.date_offset = 0;
             Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
             mHandler.sendEmptyMessageDelayed(UPDATE, 500);
-            WidgetManager.updateAllWidget(getMainActivity());
+            WidgetManager.updateAllWidget(mHostActivity);
         }
     }
 
     @Override
     public void onAlphaSet(int alpha) {
         Setting.widget_alpha = alpha;
-        Setting.setting(getMainActivity(), Global.SETTING_WIDGET_ALPHA, alpha);
+        Setting.setting(mHostActivity, Global.SETTING_WIDGET_ALPHA, alpha);
         mTvAlpha.setText(String.valueOf(alpha));
         AppWidgetManager appWidgetManager =
-                (AppWidgetManager) getMainActivity().getSystemService(Context.APPWIDGET_SERVICE);
-        WidgetManager.updateMonthWidget(getMainActivity(), appWidgetManager);
+                (AppWidgetManager) mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
+        WidgetManager.updateMonthWidget(mHostActivity, appWidgetManager);
     }
 
 
     @Override
     public void onSuccess() {
         showSnackbar("同步成功！");
-        getMainActivity().sendBroadcast(new Intent(EventDao.UPDATE));
-        Setting.setting(getMainActivity(), Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
+        mHostActivity.sendBroadcast(new Intent(EventDao.UPDATE));
+        Setting.setting(mHostActivity, Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
+        Setting.setting(mHostActivity, Global.SETTING_WORKDAY, new HashSet<>(GlobalData.WORKDAY));
         mHandler.sendEmptyMessage(CANCEL);
     }
 

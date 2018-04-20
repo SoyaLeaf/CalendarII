@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         style="@style/Toolbar"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-        app:title="设置"
+        app:title="个性化"
         app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
 
     <ScrollView
@@ -150,7 +150,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_ui"
-                    android:text="可以放大或者缩小界面，以使界面看起来更和谐。"
+                    android:text="可以调节界面，以使界面看起来更和谐"
                     android:textSize="@dimen/hint_font_size" />
             </RelativeLayout>
 

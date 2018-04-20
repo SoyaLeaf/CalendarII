@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
@@ -43,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
             configuration.setToDefaults();
             configuration.densityDpi = Setting.density_dpi;
             resources.updateConfiguration(configuration,resources.getDisplayMetrics());
-            Toast.makeText(this,""+Setting.density_dpi,Toast.LENGTH_SHORT).show();
         }
     }
 

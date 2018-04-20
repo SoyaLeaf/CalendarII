@@ -42,7 +42,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
             super.handleMessage(msg);
             switch (msg.what) {
                 case WAIT:
-                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "正在恢复，请稍等...");
+                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "正在恢复，请稍等...");
                     break;
                 case CANCEL:
                     if (mProgressDialog != null) {
@@ -111,7 +111,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     }
 
     private void loadData() {
-        mEventDao = EventDao.getInstance(getMainActivity());
+        mEventDao = EventDao.getInstance(mHostActivity);
 
         if (mTitle == null) {
             mEvents = mEventDao.queryAll();

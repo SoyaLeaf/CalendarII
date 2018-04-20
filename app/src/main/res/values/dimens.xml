@@ -50,4 +50,8 @@ Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
+    <dimen name="lunar_text_size">10dp</dimen>
+    <dimen name="greg_text_size">14dp</dimen>
+    <dimen name="holiday_text_size">5dp</dimen>
+    <dimen name="week_text_size">14dp</dimen>
 </resources>

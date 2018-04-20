@@ -40,7 +40,7 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
                 mCircleProgressBar.setProgress(msg.what);
             } else {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    exit(getContentView(), -1, -1);
+                    exit(mContentView, -1, -1);
                 } else {
                     removeFragment(DeleteFragment.this);
                 }
@@ -119,7 +119,7 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
 
     @Override
     protected void setupUI() {
-        getContentView().setOnTouchListener(new View.OnTouchListener() {
+        mContentView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (!isExiting) {
@@ -184,7 +184,7 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        getContentView().setVisibility(View.GONE);
+        mContentView.setVisibility(View.GONE);
         removeFragment(this);
     }
 

@@ -22,22 +22,24 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
     private static final int[] RADIO_BUTTON = {
             R.id.rb_default, R.id.rb_green, R.id.rb_pink, R.id.rb_teal,
             R.id.rb_blue, R.id.rb_red, R.id.rb_purple, R.id.rb_black,
-//            R.id.rb_custom
     };
 
     private static final int WAIT = 0;
     private static final int CANCEL = 1;
     private static final int UPDATE = 3;
 
-    private Handler mHandler = new Handler(){
+    private int mCurrentTheme;
+    private ProgressDialog mProgressDialog;
+
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case WAIT:
-                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "请稍等...", true);
+                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "请稍等...", true);
                     break;
                 case CANCEL:
-                    if(mProgressDialog != null){
+                    if (mProgressDialog != null) {
                         mProgressDialog.dismiss();
                         mProgressDialog = null;
                     }
@@ -48,9 +50,6 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
             }
         }
     };
-
-    private int mCurrentTheme;
-    private ProgressDialog mProgressDialog;
 
     public ThemeFragment() {
         super(R.layout.fragment_theme);
@@ -67,8 +66,7 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
     @Override
     protected void setupUI() {
         findToolbar(R.id.toolbar).setNavigationOnClickListener(this);
-//        findViewById(R.id.view_custom).setOnClickListener(this);
-        SharedPreferences setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE);
+        SharedPreferences setting = mHostActivity.getSharedPreferences("setting", Context.MODE_PRIVATE);
         mCurrentTheme = setting.getInt("theme", 0);
         RadioButton rb = findViewById(RADIO_BUTTON[mCurrentTheme]);
         rb.setChecked(true);
@@ -79,12 +77,12 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
     }
 
     private void setupTheme(int theme) {
-        SharedPreferences.Editor setting = getMainActivity().getSharedPreferences("setting", Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor setting = mHostActivity.getSharedPreferences("setting", Context.MODE_PRIVATE).edit();
         setting.putInt("theme", theme).commit();
         Setting.theme = theme;
-        Intent intent = new Intent(getMainActivity(), LaunchActivity.class);
+        Intent intent = new Intent(mHostActivity, LaunchActivity.class);
         startActivity(intent);
-        getMainActivity().finish();
+        mHostActivity.finish();
     }
 
 
@@ -103,7 +101,7 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
             for (int i = 0; i < RADIO_BUTTON.length; i++) {
                 if (buttonView.getId() == RADIO_BUTTON[i]) {
                     final int finalI = i;
-                    new Thread(){
+                    new Thread() {
                         @Override
                         public void run() {
                             Message obtain = Message.obtain();

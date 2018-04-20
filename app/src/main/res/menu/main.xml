@@ -16,14 +16,13 @@
         android:title="跳转到指定日期"
         app:showAsAction="never" />
     <item
+        android:id="@+id/menu_setting"
+        android:title="个性化"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_score"
         android:title="去评分"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/menu_setting"
-        android:title="设置"
-        app:showAsAction="never" />
-
     <item
         android:id="@+id/menu_donate"
         android:title="捐赠"
@@ -32,6 +31,4 @@
         android:id="@+id/menu_about"
         android:title="关于"
         app:showAsAction="never" />
-
-
 </menu>

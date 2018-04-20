@@ -100,9 +100,6 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     }
 
 
-    /*
-        滑动结束后，在文字上添加一条直线
-     */
     private void onTouchCancel(MotionEvent event) {
         itemView.setAlpha(1f);
         float rawX = event.getRawX();

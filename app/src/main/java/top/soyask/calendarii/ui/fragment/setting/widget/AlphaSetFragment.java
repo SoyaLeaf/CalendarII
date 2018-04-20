@@ -116,7 +116,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
         if (requestCode == GET_IMAGE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             try {
-                Bitmap bitmap = loadImage(getMainActivity(),uri);
+                Bitmap bitmap = loadImage(mHostActivity,uri);
                 findViewById(R.id.rl_bg).setBackground(new BitmapDrawable(bitmap));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -127,7 +127,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
 
     private void select() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(getMainActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            if(mHostActivity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_GET);
                 return;
             }

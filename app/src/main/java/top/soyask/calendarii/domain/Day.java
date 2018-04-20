@@ -16,6 +16,7 @@ public class Day implements Serializable {
     private int year;
     private int month;
     private boolean isHoliday;
+    private boolean isWorkday; //是否被调休
     private List<Birthday> birthdays;
     private List<Event> events;
 
@@ -143,5 +144,13 @@ public class Day implements Serializable {
 
     public boolean hasEvent(){
         return events != null && !events.isEmpty();
+    }
+
+    public boolean isWorkday() {
+        return isWorkday;
+    }
+
+    public void setWorkday(boolean workday) {
+        isWorkday = workday;
     }
 }
