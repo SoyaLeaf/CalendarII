@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -204,19 +203,11 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
         if (primaryClip.getItemCount() > 0) {
             new AlertDialog.Builder(mHostActivity).setTitle("剪切板内容")
                     .setMessage(message)
-                    .setPositiveButton("粘贴", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mEditText.append(message);
-                            dialog.dismiss();
-                        }
+                    .setPositiveButton("粘贴", (dialog, which) -> {
+                        mEditText.append(message);
+                        dialog.dismiss();
                     })
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+                    .setNegativeButton("取消", (dialog, which) -> dialog.dismiss()).show();
         } else {
             new AlertDialog.Builder(mHostActivity).setMessage("剪切板里什么也没有 >_<").show();
         }
