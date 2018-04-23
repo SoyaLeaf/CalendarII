@@ -31,6 +31,7 @@
     <string name="current_dpi">DPI，当前为：%d</string>
     <string name="birthday">生日</string>
     <string name="xx_year">%s年</string>
+    <string name="xx_year_xx_month">%d年%02d月</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

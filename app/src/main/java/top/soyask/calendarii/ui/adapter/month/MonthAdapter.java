@@ -34,9 +34,9 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private int mDateStartPos = 0;
     private int mEndPosition;
 
-    public MonthAdapter(@NonNull List<Day> mDays, @NonNull OnItemClickListener mOnItemClickListener) {
-        this.mDays = mDays;
-        this.mOnItemClickListener = mOnItemClickListener;
+    public MonthAdapter(@NonNull List<Day> days, @NonNull OnItemClickListener onItemClickListener) {
+        this.mDays = days;
+        this.mOnItemClickListener = onItemClickListener;
         this.mDateStartPos = (mDays.get(0).getDayOfWeek() + 6 - Setting.date_offset) % 7 + 7;
         this.mEndPosition = mDateStartPos + mDays.size();
     }

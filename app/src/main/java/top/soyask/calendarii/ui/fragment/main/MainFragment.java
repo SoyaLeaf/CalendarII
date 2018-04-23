@@ -335,7 +335,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         if (!events.isEmpty()) {
             setupEventView(title, events);
         } else {
-            mTvEvent.setText("这一天并没有添加任何的事件...");
+            mTvEvent.setText(R.string.nothing);
             mAnimatorHandler.sendEmptyMessage(View.INVISIBLE);
         }
     }
@@ -370,10 +370,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setToolbarDate(int year, int month) {
-        StringBuffer date = new StringBuffer()
-                .append(year).append("年")
-                .append(month < 10 ? "0" + month : month).append("月");
-        mActionBar.setTitle(date.toString());
+        String title = getString(R.string.xx_year_xx_month, year, month);
+        mActionBar.setTitle(title);
     }
 
     @Override

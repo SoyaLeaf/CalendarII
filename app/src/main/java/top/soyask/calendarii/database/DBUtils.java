@@ -61,7 +61,7 @@ public class DBUtils extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase     db, int oldVersion, int newVersion) {
         switch (oldVersion) {
             case 1:
                 db.execSQL(BIRTH_SQL);

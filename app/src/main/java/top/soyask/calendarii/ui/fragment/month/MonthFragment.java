@@ -5,15 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,6 +19,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
+import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUtils;
@@ -31,13 +28,12 @@ import top.soyask.calendarii.utils.MonthUtils;
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
-public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickListener {
+public class MonthFragment extends BaseFragment implements MonthAdapter.OnItemClickListener {
 
 
     private static final String POSITION = "position";
     private static final String TAG = "MonthFragment";
 
-    private View mContentView;
     private List<Day> mDays = new ArrayList<>();
     private MonthAdapter mMonthAdapter;
     private int mYear;
@@ -47,7 +43,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     private MonthReceiver mMonthReceiver;
 
     public MonthFragment() {
-
+        super(R.layout.fragment_month);
     }
 
     public static MonthFragment newInstance(int position) {
@@ -87,7 +83,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         filter.addAction(EventDao.DELETE);
         filter.addAction(MainFragment.SKIP);
         filter.addAction(SettingFragment.WEEK_SETTING);
-        getActivity().registerReceiver(mMonthReceiver, filter);
+        mHostActivity.registerReceiver(mMonthReceiver, filter);
         Log.d(TAG, "onCreate and registerReceiver");
     }
 
@@ -95,7 +91,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG, "onDestroyView and unregisterReceiver");
-        getActivity().unregisterReceiver(mMonthReceiver);
+        mHostActivity.unregisterReceiver(mMonthReceiver);
     }
 
     public class MonthReceiver extends BroadcastReceiver {
@@ -126,18 +122,12 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContentView = inflater.inflate(R.layout.fragment_month, container, false);
-        return mContentView;
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         mEventDao = EventDao.getInstance(getActivity());
         setupData();
-        setupUI();
+        super.onActivityCreated(savedInstanceState);
     }
 
     private synchronized void setupData() {
@@ -153,16 +143,12 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         }
     }
 
-    private void setupUI() {
+    protected void setupUI() {
         mMonthAdapter = new MonthAdapter(mDays, this);
-        RecyclerView recyclerView = find(R.id.rv_date);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 7));
+        RecyclerView recyclerView = findViewById(R.id.rv_date);
+        recyclerView.setLayoutManager(new GridLayoutManager(mHostActivity, 7));
         recyclerView.setAdapter(mMonthAdapter);
         recyclerView.setItemAnimator(null);
-    }
-
-    <T extends View> T find(@IdRes int id) {
-        return (T) mContentView.findViewById(id);
     }
 
     @Override

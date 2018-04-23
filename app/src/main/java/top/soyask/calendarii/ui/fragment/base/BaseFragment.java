@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -25,8 +24,8 @@ import top.soyask.calendarii.R;
 public abstract class BaseFragment extends Fragment {
 
     protected View mContentView;
-    private int mLayout;
     protected MainActivity mHostActivity;
+    private int mLayout;
 
     protected BaseFragment(@LayoutRes int layout) {
         mLayout = layout;
@@ -80,12 +79,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        view.setOnTouchListener((v, event) -> true);
     }
 
 
@@ -124,6 +118,5 @@ public abstract class BaseFragment extends Fragment {
      * 对Fragment的UI进行设置
      */
     protected abstract void setupUI();
-
 
 }
