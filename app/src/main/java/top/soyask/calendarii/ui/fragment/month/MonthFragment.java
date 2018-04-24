@@ -5,49 +5,40 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.task.LoadDataTask;
+import top.soyask.calendarii.task.PendingAction;
 import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
+import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
-import top.soyask.calendarii.utils.DayUtils;
-import top.soyask.calendarii.utils.MonthUtils;
 
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
-public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickListener {
+public class MonthFragment extends BaseFragment implements MonthAdapter.OnItemClickListener {
 
 
     private static final String POSITION = "position";
     private static final String TAG = "MonthFragment";
 
-    private View mContentView;
-    private List<Day> mDays = new ArrayList<>();
     private MonthAdapter mMonthAdapter;
     private int mYear;
     private int mMonth;
     private OnDaySelectListener mOnDaySelectListener;
-    private EventDao mEventDao;
     private MonthReceiver mMonthReceiver;
+    private PendingAction mPendingAction;
 
     public MonthFragment() {
-
+        super(R.layout.fragment_month);
     }
 
     public static MonthFragment newInstance(int position) {
@@ -58,34 +49,25 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         return fragment;
     }
 
-    private synchronized void setupData() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, mYear);
-        calendar.set(Calendar.MONTH, mMonth - 1);
-        int dayCount = DayUtils.getMonthDayCount(mMonth - 1, mYear);
-
-        mDays.clear();
-        for (int i = 0; i < dayCount; i++) {
-            calendar.set(Calendar.DAY_OF_MONTH,i + 1);
-            Day day = MonthUtils.generateDay(calendar, mEventDao);
-            mDays.add(day);
-        }
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPendingAction = new PendingAction();
         if (getArguments() != null) {
             initArguments();
         }
-        mEventDao = EventDao.getInstance(getActivity());
     }
 
     private void initArguments() {
         int position = getArguments().getInt(POSITION);
-        mYear = position / MONTH_COUNT + YEAR_START_REAL; //position==0时 1910/1
+        mYear = position / MONTH_COUNT + YEAR_START_REAL;
         mMonth = position % MONTH_COUNT + 1;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupReceiver();
     }
 
     private void setupReceiver() {
@@ -96,21 +78,15 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
         filter.addAction(EventDao.DELETE);
         filter.addAction(MainFragment.SKIP);
         filter.addAction(SettingFragment.WEEK_SETTING);
-        getActivity().registerReceiver(mMonthReceiver, filter);
+        mHostActivity.registerReceiver(mMonthReceiver, filter);
         Log.d(TAG, "onCreate and registerReceiver");
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupReceiver();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         Log.d(TAG, "onDestroyView and unregisterReceiver");
-        getActivity().unregisterReceiver(mMonthReceiver);
+        mHostActivity.unregisterReceiver(mMonthReceiver);
     }
 
     public class MonthReceiver extends BroadcastReceiver {
@@ -125,7 +101,7 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
                         int month = intent.getIntExtra("month", 0);
                         int day = intent.getIntExtra("day", 0);
                         if (year == mYear && month == mMonth) {
-                            mMonthAdapter.setSelectedDay(day);
+                            mPendingAction.addAction(() -> mMonthAdapter.setSelectedDay(day));
                         }
                         break;
                     case SettingFragment.WEEK_SETTING:
@@ -133,46 +109,28 @@ public class MonthFragment extends Fragment implements MonthAdapter.OnItemClickL
                     case EventDao.UPDATE:
                     case EventDao.ADD:
                     case EventDao.DELETE:
-                        setupData();
-                        mMonthAdapter.notifyDataSetChanged();
+                        LoadDataTask task = new LoadDataTask(mHostActivity, mMonthAdapter, mPendingAction);
+                        task.execute(mYear, mMonth);
                         break;
                 }
             }
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContentView = inflater.inflate(R.layout.fragment_month, container, false);
-        return mContentView;
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mEventDao = EventDao.getInstance(getActivity());
-        setupData();
-        setupUI();
+        LoadDataTask task = new LoadDataTask(mHostActivity, mMonthAdapter, mPendingAction);
+        task.execute(mYear, mMonth);
     }
 
-
-    private void setupUI() {
-        initDateView();
-    }
-
-
-    private void initDateView() {
-        mMonthAdapter = new MonthAdapter(mDays, this);
-
-        RecyclerView recyclerView = find(R.id.rv_date);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 7));
+    protected void setupUI() {
+        mMonthAdapter = new MonthAdapter(this);
+        RecyclerView recyclerView = findViewById(R.id.rv_date);
+        recyclerView.setLayoutManager(new GridLayoutManager(mHostActivity, 7));
         recyclerView.setAdapter(mMonthAdapter);
         recyclerView.setItemAnimator(null);
-    }
-
-
-    <T extends View> T find(@IdRes int id) {
-        return (T) mContentView.findViewById(id);
     }
 
     @Override

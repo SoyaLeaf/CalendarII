@@ -42,7 +42,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
             super.handleMessage(msg);
             switch (msg.what) {
                 case WAIT:
-                    mProgressDialog = ProgressDialog.show(getMainActivity(), null, "正在恢复，请稍等...");
+                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "正在恢复，请稍等...");
                     break;
                 case CANCEL:
                     if (mProgressDialog != null) {
@@ -61,14 +61,11 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     };
 
 
-    private Comparator<Event> mComparator = new Comparator<Event>() {
-        @Override
-        public int compare(Event o1, Event o2) {
-            String title0 = o1.getTitle();
-            String title1 = o2.getTitle();
-            int s = title0.compareTo(title1);
-            return s == 0 ? o1.getId() - o2.getId() : s;
-        }
+    private Comparator<Event> mComparator = (o1, o2) -> {
+        String title0 = o1.getTitle();
+        String title1 = o2.getTitle();
+        int s = title0.compareTo(title1);
+        return s == 0 ? o1.getId() - o2.getId() : s;
     };
     private RecyclerView mRecyclerView;
 
@@ -111,7 +108,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     }
 
     private void loadData() {
-        mEventDao = EventDao.getInstance(getMainActivity());
+        mEventDao = EventDao.getInstance(mHostActivity);
 
         if (mTitle == null) {
             mEvents = mEventDao.queryAll();
@@ -132,12 +129,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     @Override
     public void onEditClick(final int position, Event event) {
         AddEventFragment addEventFragment = AddEventFragment.newInstance(null, event);
-        addEventFragment.setOnUpdateListener(new AddEventFragment.OnUpdateListener() {
-            @Override
-            public void onUpdate() {
-                mEventAdapter.notifyItemChanged(position);
-            }
-        });
+        addEventFragment.setOnUpdateListener(() -> mEventAdapter.notifyItemChanged(position));
         addFragment(addEventFragment);
     }
 
@@ -147,17 +139,14 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         mEvents.remove(event);
         mEventAdapter.notifyItemRemoved(position);
         mEventAdapter.notifyItemRangeChanged(position, mEvents.size());
-        showSnackbar("删除成功^_~", "撤销", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEventDao.add(event);
-                mEvents.add(event);  // FIXME: 2017/8/26 这里不能 event id变化了
-                Collections.sort(mEvents, mComparator);
-                mEventAdapter.notifyItemInserted(position);
-                mEventAdapter.notifyItemRangeChanged(position, mEvents.size());
-                if (position == 0) {
-                    mRecyclerView.scrollToPosition(0);
-                }
+        showSnackbar("删除成功^_~", "撤销", v -> {
+            mEventDao.add(event);
+            mEvents.add(event);  // FIXME: 2017/8/26 这里不能 event id变化了
+            Collections.sort(mEvents, mComparator);
+            mEventAdapter.notifyItemInserted(position);
+            mEventAdapter.notifyItemRangeChanged(position, mEvents.size());
+            if (position == 0) {
+                mRecyclerView.scrollToPosition(0);
             }
         });
     }
@@ -235,19 +224,16 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         }
 
         mCompleteEvents.clear();
-        showSnackbar("删除了划掉的事件。", "我要恢复", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mHandler.sendEmptyMessage(WAIT);
-                for (Event event : temp) {
-                    mEventDao.add(event);
-                }
-                mEvents.addAll(temp);
-                mCompleteEvents.addAll(temp);
-                Collections.sort(mEvents, mComparator);
-                mEventAdapter.notifyDataSetChanged();
-                mHandler.sendEmptyMessage(CANCEL);
+        showSnackbar("删除了划掉的事件。", "我要恢复", v -> {
+            mHandler.sendEmptyMessage(WAIT);
+            for (Event event : temp) {
+                mEventDao.add(event);
             }
+            mEvents.addAll(temp);
+            mCompleteEvents.addAll(temp);
+            Collections.sort(mEvents, mComparator);
+            mEventAdapter.notifyDataSetChanged();
+            mHandler.sendEmptyMessage(CANCEL);
         });
     }
 
@@ -263,18 +249,15 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
             mEventDao.delete(mTitle);
         }
 
-        showSnackbar("删除了全部的事件。", "我要恢复", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mHandler.sendEmptyMessage(WAIT);
-                for (Event event : temp) {
-                    mEventDao.add(event);
-                }
-                mEvents.addAll(temp);
-                Collections.sort(mEvents, mComparator);
-                mEventAdapter.notifyDataSetChanged();
-                mHandler.sendEmptyMessage(CANCEL);
+        showSnackbar("删除了全部的事件。", "我要恢复", v -> {
+            mHandler.sendEmptyMessage(WAIT);
+            for (Event event : temp) {
+                mEventDao.add(event);
             }
+            mEvents.addAll(temp);
+            Collections.sort(mEvents, mComparator);
+            mEventAdapter.notifyDataSetChanged();
+            mHandler.sendEmptyMessage(CANCEL);
         });
     }
 }

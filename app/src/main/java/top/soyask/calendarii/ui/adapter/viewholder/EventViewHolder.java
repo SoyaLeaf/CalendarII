@@ -33,14 +33,14 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     }
 
     private void findView(View itemView) {
-        el = (ExpandableLayout) itemView.findViewById(R.id.el);
-        ib_down = (ImageButton) itemView.findViewById(R.id.ib_down);
-        ib_up = (ImageButton) itemView.findViewById(R.id.ib_up);
-        ib_delete = (ImageButton) itemView.findViewById(R.id.ib_delete);
-        ib_edit = (ImageButton) itemView.findViewById(R.id.ib_edit);
-        ib_share = (ImageButton) itemView.findViewById(R.id.ib_share);
-        tv_title = (TextView) itemView.findViewById(R.id.tv_title);
-        tv_event = (TextView) itemView.findViewById(R.id.tv_event);
+        el = itemView.findViewById(R.id.el);
+        ib_down = itemView.findViewById(R.id.ib_down);
+        ib_up = itemView.findViewById(R.id.ib_up);
+        ib_delete = itemView.findViewById(R.id.ib_delete);
+        ib_edit = itemView.findViewById(R.id.ib_edit);
+        ib_share = itemView.findViewById(R.id.ib_share);
+        tv_title = itemView.findViewById(R.id.tv_title);
+        tv_event = itemView.findViewById(R.id.tv_event);
     }
 
     private void init() {
@@ -100,26 +100,24 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     }
 
 
-    /*
-        滑动结束后，在文字上添加一条直线
-     */
     private void onTouchCancel(MotionEvent event) {
         itemView.setAlpha(1f);
         float rawX = event.getRawX();
         int width = tv_title.getWidth() / 4;
         if (rawX - startX > width) {
-            if(mOnTextPressListener != null){
+            if (mOnTextPressListener != null) {
                 mOnTextPressListener.onCross();
             }
         } else if (startX - rawX > width) {
-            if(mOnTextPressListener != null){
+            if (mOnTextPressListener != null) {
                 mOnTextPressListener.onLineClear();
             }
         }
     }
 
-    public interface OnTextPressListener{
+    public interface OnTextPressListener {
         void onCross();
+
         void onLineClear();
     }
 }

@@ -125,7 +125,7 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
     private void setupSpinner() {
         Spinner spinner = findViewById(R.id.spinner_who);
         mName = getResources().getStringArray(R.array.who);
-        spinner.setAdapter(new ArrayAdapter<>(getMainActivity(), R.layout.item_who, R.id.tv, mName));
+        spinner.setAdapter(new ArrayAdapter<>(mHostActivity, R.layout.item_who, R.id.tv, mName));
         spinner.setOnItemSelectedListener(this);
     }
 
@@ -182,7 +182,7 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
 
     private void done() {
         Birthday birthday = getBirthday();
-        BirthdayDao birthdayDao = BirthdayDao.getInstance(getMainActivity());
+        BirthdayDao birthdayDao = BirthdayDao.getInstance(mHostActivity);
         birthdayDao.add(birthday);
         mOnDoneClickListener.onDone(birthday);
     }

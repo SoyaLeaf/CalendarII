@@ -2,10 +2,37 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:padding="8dp"
+    >
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:text="@string/confirm"
+        android:textColor="@color/text_color_sub_dark" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:padding="8dp"
+        android:text="@string/cancel"
+        android:textColor="@color/text_color_sub_dark" />
 
     <LinearLayout
         android:id="@+id/ll"
+        android:layout_below="@id/btn_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -39,31 +66,5 @@
             android:theme="@style/NumberPicker"></NumberPicker>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_confirm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/ll"
-        android:background="?attr/selectableItemBackground"
-        android:minHeight="0dp"
-        android:minWidth="0dp"
-        android:layout_marginRight="8dp"
-        android:padding="8dp"
-        android:text="确定"
-        android:textColor="?attr/colorPrimary" />
-
-    <Button
-        android:id="@+id/btn_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ll"
-        android:layout_toLeftOf="@id/btn_confirm"
-        android:background="?attr/selectableItemBackground"
-        android:minHeight="0dp"
-        android:minWidth="0dp"
-        android:padding="8dp"
-        android:text="取消"
-        android:textColor="?attr/colorPrimary" />
 
 </RelativeLayout>

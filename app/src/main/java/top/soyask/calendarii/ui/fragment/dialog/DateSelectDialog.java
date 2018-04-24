@@ -3,8 +3,7 @@ package top.soyask.calendarii.ui.fragment.dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.util.Log;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.utils.DayUtils;
 
 
-public class DateSelectDialog extends DialogFragment implements View.OnClickListener, NumberPicker.OnValueChangeListener {
+public class DateSelectDialog extends BottomSheetDialogFragment implements View.OnClickListener, NumberPicker.OnValueChangeListener {
 
     private static final String ARG_YEAR = "year";
     private static final String ARG_MONTH = "month";
@@ -118,20 +117,17 @@ public class DateSelectDialog extends DialogFragment implements View.OnClickList
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.e("", "onDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("", "onDestroy");
-
     }
 
     private void setupNumberPicker() {
-        mNpYear = (NumberPicker) mContentView.findViewById(R.id.np_year);
-        mNpMonth = (NumberPicker) mContentView.findViewById(R.id.np_month);
-        mNpDay = (NumberPicker) mContentView.findViewById(R.id.np_day);
+        mNpYear =  mContentView.findViewById(R.id.np_year);
+        mNpMonth =  mContentView.findViewById(R.id.np_month);
+        mNpDay =  mContentView.findViewById(R.id.np_day);
 
         mNpYear.setMinValue(1910);
         mNpYear.setMaxValue(2100);

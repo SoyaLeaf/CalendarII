@@ -7,7 +7,7 @@
     <!-- Base application theme. -->
 
     <style name="NumberPicker">
-        <item name="android:textColorSecondary">?attr/colorAccent</item>
+        <item name="android:textColorSecondary">@color/divider_dark</item>
     </style>
 
     <style name="ColorSecondaryAccent">
@@ -110,5 +110,15 @@
     <style name="SubtitleText">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">12dp</item>
+    </style>
+
+    <style name="reset_btn">
+        <item name="android:layout_gravity">right|center_vertical</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 </resources>

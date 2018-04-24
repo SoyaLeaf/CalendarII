@@ -81,11 +81,11 @@ public class PicSetFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void changeToDefault() {
-        Setting.remove(getMainActivity(), Global.SETTING_WHITE_WIDGET_PIC);
+        Setting.remove(mHostActivity, Global.SETTING_WHITE_WIDGET_PIC);
         mImageView.setImageDrawable(getResources().getDrawable(R.mipmap.miku));
         AppWidgetManager appWidgetManager =
-                (AppWidgetManager) getMainActivity().getSystemService(Context.APPWIDGET_SERVICE);
-        WidgetManager.updateWhiteWidget(getMainActivity(), appWidgetManager);
+                (AppWidgetManager)mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
+        WidgetManager.updateWhiteWidget(mHostActivity, appWidgetManager);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class PicSetFragment extends BaseFragment implements View.OnClickListener
         if (requestCode == GET_IMAGE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             try {
-                Bitmap bitmap = loadImage(getMainActivity(), uri);
+                Bitmap bitmap = loadImage(mHostActivity, uri);
                 mImageView.setImageBitmap(bitmap);
                 setupBitmap(bitmap);
             } catch (Exception e) {
@@ -110,21 +110,21 @@ public class PicSetFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void setupBitmap(Bitmap bitmap) throws FileNotFoundException {
-        File filesDir = getMainActivity().getFilesDir();
+        File filesDir =mHostActivity.getFilesDir();
         Setting.white_widget_pic = filesDir + File.separator + Global.SETTING_WHITE_WIDGET_PIC + ".png";
         FileOutputStream fos = new FileOutputStream(Setting.white_widget_pic);
         boolean compress = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         if (compress) {
-            Setting.setting(getMainActivity(),Global.SETTING_WHITE_WIDGET_PIC,Setting.white_widget_pic);
+            Setting.setting(mHostActivity,Global.SETTING_WHITE_WIDGET_PIC,Setting.white_widget_pic);
             AppWidgetManager appWidgetManager =
-                    (AppWidgetManager) getMainActivity().getSystemService(Context.APPWIDGET_SERVICE);
-            WidgetManager.updateWhiteWidget(getMainActivity(), appWidgetManager);
+                    (AppWidgetManager)mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
+            WidgetManager.updateWhiteWidget(mHostActivity, appWidgetManager);
         }
     }
 
     private void select() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (getMainActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (mHostActivity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_GET);
                 return;
             }

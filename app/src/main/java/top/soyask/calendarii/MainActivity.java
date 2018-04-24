@@ -2,11 +2,12 @@ package top.soyask.calendarii;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
+import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 
@@ -26,13 +27,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Setting.loadSetting(this);
+//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                .detectDiskReads()
+//                .detectDiskWrites()
+//                .detectNetwork()   // or .detectAll() for all detectable problems
+//                .penaltyLog()
+//                .build());
+//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                .detectLeakedSqlLiteObjects()
+//                .detectLeakedClosableObjects()
+//                .penaltyLog()
+//                .penaltyDeath()
+//                .build());
         checkAndUpdateDpi();
         setupTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            init();
+        if(savedInstanceState == null){
+            new InitTask().execute();
         }
     }
 
@@ -42,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
             Configuration configuration = new Configuration();
             configuration.setToDefaults();
             configuration.densityDpi = Setting.density_dpi;
-            resources.updateConfiguration(configuration,resources.getDisplayMetrics());
-            Toast.makeText(this,""+Setting.density_dpi,Toast.LENGTH_SHORT).show();
+            resources.updateConfiguration(configuration, resources.getDisplayMetrics());
         }
     }
 
@@ -65,9 +76,20 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-}
+    private class InitTask extends AsyncTask<Void,Void,Void>{
 
-/*
-TODO 小部件面积缩小
-TODO 接入系统日程
- */
+        @Override
+        protected Void doInBackground(Void... voids) {
+            GlobalData.loadBirthday(MainActivity.this);
+            GlobalData.loadHoliday(MainActivity.this);
+            GlobalData.loadWorkday(MainActivity.this);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            init();
+        }
+    }
+
+}

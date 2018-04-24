@@ -121,6 +121,7 @@ public class MonthUtils {
                 .append(dayOfMonth)
                 .toString();
         day.setHoliday(GlobalData.HOLIDAY.contains(str));
+        day.setWorkday(GlobalData.WORKDAY.contains(str));
     }
 
     private static void setBirthday(int month, int dayOfMonth, LunarDay lunarDay, Day day) {

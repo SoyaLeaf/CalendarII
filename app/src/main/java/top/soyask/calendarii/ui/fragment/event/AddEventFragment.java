@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -91,7 +90,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            mManager = (InputMethodManager) getMainActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            mManager = (InputMethodManager)mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
             mManager.showSoftInput(mEditText, 0);
         }
     }
@@ -150,7 +149,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     private void done() {
         String detail = mEditText.getText().toString();
         String title = 20 + mBtnDate.getText().toString();
-        EventDao eventDao = EventDao.getInstance(getMainActivity());
+        EventDao eventDao = EventDao.getInstance(mHostActivity);
 
         if (mEvent == null) {
             Event event = new Event(title, detail);
@@ -183,13 +182,13 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         int height = display.getHeight();
         int width = display.getWidth();
-        Animator anim = ViewAnimationUtils.createCircularReveal(getContentView(), width, 0, height, 0);
+        Animator anim = ViewAnimationUtils.createCircularReveal(mContentView, width, 0, height, 0);
         anim.setDuration(500);
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
         anim.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                getContentView().setVisibility(View.GONE);
+                mContentView.setVisibility(View.GONE);
                 removeFragment(AddEventFragment.this);
             }
         });
@@ -198,27 +197,19 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
 
     private void paste() {
         ClipboardManager clipboardManager =
-                (ClipboardManager) getMainActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                (ClipboardManager)mHostActivity.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData primaryClip = clipboardManager.getPrimaryClip();
         final String message = primaryClip.getItemAt(0).getText().toString();
         if (primaryClip.getItemCount() > 0) {
-            new AlertDialog.Builder(getMainActivity()).setTitle("剪切板内容")
+            new AlertDialog.Builder(mHostActivity).setTitle("剪切板内容")
                     .setMessage(message)
-                    .setPositiveButton("粘贴", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            mEditText.append(message);
-                            dialog.dismiss();
-                        }
+                    .setPositiveButton("粘贴", (dialog, which) -> {
+                        mEditText.append(message);
+                        dialog.dismiss();
                     })
-                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
+                    .setNegativeButton("取消", (dialog, which) -> dialog.dismiss()).show();
         } else {
-            new AlertDialog.Builder(getMainActivity()).setMessage("剪切板里什么也没有 >_<").show();
+            new AlertDialog.Builder(mHostActivity).setMessage("剪切板里什么也没有 >_<").show();
         }
 
 
@@ -239,7 +230,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        mManager = (InputMethodManager) getMainActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        mManager = (InputMethodManager)mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         mManager.showSoftInput(mEditText, 0);
     }
 

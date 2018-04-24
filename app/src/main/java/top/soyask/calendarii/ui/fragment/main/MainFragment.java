@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
@@ -41,7 +40,6 @@ import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.domain.LunarDay;
-import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
@@ -79,6 +77,13 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private View mEventView;
     private View mPoint;
     private ImageView mIvYear;
+    private View mIBtnMore;
+    private MainReceiver mMainReceiver;
+    private MenuItem mItemToday;
+    private Animator mEventViewAnimator;
+    private View mLeftBottom;
+    private TextView mIvBirth;
+    private View mFlBirth;
 
     private boolean isEventViewVisible = true;
     private boolean isBirthday = false;
@@ -252,18 +257,11 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         }
     };
 
-
-    private View mIBtnMore;
-    private MainReceiver mMainReceiver;
-    private MenuItem mItemToday;
-    private Animator mEventViewAnimator;
-    private View mLeftBottom;
     private static final String INTENT_FULL_URL = "intent://platformapi/startapp?saId=10000007&" +
             "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2FFKX01613AS644I1LR9US96%3F_s" +
             "%3Dweb-other&_t=1472443966571#Intent;" +
             "scheme=alipayqr;package=com.eg.android.AlipayGphone;end";
-    private TextView mIvBirth;
-    private View mFlBirth;
+
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -286,13 +284,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void initSelectDay() {
-        mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(getMainActivity()));
-        mAnimatorHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                onSelected(mSelectedDay);
-            }
-        }, 1000);
+        mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(mHostActivity));
+        mAnimatorHandler.postDelayed(() -> onSelected(mSelectedDay), 1000);
     }
 
     private void setupOtherView() {
@@ -331,7 +324,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setEvent(final String title) {
-        EventDao eventDao = EventDao.getInstance(getMainActivity());
+        EventDao eventDao = EventDao.getInstance(mHostActivity);
         List<Event> events = eventDao.query(title);
         mTvTitle.setText(title);
         if (mEventViewWidth == 0) {
@@ -341,7 +334,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         if (!events.isEmpty()) {
             setupEventView(title, events);
         } else {
-            mTvEvent.setText("这一天并没有添加任何的事件...");
+            mTvEvent.setText(R.string.nothing);
             mAnimatorHandler.sendEmptyMessage(View.INVISIBLE);
         }
     }
@@ -353,12 +346,9 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         } else {
             mTvEvent.setText(events.get(0).getDetail());
         }
-        mIBtnMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AllEventFragment allEventFragment = AllEventFragment.newInstance(title);
-                addFragment(allEventFragment);
-            }
+        mIBtnMore.setOnClickListener(v -> {
+            AllEventFragment allEventFragment = AllEventFragment.newInstance(title);
+            addFragment(allEventFragment);
         });
         mAnimatorHandler.sendEmptyMessage(View.VISIBLE);
     }
@@ -379,10 +369,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setToolbarDate(int year, int month) {
-        StringBuffer date = new StringBuffer()
-                .append(year).append("年")
-                .append(month < 10 ? "0" + month : month).append("月");
-        mActionBar.setTitle(date.toString());
+        String title = getString(R.string.xx_year_xx_month, year, month);
+        mActionBar.setTitle(title);
     }
 
     @Override
@@ -425,24 +413,16 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void donate() {
-        new AlertDialog.Builder(getMainActivity())
+        new AlertDialog.Builder(mHostActivity)
                 .setTitle(R.string.donate)
                 .setMessage(R.string.thank_you)
-                .setNegativeButton(R.string.not_interested, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(getMainActivity(), R.string.howerver_thanks, Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .setPositiveButton(R.string.donate_little, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            toDonate();
-                            Toast.makeText(getMainActivity(), R.string.thanks_very_much, Toast.LENGTH_SHORT).show();
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
-                        }
+                .setNegativeButton(R.string.not_interested, (dialog, which) -> Toast.makeText(mHostActivity, R.string.however_thanks, Toast.LENGTH_SHORT).show())
+                .setPositiveButton(R.string.donate_little, (dialog, which) -> {
+                    try {
+                        toDonate();
+                        Toast.makeText(mHostActivity, R.string.thanks_very_much, Toast.LENGTH_SHORT).show();
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
                     }
                 }).show();
     }
@@ -530,7 +510,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         String era = lunar.getEra();
         int img = EraUtils.getYearForTwelveZodiacImage(lunar.getYear());
         mTvLunar.setText(lunar.getLunarDate());
-        mTvLunarYear.setText(era + "年");
+        mTvLunarYear.setText(getString(R.string.xx_year, era));
         mIvYear.setImageDrawable(getResources().getDrawable(img));
     }
 
@@ -577,8 +557,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupReceiver();
-        GlobalData.loadBirthday(getMainActivity());
-        GlobalData.loadHoliday(getMainActivity());
     }
 
 
@@ -588,13 +566,13 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         filter.addAction(EventDao.ADD);
         filter.addAction(EventDao.UPDATE);
         filter.addAction(EventDao.DELETE);
-        getMainActivity().registerReceiver(mMainReceiver, filter);
+        mHostActivity.registerReceiver(mMainReceiver, filter);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getMainActivity().unregisterReceiver(mMainReceiver);
+        mHostActivity.unregisterReceiver(mMainReceiver);
     }
 
     @Override
@@ -621,7 +599,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         intent.putExtra("year", year);
         intent.putExtra("month", month);
         intent.putExtra("day", day);
-        getMainActivity().sendBroadcast(intent);
+        mHostActivity.sendBroadcast(intent);
     }
 
     public class MainReceiver extends BroadcastReceiver {

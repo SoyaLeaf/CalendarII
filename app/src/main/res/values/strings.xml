@@ -9,7 +9,7 @@
     <string name="donate">捐赠</string>
     <string name="thank_you">谢谢你</string>
     <string name="not_interested">没兴趣</string>
-    <string name="howerver_thanks">还是谢谢支持！我会更加努力的。</string>
+    <string name="however_thanks">还是谢谢支持！我会更加努力的。</string>
     <string name="thanks_very_much">万分感谢！我会更加努力的。</string>
     <string name="donate_little">捐赠一点</string>
     <string name="no_market">您的系统中没有安装应用市场</string>
@@ -19,6 +19,19 @@
     <string name="it_has_been_xx_days">距今已过%4d天</string>
     <string name="xx_later">%d天之后</string>
     <string name="xx_before">%d天之前</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="delete">删除</string>
+    <string name="setting">设置</string>
+    <string name="current_lunar_size">农历字体大小，当前为：%d</string>
+    <string name="current_week_size">星期字体大小，当前为：%d</string>
+    <string name="current_number_size">日期数字字体大小，当前为：%d</string>
+    <string name="current_holiday_size">假日字体大小，当前为：%d</string>
+    <string name="current_day_size">日期背景大小，当前为：%d</string>
+    <string name="current_dpi">DPI，当前为：%d</string>
+    <string name="birthday">生日</string>
+    <string name="xx_year">%s年</string>
+    <string name="xx_year_xx_month">%d年%02d月</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

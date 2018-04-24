@@ -44,11 +44,13 @@ public class BirthdayDao {
         values.put("who", birthday.getWho());
         values.put("isLunar", birthday.isLunar());
         database.insert(BIRTHDAY, null, values);
+        database.close();
     }
 
     public void delete(int id) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(BIRTHDAY, "id = ?", new String[]{id + ""});
+        database.close();
     }
 
     public void update(Birthday birthday) {
@@ -58,6 +60,7 @@ public class BirthdayDao {
         values.put("who", birthday.getWho());
         values.put("isLunar", birthday.isLunar());
         database.update(BIRTHDAY, values, "id = ?", new String[]{birthday.getId() + ""});
+        database.close();
     }
 
     public List<Birthday> queryAll() {
@@ -77,6 +80,7 @@ public class BirthdayDao {
             birthday.setLunar(isLunar == 1);
             birthdays.add(birthday);
         }
+        database.close();
         return birthdays;
     }
 }
