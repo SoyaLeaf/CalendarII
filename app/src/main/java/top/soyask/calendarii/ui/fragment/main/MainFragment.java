@@ -40,7 +40,6 @@ import top.soyask.calendarii.domain.Birthday;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.domain.LunarDay;
-import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
@@ -558,9 +557,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupReceiver();
-        GlobalData.loadBirthday(mHostActivity);
-        GlobalData.loadHoliday(mHostActivity);
-        GlobalData.loadWorkday(mHostActivity);
     }
 
 

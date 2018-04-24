@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import top.soyask.calendarii.R;
@@ -34,11 +35,9 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private int mDateStartPos = 0;
     private int mEndPosition;
 
-    public MonthAdapter(@NonNull List<Day> days, @NonNull OnItemClickListener onItemClickListener) {
-        this.mDays = days;
+    public MonthAdapter(@NonNull OnItemClickListener onItemClickListener) {
+        this.mDays = new ArrayList<>();
         this.mOnItemClickListener = onItemClickListener;
-        this.mDateStartPos = (mDays.get(0).getDayOfWeek() + 6 - Setting.date_offset) % 7 + 7;
-        this.mEndPosition = mDateStartPos + mDays.size();
     }
 
     public void updateStartDate() {
@@ -103,7 +102,7 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 tv.setText(WEEK_ARRAY[index]);
                 if (Setting.day_week_text_size != -1) {
                     tv.setTextSize(Setting.day_week_text_size);
-                }else {
+                } else {
                     tv.setTextSize(Global.DEFAULT_WEEK_SIZE);
                 }
                 break;
@@ -153,20 +152,20 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private void setupViewSize(DayViewHolder holder) {
         if (Setting.day_number_text_size != -1) {
             holder.tv_greg.setTextSize(Setting.day_number_text_size);
-        }else {
+        } else {
             holder.tv_greg.setTextSize(Global.DEFAULT_NUMBER_SIZE);
         }
 
         if (Setting.day_lunar_text_size != -1) {
             holder.tv_lunar.setTextSize(Setting.day_lunar_text_size);
-        }else {
+        } else {
             holder.tv_lunar.setTextSize(Global.DEFAULT_LUNAR_SIZE);
         }
 
         if (Setting.day_holiday_text_size != -1) {
             holder.tv_holiday.setTextSize(Setting.day_holiday_text_size);
             holder.tv_work.setTextSize(Setting.day_holiday_text_size);
-        }else {
+        } else {
             holder.tv_holiday.setTextSize(Global.DEFAULT_HOLIDAY_SIZE);
             holder.tv_work.setTextSize(Global.DEFAULT_HOLIDAY_SIZE);
         }
@@ -174,10 +173,10 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (Setting.day_size != -1) {
             holder.view_group.getLayoutParams().width = Setting.day_size;
             holder.view_group.getLayoutParams().height = Setting.day_size;
-        }else {
+        } else {
             int size = holder.itemView.getResources().getDimensionPixelSize(R.dimen.item_day_size);
-            holder.view_group.getLayoutParams().width =  size;
-            holder.view_group.getLayoutParams().height =  size;
+            holder.view_group.getLayoutParams().width = size;
+            holder.view_group.getLayoutParams().height = size;
         }
         holder.itemView.postInvalidate();
     }
@@ -210,6 +209,13 @@ public class MonthAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemCount() {
         return 49;
+    }
+
+    public void setDays(List<Day> days) {
+        mDays.clear();
+        mDays.addAll(days);
+        updateStartDate();
+        notifyDataSetChanged();
     }
 
     public interface OnItemClickListener {

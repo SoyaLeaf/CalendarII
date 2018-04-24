@@ -32,21 +32,21 @@
             android:textColor="@android:color/white"
             android:textSize="10dp" />
 
-        <FrameLayout
+        <View
             android:id="@+id/fl_event"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/bg_sub_r60"
-            android:visibility="gone"></FrameLayout>
+            android:visibility="gone"></View>
 
-        <FrameLayout
+        <View
             android:id="@+id/fl_select"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/bg_primary_border_r60"
-            android:visibility="gone"></FrameLayout>
+            android:visibility="gone"></View>
 
         <TextView
             android:id="@+id/tv_holiday"
@@ -69,19 +69,14 @@
             android:textSize="5dp"
             android:visibility="gone" />
 
-        <FrameLayout
-            android:id="@+id/iv_birth"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone">
 
-            <View
-                android:layout_width="4dp"
-                android:layout_height="4dp"
-                android:layout_gravity="right"
-                android:layout_margin="4dp"
-                android:background="@drawable/bg_left_bottom" />
-        </FrameLayout>
+        <View
+            android:id="@+id/iv_birth"
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_margin="4dp"
+            android:background="@drawable/bg_left_bottom" />
     </RelativeLayout>
 </FrameLayout>
 

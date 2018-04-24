@@ -48,6 +48,7 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         database.insert(EVENT, null, values);
+        database.close();
         sendBroadcast(ADD);
     }
 
@@ -66,39 +67,42 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         database.update(EVENT, values, "id = ?", new String[]{String.valueOf(event.getId())});
-
+        database.close();
         sendBroadcast(UPDATE);
     }
 
     public void delete(Event event) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "id = ?", new String[]{String.valueOf(event.getId())});
+        database.close();
         sendBroadcast(DELETE);
     }
 
     public void delete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "title = ?", new String[]{title});
+        database.close();
         sendBroadcast(DELETE);
     }
 
     public void deleteAll() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, null, null);
-
+        database.close();
         sendBroadcast(DELETE);
     }
 
     public void deleteComplete() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "isComplete = ?", new String[]{String.valueOf(1)});
-
+        database.close();
         sendBroadcast(DELETE);
     }
 
     public void deleteComplete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
+        database.close();
         sendBroadcast(DELETE);
     }
 
@@ -117,6 +121,7 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
+        database.close();
 
         return events;
     }
@@ -147,6 +152,7 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
+        database.close();
         return events;
     }
 
@@ -168,7 +174,7 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
-
+        database.close();
         return events;
     }
 }

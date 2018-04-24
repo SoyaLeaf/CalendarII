@@ -29,21 +29,21 @@
             android:gravity="center_horizontal|top"
             android:textSize="@dimen/lunar_text_size" />
 
-        <FrameLayout
+        <View
             android:id="@+id/fl_event"
             android:layout_width="3dp"
             android:layout_height="3dp"
             android:layout_above="@id/tv_lunar"
             android:layout_toRightOf="@id/tv_greg"
             android:background="@drawable/bg_primary_left_top_r10"
-            android:visibility="gone"></FrameLayout>
+            android:visibility="gone"></View>
 
-        <FrameLayout
+        <View
             android:id="@+id/fl_select"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/bg_primary_border_r60"
-            android:visibility="gone"></FrameLayout>
+            android:visibility="gone"></View>
 
         <TextView
             android:id="@+id/tv_holiday"
@@ -65,21 +65,14 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <FrameLayout
+        <View
             android:id="@+id/iv_birth"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="2dp"
-            android:background="@drawable/bg_birth_r60"
-            android:visibility="gone">
-
-            <View
-                android:layout_width="4dp"
-                android:layout_height="4dp"
-                android:layout_gravity="right"
-                android:layout_margin="4dp"
-                android:background="@drawable/bg_left_bottom" />
-        </FrameLayout>
+            android:layout_width="4dp"
+            android:layout_height="4dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_margin="4dp"
+            android:background="@drawable/bg_left_bottom" />
     </RelativeLayout>
 </FrameLayout>
 

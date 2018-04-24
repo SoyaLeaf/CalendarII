@@ -21,9 +21,8 @@ import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
+import top.soyask.calendarii.task.LoadDataTask;
 import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
-import top.soyask.calendarii.utils.DayUtils;
-import top.soyask.calendarii.utils.MonthUtils;
 
 import static android.content.res.Configuration.DENSITY_DPI_UNDEFINED;
 import static top.soyask.calendarii.MainActivity.THEMES;
@@ -51,25 +50,15 @@ public class ZoomActivity extends AppCompatActivity
         setupTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zoom);
-        setupData();
         setupUI();
+        LoadDataTask task = new LoadDataTask(this, mMonthAdapter);
+        Calendar calendar = Calendar.getInstance();
+        task.execute(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
     }
 
     private void setupTheme() {
         int theme = THEMES[Setting.theme];
         setTheme(theme);
-    }
-
-    private synchronized void setupData() {
-        mEventDao = EventDao.getInstance(this);
-        Calendar calendar = Calendar.getInstance();
-        int dayCount = DayUtils.getMonthDayCount(calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR));
-        mDays.clear();
-        for (int i = 0; i < dayCount; i++) {
-            calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-            Day day = MonthUtils.generateDay(calendar, mEventDao);
-            mDays.add(day);
-        }
     }
 
     protected void setupUI() {
@@ -145,22 +134,13 @@ public class ZoomActivity extends AppCompatActivity
     }
 
     private void setupRecyclerView() {
-        mMonthAdapter = new MonthAdapter(mDays, this);
+        mMonthAdapter = new MonthAdapter(this);
         RecyclerView recyclerView = findViewById(R.id.rv);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 7));
         recyclerView.setAdapter(mMonthAdapter);
         recyclerView.setItemAnimator(null);
     }
 
-
-    private void reset() {
-        Setting.remove(this, Global.SETTING_DENSITY_DPI);
-        Setting.density_dpi = -1;
-        Resources resources = getResources();
-        Configuration newConfig = resources.getConfiguration();
-        newConfig.densityDpi = DENSITY_DPI_UNDEFINED;
-        resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
-    }
 
     @Override
     public void onDayClick(int position, Day day) {
@@ -195,10 +175,6 @@ public class ZoomActivity extends AppCompatActivity
                     Setting.day_holiday_text_size = progress;
                     mTvHolidaySize.setText(getString(R.string.current_holiday_size, progress));
                     findViewById(R.id.btn_reset_holiday).setVisibility(View.VISIBLE);
-                    break;
-                case R.id.btn_reset_dpi:
-                    reset();
-                    recreate();
                     break;
             }
         }
@@ -298,9 +274,24 @@ public class ZoomActivity extends AppCompatActivity
                 Setting.day_week_text_size = -1;
                 Setting.setting(this, Global.SETTING_DAY_WEEK_TEXT_SIZE, -1);
                 break;
+            case R.id.btn_reset_dpi:
+                resetDpi();
+                recreate();
+                break;
         }
         setupSeekBar();
         sendBroadcast(new Intent(EventDao.UPDATE));
         mMonthAdapter.notifyDataSetChanged();
     }
+
+
+    private void resetDpi() {
+        Setting.remove(this, Global.SETTING_DENSITY_DPI);
+        Setting.density_dpi = -1;
+        Resources resources = getResources();
+        Configuration newConfig = resources.getConfiguration();
+        newConfig.densityDpi = DENSITY_DPI_UNDEFINED;
+        resources.updateConfiguration(newConfig, resources.getDisplayMetrics());
+    }
+
 }

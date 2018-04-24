@@ -24,7 +24,6 @@ public final class Setting {
 
     public static void loadSetting(Context context) {
         SharedPreferences setting = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE);
-        Setting.theme = setting.getInt(Global.SETTING_THEME, 0);
         Setting.date_offset = setting.getInt(Global.SETTING_DATE_OFFSET, 0);
         Setting.widget_alpha = setting.getInt(Global.SETTING_WIDGET_ALPHA, 0);
         Setting.white_widget_pic = setting.getString(Global.SETTING_WHITE_WIDGET_PIC, null);
@@ -34,6 +33,11 @@ public final class Setting {
         Setting.day_lunar_text_size = setting.getInt(Global.SETTING_DAY_LUNAR_TEXT_SIZE,-1);
         Setting.day_week_text_size = setting.getInt(Global.SETTING_DAY_WEEK_TEXT_SIZE, -1);
         Setting.day_holiday_text_size = setting.getInt(Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, -1);
+    }
+
+    public static void loadTheme(Context context){
+        SharedPreferences setting = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE);
+        Setting.theme = setting.getInt(Global.SETTING_THEME, 0);
     }
 
     public static void setting(Context context, String name, int value) {
