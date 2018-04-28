@@ -32,6 +32,8 @@
     <string name="birthday">生日</string>
     <string name="xx_year">%s年</string>
     <string name="xx_year_xx_month">%d年%02d月</string>
+    <string name="do_not_save">不保存</string>
+    <string name="whether_to_save">是否保存当前内容？</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

@@ -8,8 +8,8 @@ android {
         applicationId "top.soyask.calendarii"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 16
-        versionName "2.0"
+        versionCode 17
+        versionName "真·2.0"
     }
     buildTypes {
         release {

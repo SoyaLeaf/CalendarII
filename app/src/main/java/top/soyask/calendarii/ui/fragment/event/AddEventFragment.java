@@ -90,7 +90,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            mManager = (InputMethodManager)mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            mManager = (InputMethodManager) mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
             mManager.showSoftInput(mEditText, 0);
         }
     }
@@ -133,17 +133,34 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
         switch (v.getId()) {
             case R.id.btn_date:
                 DateSelectDialog dateSelectDialog = DateSelectDialog.newInstance(mDay.getYear(), mDay.getMonth(), mDay.getDayOfMonth());
-                dateSelectDialog.show(getChildFragmentManager(),"");
+                dateSelectDialog.show(getChildFragmentManager(), "");
                 dateSelectDialog.setDateSelectCallback(this);
                 break;
             case R.id.ib_done:
                 done();
                 break;
             default:
-                removeFragment(this);
-                mManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+                String detail = mEditText.getText().toString();
+                if (detail.isEmpty()) {
+                    removeSelf();
+                } else {
+                    new AlertDialog.Builder(mHostActivity)
+                            .setMessage(R.string.whether_to_save)
+                            .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                                done();
+                            })
+                            .setNegativeButton(R.string.do_not_save, (dialog, which) -> {
+                                removeSelf();
+                            })
+                            .show();
+                }
                 break;
         }
+    }
+
+    private void removeSelf() {
+        removeFragment(this);
+        mManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
     private void done() {
@@ -197,7 +214,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
 
     private void paste() {
         ClipboardManager clipboardManager =
-                (ClipboardManager)mHostActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                (ClipboardManager) mHostActivity.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData primaryClip = clipboardManager.getPrimaryClip();
         final String message = primaryClip.getItemAt(0).getText().toString();
         if (primaryClip.getItemCount() > 0) {
@@ -230,7 +247,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onAnimationEnd(Animator animation) {
-        mManager = (InputMethodManager)mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mManager = (InputMethodManager) mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         mManager.showSoftInput(mEditText, 0);
     }
 
@@ -245,7 +262,8 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onSelectCancel() { }
+    public void onSelectCancel() {
+    }
 
     @Override
     public void onValueChange(int year, int month, int day) {
@@ -257,7 +275,8 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
-    public void onSelectConfirm(int year, int month, int day) {}
+    public void onSelectConfirm(int year, int month, int day) {
+    }
 
     @Override
     public void onDismiss() {
