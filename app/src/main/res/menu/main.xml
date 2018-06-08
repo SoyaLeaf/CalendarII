@@ -24,10 +24,6 @@
         android:title="去评分"
         app:showAsAction="never" />
     <item
-        android:id="@+id/menu_donate"
-        android:title="捐赠"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/menu_about"
         android:title="关于"
         app:showAsAction="never" />

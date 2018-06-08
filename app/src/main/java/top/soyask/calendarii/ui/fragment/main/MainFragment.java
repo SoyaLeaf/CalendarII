@@ -2,7 +2,6 @@ package top.soyask.calendarii.ui.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -256,12 +254,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         }
     };
 
-    private static final String INTENT_FULL_URL = "intent://platformapi/startapp?saId=10000007&" +
-            "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2FFKX01613AS644I1LR9US96%3F_s" +
-            "%3Dweb-other&_t=1472443966571#Intent;" +
-            "scheme=alipayqr;package=com.eg.android.AlipayGphone;end";
-
-
     public MainFragment() {
         super(R.layout.fragment_main);
     }
@@ -404,32 +396,11 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 SettingFragment settingFragment = SettingFragment.newInstance();
                 addFragment(settingFragment);
                 break;
-            case R.id.menu_donate:
-                donate();
-                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void donate() {
-        new AlertDialog.Builder(mHostActivity)
-                .setTitle(R.string.donate)
-                .setMessage(R.string.thank_you)
-                .setNegativeButton(R.string.not_interested, (dialog, which) -> Toast.makeText(mHostActivity, R.string.however_thanks, Toast.LENGTH_SHORT).show())
-                .setPositiveButton(R.string.donate_little, (dialog, which) -> {
-                    try {
-                        toDonate();
-                        Toast.makeText(mHostActivity, R.string.thanks_very_much, Toast.LENGTH_SHORT).show();
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                }).show();
-    }
 
-    private void toDonate() throws URISyntaxException {
-        Intent intent = Intent.parseUri(INTENT_FULL_URL, Intent.URI_INTENT_SCHEME);
-        startActivity(intent);
-    }
 
     private void showSelectDialog() {
         DateSelectDialog dateSelectDialog = DateSelectDialog.newInstance(mSelectedDay.getYear(), mSelectedDay.getMonth(), mSelectedDay.getDayOfMonth());
