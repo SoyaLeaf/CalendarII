@@ -16,7 +16,6 @@ import android.view.View;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.utils.DayUtils;
 
 /**
@@ -32,8 +31,6 @@ public class CalendarView extends View {
     private static final int DATE_VIEW_TYPE_NEXT = 2;
 
     private List<? extends IDay> mDays;
-    private int mCurrentYear;
-    private int mCurrentMonth;
     private int mFirstDayOfWeek;
     private int mFirstDayOffset = 0;
     private int mDisplayWidth;
@@ -53,7 +50,7 @@ public class CalendarView extends View {
     private int mWeekdayTextColor;
     private int mWeekendTextColor;
     private int mTodayTextColor;
-    private OnDaySelectedListener mListener;
+    private OnDayClickListener mListener;
     private boolean initialized;
 
     private WeekView[] mWeekViews = new WeekView[7];
@@ -95,8 +92,6 @@ public class CalendarView extends View {
     }
 
     public void setData(int currentYear, int currentMonth, List<? extends IDay> days) {
-        mCurrentYear = currentYear;
-        mCurrentMonth = currentMonth;
         mDays = days;
         mFirstDayOfWeek = (mDays.get(0).getDayOfWeek() + 6 - mFirstDayOffset) % 7;
         initWeekViews();
@@ -219,10 +214,14 @@ public class CalendarView extends View {
                 if (!moved) {
                     float x = event.getX();
                     float y = event.getY();
-                    int i = (int) ((y - WeekView.size / 2 - mDateMargin - getPaddingTop()) / (mDateHeight + 2 * mDateMargin));
-                    int j = (int) (x / mDateWidth);
-                    int position = i * 7 + j;
-                    select(position);
+
+                    float v = y - WeekView.size / 2 - mDateMargin - getPaddingTop();
+                    if (v > 0) {
+                        int i = (int) (v / (mDateHeight + 2 * mDateMargin));
+                        int j = (int) (x / mDateWidth);
+                        int position = i * 7 + j;
+                        select(position);
+                    }
                 }
                 break;
         }
@@ -230,13 +229,52 @@ public class CalendarView extends View {
     }
 
     public void select(int position) {
-        if (position >= mFirstDayOfWeek && position < mFirstDayOfWeek + mDays.size()) {
-            mSelectPos = position;
-            postInvalidate();
-            if (mListener != null) {
-                IDay day = mDays.get(position - mFirstDayOfWeek);
-                mListener.onDaySelected(position, day);
-            }
+        if (position < 0) {
+            mSelectPos = -1;
+        } else if (isPositionInCurrentMonth(position)) {
+            onDaySelected(position);
+        } else if (isPositionInPrevMonth(position)) {
+            onPrevMonthClick(position);
+        } else if (isPositionInNextMonth(position)) {
+            onNextMonthClick(position);
+        }
+        postInvalidate();
+    }
+
+    private boolean isPositionInCurrentMonth(int position) {
+        return position >= mFirstDayOfWeek && position < mFirstDayOfWeek + mDays.size();
+    }
+
+    private boolean isPositionInPrevMonth(int position) {
+        return position < mFirstDayOfWeek;
+    }
+
+    private boolean isPositionInNextMonth(int position) {
+        return position >= mFirstDayOfWeek + mDays.size();
+    }
+
+    private void onDaySelected(int position) {
+        mSelectPos = position;
+        if (mListener != null) {
+            IDay day = mDays.get(position - mFirstDayOfWeek);
+            mListener.onDaySelected(position, day);
+        }
+    }
+
+    private void onPrevMonthClick(int position) {
+        mSelectPos = -1;
+        if (mListener != null) {
+            int i = position / 7;
+            int j = position % 7;
+            int dayOfMonth = mDateViews[i][j].day.getDayOfMonth();
+            mListener.onPrevMonthClick(dayOfMonth);
+        }
+    }
+
+    private void onNextMonthClick(int position) {
+        mSelectPos = -1;
+        if (mListener != null) {
+            mListener.onNextMonthClick(position + 1 - mFirstDayOfWeek - mDays.size());
         }
     }
 
@@ -244,45 +282,45 @@ public class CalendarView extends View {
         select(position + mFirstDayOfWeek - 1);
     }
 
-    public void setOnDaySelectedListener(OnDaySelectedListener listener) {
+    public void setOnDaySelectedListener(OnDayClickListener listener) {
         this.mListener = listener;
     }
 
-    public void updateStartDate() {
-        mFirstDayOffset = Setting.date_offset;
-        postInvalidate();
+    public CalendarView setFirstDayOffset(int firstDayOffset) {
+        mFirstDayOffset = firstDayOffset;
+        return this;
     }
-    
+
     public CalendarView setDateCircleSize(int dateCircleSize) {
-        if(dateCircleSize != -1){
+        if (dateCircleSize != -1) {
             mDateCircleSize = dateCircleSize;
         }
         return this;
     }
 
     public CalendarView setDateTextSize(float dateTextSize) {
-        if(dateTextSize != -1){
+        if (dateTextSize != -1) {
             mDateTextSize = dateTextSize;
         }
         return this;
     }
 
     public CalendarView setDateBottomTextSize(float bottomTextSize) {
-        if(bottomTextSize != -1){
+        if (bottomTextSize != -1) {
             mDateBottomTextSize = bottomTextSize;
         }
         return this;
     }
 
     public CalendarView setWeekTextSize(float weekTextSize) {
-        if(weekTextSize != -1){
+        if (weekTextSize != -1) {
             mWeekTextSize = weekTextSize;
         }
         return this;
     }
 
     public CalendarView setHolidayTextSize(float holidayTextSize) {
-        if(holidayTextSize != -1){
+        if (holidayTextSize != -1) {
             mHolidayTextSize = holidayTextSize;
         }
         return this;
@@ -529,7 +567,11 @@ public class CalendarView extends View {
         }
     }
 
-    public interface OnDaySelectedListener {
+    public interface OnDayClickListener {
         void onDaySelected(int position, IDay day);
+
+        void onNextMonthClick(int dayOfMonth);
+
+        void onPrevMonthClick(int dayOfMonth);
     }
 }

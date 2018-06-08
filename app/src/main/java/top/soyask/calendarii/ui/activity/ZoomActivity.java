@@ -27,7 +27,7 @@ import static android.content.res.Configuration.DENSITY_DPI_UNDEFINED;
 import static top.soyask.calendarii.MainActivity.THEMES;
 
 public class ZoomActivity extends AppCompatActivity
-        implements SeekBar.OnSeekBarChangeListener,View.OnClickListener {
+        implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private List<Day> mDays = new ArrayList<>();
     private EventDao mEventDao;
@@ -271,7 +271,8 @@ public class ZoomActivity extends AppCompatActivity
     }
 
     private void updateCalendarSetting() {
-        mCalendarView.setDateCircleSize(Setting.day_size == -1 ? getDimension(R.dimen.item_day_size) : Setting.day_size)
+        mCalendarView.setFirstDayOffset(Setting.date_offset)
+                .setDateCircleSize(Setting.day_size == -1 ? getDimension(R.dimen.item_day_size) : Setting.day_size)
                 .setDateTextSize(Setting.day_number_text_size == -1 ? getDimension(R.dimen.date_text_size) : Setting.day_number_text_size)
                 .setDateBottomTextSize(Setting.day_lunar_text_size == -1 ? getDimension(R.dimen.bottom_text_size) : Setting.day_lunar_text_size)
                 .setHolidayTextSize(Setting.day_holiday_text_size == -1 ? getDimension(R.dimen.holiday_text_size) : Setting.day_holiday_text_size)

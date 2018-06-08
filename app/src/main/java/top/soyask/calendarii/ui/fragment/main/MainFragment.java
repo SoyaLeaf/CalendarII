@@ -494,6 +494,16 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         calculateDelta_T();
     }
 
+    @Override
+    public void skipToNextMonth(int dayOfMonth) {
+        skipToOneDay(1, dayOfMonth);
+    }
+
+    @Override
+    public void skipToPrevMonth(int dayOfMonth) {
+        skipToOneDay(-1, dayOfMonth);
+    }
+
     private void setBirthday(Day day) {
         if (day.hasBirthday()) {
             StringBuffer buffer = getBirthdayStr();
@@ -591,14 +601,21 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         skipToOneDay(year, month, day);
     }
 
-    private void skipToOneDay(int year, int month, int day) {
-        int position = (year - MonthFragmentAdapter.YEAR_START) * 12 + month - 1;
+    private void skipToOneDay(int offset, int dayOfMonth) {
+        int position = mViewPager.getCurrentItem() + offset;
+        int year = position / MONTH_COUNT + YEAR_START_REAL;
+        int month = position % MONTH_COUNT + 1;
         mViewPager.setCurrentItem(position);
         Intent intent = new Intent(MonthFragment.SKIP);
         intent.putExtra("year", year);
         intent.putExtra("month", month);
-        intent.putExtra("day", day);
+        intent.putExtra("day", dayOfMonth);
         mHostActivity.sendBroadcast(intent);
+    }
+
+    private void skipToOneDay(int year, int month, int day) {
+        int position = (year - MonthFragmentAdapter.YEAR_START) * 12 + month - 1;
+        skipToOneDay(position - mViewPager.getCurrentItem(), day);
     }
 
     public class MainReceiver extends BroadcastReceiver {
