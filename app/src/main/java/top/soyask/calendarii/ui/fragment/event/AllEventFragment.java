@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,29 +37,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     private ProgressDialog mProgressDialog;
     private String mTitle;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case WAIT:
-                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "正在恢复，请稍等...");
-                    break;
-                case CANCEL:
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                        mProgressDialog = null;
-                    }
-                    break;
-                case DELETE_ALL:
-                    deleteAll();
-                    break;
-                case DELETE_COMP:
-                    deleteComplete();
-                    break;
-            }
-        }
-    };
+    private Handler mHandler = new EventHandler(this);
 
 
     private Comparator<Event> mComparator = (o1, o2) -> {
@@ -97,7 +76,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
         mEventAdapter = new EventAdapter(mEvents, this);
         mRecyclerView.setAdapter(mEventAdapter);
 
-        if(mTitle != null){
+        if (mTitle != null) {
             findToolbar().setTitle(mTitle);
         }
         findToolbar().setNavigationOnClickListener(this);
@@ -128,9 +107,9 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
 
     @Override
     public void onEditClick(final int position, Event event) {
-        AddEventFragment addEventFragment = AddEventFragment.newInstance(null, event);
-        addEventFragment.setOnUpdateListener(() -> mEventAdapter.notifyItemChanged(position));
-        addFragment(addEventFragment);
+        EditEventFragment editEventFragment = EditEventFragment.newInstance(null, event);
+        editEventFragment.setOnUpdateListener(() -> mEventAdapter.notifyItemChanged(position));
+        addFragment(editEventFragment);
     }
 
     @Override
@@ -173,11 +152,7 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     public void onShare(Event event) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
-        String text = new StringBuffer()
-                .append(event.getDetail())
-                .append("\n 　　　　　--")
-                .append(event.getTitle())
-                .toString();
+        String text = String.format("%s\n 　　　　　--%s", event.getDetail(), event.getTitle());
         intent.putExtra(Intent.EXTRA_SUBJECT, ".");
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
@@ -259,5 +234,38 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
             mEventAdapter.notifyDataSetChanged();
             mHandler.sendEmptyMessage(CANCEL);
         });
+    }
+
+    private static class EventHandler extends Handler {
+        private final WeakReference<AllEventFragment> mFragment;
+
+        private EventHandler(AllEventFragment fragment) {
+            mFragment = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            AllEventFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            switch (msg.what) {
+                case WAIT:
+                    fragment.mProgressDialog = ProgressDialog.show(fragment.mHostActivity, null, "正在恢复，请稍等...");
+                    break;
+                case CANCEL:
+                    if (fragment.mProgressDialog != null) {
+                        fragment.mProgressDialog.dismiss();
+                        fragment.mProgressDialog = null;
+                    }
+                    break;
+                case DELETE_ALL:
+                    fragment.deleteAll();
+                    break;
+                case DELETE_COMP:
+                    fragment.deleteComplete();
+                    break;
+            }
+        }
     }
 }

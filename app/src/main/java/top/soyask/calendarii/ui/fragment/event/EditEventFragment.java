@@ -2,17 +2,17 @@ package top.soyask.calendarii.ui.fragment.event;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.Build;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -21,6 +21,7 @@ import android.widget.EditText;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
@@ -30,7 +31,7 @@ import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 
 
-public class AddEventFragment extends BaseFragment implements View.OnClickListener, Animator.AnimatorListener, DateSelectDialog.DateSelectCallback {
+public class EditEventFragment extends BaseFragment implements View.OnClickListener, Animator.AnimatorListener, DateSelectDialog.DateSelectCallback {
 
     private static final String DATE = "DATE";
     private static final String EVENT = "EVENT";
@@ -43,12 +44,12 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     private OnAddListener mOnAddListener;
     private boolean isExiting;
 
-    public AddEventFragment() {
+    public EditEventFragment() {
         super(R.layout.fragment_add_event);
     }
 
-    public static AddEventFragment newInstance(Day day, Event event) {
-        AddEventFragment fragment = new AddEventFragment();
+    public static EditEventFragment newInstance(Day day, Event event) {
+        EditEventFragment fragment = new EditEventFragment();
         Bundle args = new Bundle();
         args.putSerializable(DATE, day);
         args.putSerializable(EVENT, event);
@@ -69,10 +70,8 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
             mEditText.setText(mEvent.getDetail());
             mBtnDate.setText(title.substring(2));
         } else {
-            String date = new StringBuffer()
-                    .append(mDay.getYear()).append("年")
-                    .append(mDay.getMonth()).append("月")
-                    .append(mDay.getDayOfMonth()).append("日").toString();
+            String date = String.format(Locale.CHINA, "%s年%d月%d日",
+                    String.valueOf(mDay.getYear()), mDay.getMonth(), mDay.getDayOfMonth());
             mBtnDate.setText(date.substring(2));
         }
         mEditText.requestFocus();
@@ -89,8 +88,8 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.LOLLIPOP) {
-            mManager = (InputMethodManager) mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mManager = (InputMethodManager) mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (mManager != null) {
             mManager.showSoftInput(mEditText, 0);
         }
     }
@@ -105,7 +104,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
 
         if (mDay == null && mEvent != null) {
             String title = mEvent.getTitle();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
             Date date = null;
             try {
                 date = dateFormat.parse(title);
@@ -116,16 +115,20 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void enter(View view) {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        int height = display.getHeight();
-        int width = display.getWidth();
-        Animator anim = ViewAnimationUtils.createCircularReveal(view, width, height, 0, height);
-        anim.setDuration(500);
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
-        anim.addListener(this);
-        anim.start();
+        WindowManager windowManager = mHostActivity.getWindowManager();
+        if (windowManager != null) {
+            Display display = windowManager.getDefaultDisplay();
+            Point outSize = new Point();
+            display.getRealSize(outSize);
+            int height = outSize.y;
+            int width = outSize.x;
+            Animator anim = ViewAnimationUtils.createCircularReveal(view, width, height, 0, height);
+            anim.setDuration(500);
+            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+            anim.addListener(this);
+            anim.start();
+        }
     }
 
     @Override
@@ -146,59 +149,65 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
                 } else {
                     new AlertDialog.Builder(mHostActivity)
                             .setMessage(R.string.whether_to_save)
-                            .setPositiveButton(R.string.confirm, (dialog, which) -> {
-                                done();
-                            })
-                            .setNegativeButton(R.string.do_not_save, (dialog, which) -> {
-                                removeSelf();
-                            })
+                            .setPositiveButton(R.string.confirm, (dialog, which) -> done())
+                            .setNegativeButton(R.string.do_not_save, (dialog, which) -> removeSelf())
                             .show();
                 }
                 break;
         }
     }
 
-    private void removeSelf() {
-        removeFragment(this);
-        mManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-    }
 
     private void done() {
         String detail = mEditText.getText().toString();
-        String title = 20 + mBtnDate.getText().toString();
-        EventDao eventDao = EventDao.getInstance(mHostActivity);
 
-        if (mEvent == null) {
-            Event event = new Event(title, detail);
-            eventDao.add(event);
-            if (mOnAddListener != null) {
-                mOnAddListener.onAdd();
-            }
-        } else {
-            mEvent.setTitle(title);
-            mEvent.setDetail(detail);
-            eventDao.update(mEvent);
-            if (mOnUpdateListener != null) {
-                mOnUpdateListener.onUpdate();
+        if (checkContent(detail)) {
+            String title = 20 + mBtnDate.getText().toString();
+            EventDao eventDao = EventDao.getInstance(mHostActivity);
+            if (mEvent == null) {
+                addNewEvent(detail, title, eventDao);
+            } else {
+                updateEvent(detail, title, eventDao);
             }
         }
+        removeWithAnimationAndHideSoftInput();
+    }
+
+    private boolean checkContent(String detail) {
+        return detail != null && !detail.trim().isEmpty();
+    }
+
+    private void addNewEvent(String detail, String title, EventDao eventDao) {
+        Event event = new Event(title, detail);
+        eventDao.add(event);
+        if (mOnAddListener != null) {
+            mOnAddListener.onAdd();
+        }
+    }
+
+    private void updateEvent(String detail, String title, EventDao eventDao) {
+        mEvent.setTitle(title);
+        mEvent.setDetail(detail);
+        eventDao.update(mEvent);
+        if (mOnUpdateListener != null) {
+            mOnUpdateListener.onUpdate();
+        }
+    }
+
+    private void removeWithAnimationAndHideSoftInput() {
         mManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
         if (!isExiting) {
             isExiting = true;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                exit();
-            } else {
-                removeFragment(this);
-            }
+            removeWithAnimation();
         }
-
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void exit() {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        int height = display.getHeight();
-        int width = display.getWidth();
+    private void removeWithAnimation() {
+        Display display = mHostActivity.getWindowManager().getDefaultDisplay();
+        Point outSize = new Point();
+        display.getRealSize(outSize);
+        int height = outSize.y;
+        int width = outSize.x;
         Animator anim = ViewAnimationUtils.createCircularReveal(mContentView, width, 0, height, 0);
         anim.setDuration(500);
         anim.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -206,10 +215,16 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onAnimationEnd(Animator animation) {
                 mContentView.setVisibility(View.GONE);
-                removeFragment(AddEventFragment.this);
+                removeFragment(EditEventFragment.this);
             }
         });
         anim.start();
+    }
+
+    private void removeSelf() {
+        isExiting = true;
+        mManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        removeFragment(this);
     }
 
     private void paste() {
@@ -228,8 +243,6 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
         } else {
             new AlertDialog.Builder(mHostActivity).setMessage("剪切板里什么也没有 >_<").show();
         }
-
-
     }
 
     public void setOnUpdateListener(OnUpdateListener onUpdateListener) {
@@ -248,7 +261,9 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onAnimationEnd(Animator animation) {
         mManager = (InputMethodManager) mHostActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        mManager.showSoftInput(mEditText, 0);
+        if (mManager != null) {
+            mManager.showSoftInput(mEditText, 0);
+        }
     }
 
     @Override
@@ -267,10 +282,7 @@ public class AddEventFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onValueChange(int year, int month, int day) {
-        String date = new StringBuffer()
-                .append(year).append("年")
-                .append(month).append("月")
-                .append(day).append("日").toString();
+        String date = String.format(Locale.CHINA, "%s年%d月%d日", String.valueOf(year), month, day);
         mBtnDate.setText(date.substring(2));
     }
 
