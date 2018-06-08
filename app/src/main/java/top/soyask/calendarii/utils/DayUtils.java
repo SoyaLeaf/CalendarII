@@ -6,8 +6,13 @@ import java.util.Calendar;
  * Created by mxf on 2017/8/10.
  */
 public class DayUtils {
-
+    /**
+     * @param month 传入实际的月份
+     * @param year
+     * @return
+     */
     public static int getMonthDayCount(int month, int year) {
+        month = month - 1;
         switch (month) {
             case Calendar.JANUARY:
             case Calendar.MARCH:
@@ -25,9 +30,18 @@ public class DayUtils {
             case Calendar.FEBRUARY:
                 return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) ? 29 : 28;
             default:
-                throw new IllegalArgumentException("Didn't find this month(未找到该月份):"+month);
+                throw new IllegalArgumentException("Didn't find this month(未找到该月份):" + month);
         }
 
+    }
+
+    public static int getPrevMonthDayCount(int month, int year) {
+        if (month > 1) {
+            month--;
+        } else {
+            year--;
+        }
+        return getMonthDayCount(month, year);
     }
 
 

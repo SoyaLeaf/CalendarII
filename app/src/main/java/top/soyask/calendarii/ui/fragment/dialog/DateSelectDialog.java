@@ -100,7 +100,7 @@ public class DateSelectDialog extends BottomSheetDialogFragment implements View.
     }
 
     private void updateDayCount(int year, int month) {
-        int dayCount = DayUtils.getMonthDayCount(month - 1, year);
+        int dayCount = DayUtils.getMonthDayCount(month, year);
         mNpDay.setMaxValue(dayCount);
     }
 

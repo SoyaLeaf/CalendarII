@@ -106,7 +106,7 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
                 if (isLunar) {
                     mNpDay.setMaxValue(30);
                 } else {
-                    int monthDayCount = DayUtils.getMonthDayCount(newVal-1, 2000);
+                    int monthDayCount = DayUtils.getMonthDayCount(newVal, 2000);
                     mNpDay.setMaxValue(monthDayCount);
                 }
             }

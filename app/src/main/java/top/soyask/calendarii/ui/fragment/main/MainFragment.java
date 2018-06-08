@@ -60,7 +60,6 @@ import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, AddEventFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 
-    public static final String SKIP = "skip";
     private static final int BIRTHDAY_INVISIBLE = 0x233;
     private static final int BIRTHDAY_VISIBLE = 0x234;
 
@@ -490,7 +489,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public synchronized void onSelected(Day day) {
         this.mSelectedDay = day;
         setBirthday(day);
-        setEvent(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+        setEvent(getString(R.string.xx_year_xx_month_xx, day.getYear(), day.getMonth(), day.getDayOfMonth()));
         setLunarInfo();
         calculateDelta_T();
     }
@@ -563,9 +562,9 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void setupReceiver() {
         mMainReceiver = new MainReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(EventDao.ADD);
-        filter.addAction(EventDao.UPDATE);
-        filter.addAction(EventDao.DELETE);
+        filter.addAction(MonthFragment.ADD_EVENT);
+        filter.addAction(MonthFragment.UPDATE_EVENT);
+        filter.addAction(MonthFragment.DELETE_EVENT);
         mHostActivity.registerReceiver(mMainReceiver, filter);
     }
 
@@ -595,7 +594,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void skipToOneDay(int year, int month, int day) {
         int position = (year - MonthFragmentAdapter.YEAR_START) * 12 + month - 1;
         mViewPager.setCurrentItem(position);
-        Intent intent = new Intent(SKIP);
+        Intent intent = new Intent(MonthFragment.SKIP);
         intent.putExtra("year", year);
         intent.putExtra("month", month);
         intent.putExtra("day", day);

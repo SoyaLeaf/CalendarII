@@ -4,11 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import top.soyask.calendarii.ui.view.CalendarView;
+
 /**
  * Created by mxf on 2017/8/8.
  */
-public class Day implements Serializable {
+public class Day implements CalendarView.IDay, Serializable {
 
+    private static final String BIRTHDAY = "生日";
     private int dayOfMonth;
     private LunarDay lunar;
     private boolean isToday;
@@ -71,6 +74,11 @@ public class Day implements Serializable {
 
     public int getDayOfMonth() {
         return dayOfMonth;
+    }
+
+    @Override
+    public String getBottomText() {
+        return hasBirthday() ? BIRTHDAY : getLunar().getSimpleLunar();
     }
 
     public void setDayOfMonth(int dayOfMonth) {
@@ -138,11 +146,11 @@ public class Day implements Serializable {
         isHoliday = holiday;
     }
 
-    public boolean hasBirthday(){
+    public boolean hasBirthday() {
         return birthdays != null && !birthdays.isEmpty();
     }
 
-    public boolean hasEvent(){
+    public boolean hasEvent() {
         return events != null && !events.isEmpty();
     }
 

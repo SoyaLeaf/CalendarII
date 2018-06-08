@@ -14,12 +14,12 @@ import android.widget.TextView;
 import java.util.HashSet;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.activity.ZoomActivity;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.AlphaSetFragment;
@@ -33,7 +33,6 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     private static final int CANCEL = 1;
     private static final int UPDATE = 3;
     private static final int RESTART = 4;
-    public static final String WEEK_SETTING = "week_setting";
     private TextView mTvAlpha;
     private ProgressDialog mProgressDialog;
 
@@ -43,7 +42,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             super.handleMessage(msg);
             switch (msg.what) {
                 case UPDATE:
-                    mHostActivity.sendBroadcast(new Intent(WEEK_SETTING));
+                    mHostActivity.sendBroadcast(new Intent(MonthFragment.WEEK_SETTING));
                     break;
                 case WAIT:
                     mProgressDialog = ProgressDialog.show(mHostActivity, null, "请稍等...");
@@ -163,7 +162,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onSuccess() {
         showSnackbar("同步成功！");
-        mHostActivity.sendBroadcast(new Intent(EventDao.UPDATE));
+        mHostActivity.sendBroadcast(new Intent(MonthFragment.UPDATE_EVENT));
         Setting.setting(mHostActivity, Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
         Setting.setting(mHostActivity, Global.SETTING_WORKDAY, new HashSet<>(GlobalData.WORKDAY));
         mHandler.sendEmptyMessage(CANCEL);

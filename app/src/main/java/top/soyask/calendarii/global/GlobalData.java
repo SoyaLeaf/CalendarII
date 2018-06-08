@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.Set;
 
 import top.soyask.calendarii.database.dao.BirthdayDao;
-import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Birthday;
+import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 
 /**
  * Created by mxf on 2017/11/1.
@@ -48,7 +48,7 @@ public class GlobalData {
                 BIRTHDAY.put(when, birthdayList);
             }
         }
-        context.sendBroadcast(new Intent(EventDao.UPDATE));
+        context.sendBroadcast(new Intent(MonthFragment.UPDATE_EVENT));
     }
 
     private static final String URL_HOLIDAY = "http://owvj0u2dq.bkt.clouddn.com/holiday.json";

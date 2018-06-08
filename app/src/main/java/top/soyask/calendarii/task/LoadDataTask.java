@@ -9,7 +9,7 @@ import java.util.List;
 
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
+import top.soyask.calendarii.ui.view.CalendarView;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
@@ -20,27 +20,31 @@ import top.soyask.calendarii.utils.MonthUtils;
 public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
 
     private EventDao mEventDao;
-    private MonthAdapter mAdapter;
+    private CalendarView mCalendarView;
     private PendingAction mPendingAction;
+    private Integer mYear;
+    private Integer mMonth;
 
-    public LoadDataTask(Context context, MonthAdapter adapter, PendingAction action) {
+    public LoadDataTask(Context context, CalendarView calendarView, PendingAction action) {
         this.mEventDao = EventDao.getInstance(context);
-        this.mAdapter = adapter;
+        this.mCalendarView = calendarView;
         this.mPendingAction = action;
     }
 
-    public LoadDataTask(Context context, MonthAdapter adapter) {
-        this(context, adapter, null);
+    public LoadDataTask(Context context, CalendarView calendarView) {
+        this(context, calendarView, null);
     }
 
     @Override
     protected List<Day> doInBackground(Integer... integers) {
-        return loadData(integers[0], integers[1], mEventDao);
+        mYear = integers[0];
+        mMonth = integers[1];
+        return loadData(mYear, mMonth, mEventDao);
     }
 
     @Override
     protected void onPostExecute(List<Day> days) {
-        mAdapter.setDays(days);
+        mCalendarView.setData(mYear,mMonth,days);
         if (mPendingAction != null) {
             mPendingAction.execute();
         }
@@ -51,7 +55,7 @@ public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
-        int dayCount = DayUtils.getMonthDayCount(month - 1, year);
+        int dayCount = DayUtils.getMonthDayCount(month, year);
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);

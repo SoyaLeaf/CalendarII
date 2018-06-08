@@ -12,6 +12,7 @@ import java.util.List;
 
 import top.soyask.calendarii.database.DBUtils;
 import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
 
 /**
@@ -23,11 +24,8 @@ public class EventDao {
     private DBUtils mDBUtils;
     private Context mContext;
     private static EventDao mEventDao;
-    public static final String ADD = "add";
-    public static final String DELETE = "delete";
-    public static final String UPDATE = "update";
 
-    public EventDao(DBUtils dBUtils,Context context) {
+    public EventDao(DBUtils dBUtils, Context context) {
         this.mDBUtils = dBUtils;
         this.mContext = context;
     }
@@ -35,7 +33,7 @@ public class EventDao {
     public static EventDao getInstance(Context context) {
         if (mEventDao == null) {
             DBUtils dbUtils = DBUtils.getInstance(context);
-            mEventDao = new EventDao(dbUtils,context);
+            mEventDao = new EventDao(dbUtils, context);
         }
         return mEventDao;
     }
@@ -49,7 +47,7 @@ public class EventDao {
         values.put("isComplete", event.isComplete());
         database.insert(EVENT, null, values);
         database.close();
-        sendBroadcast(ADD);
+        sendBroadcast(MonthFragment.ADD_EVENT);
     }
 
     private void sendBroadcast(String action) {
@@ -68,42 +66,42 @@ public class EventDao {
         values.put("isComplete", event.isComplete());
         database.update(EVENT, values, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
-        sendBroadcast(UPDATE);
+        sendBroadcast(MonthFragment.UPDATE_EVENT);
     }
 
     public void delete(Event event) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
-        sendBroadcast(DELETE);
+        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void delete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "title = ?", new String[]{title});
         database.close();
-        sendBroadcast(DELETE);
+        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteAll() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, null, null);
         database.close();
-        sendBroadcast(DELETE);
+        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteComplete() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "isComplete = ?", new String[]{String.valueOf(1)});
         database.close();
-        sendBroadcast(DELETE);
+        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteComplete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(EVENT, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
         database.close();
-        sendBroadcast(DELETE);
+        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
 
@@ -121,20 +119,22 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
+        cursor.close();
         database.close();
-
         return events;
     }
 
 
     public List<Event> query(String title) {
-        List<Event> events = new ArrayList<>();
-        try {
-            events.addAll(queryByTitle(title));
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            return events;
+        synchronized (mDBUtils) {
+            List<Event> events = new ArrayList<>();
+            try {
+                events.addAll(queryByTitle(title));
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                return events;
+            }
         }
     }
 
@@ -152,6 +152,7 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
+        cursor.close();
         database.close();
         return events;
     }
@@ -174,6 +175,7 @@ public class EventDao {
             event.setComplete(cursor.getInt(4) == 1);
             events.add(event);
         }
+        cursor.close();
         database.close();
         return events;
     }

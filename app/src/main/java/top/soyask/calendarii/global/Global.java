@@ -9,11 +9,6 @@ public class Global {
     public static final int YEAR_END = 2100;
     public static final int MONTH_COUNT = 12;
 
-    public static final int DEFAULT_LUNAR_SIZE = 10;
-    public static final int DEFAULT_NUMBER_SIZE = 14;
-    public static final int DEFAULT_WEEK_SIZE = 14;
-    public static final int DEFAULT_HOLIDAY_SIZE = 5;
-
     public static final String SETTING_THEME = "theme";
     public static final String SETTING_DATE_OFFSET = "date_offset";
     public static final String SETTING_WIDGET_ALPHA = "widget_alpha";
