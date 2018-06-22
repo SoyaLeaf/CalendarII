@@ -32,7 +32,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected <T extends View> T findViewById(@IdRes int id) {
-        return (T) mContentView.findViewById(id);
+        return  mContentView.findViewById(id);
     }
     protected Toolbar findToolbar(@IdRes int id){
         return findViewById(id);

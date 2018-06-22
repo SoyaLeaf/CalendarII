@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 
 import top.soyask.calendarii.R;
@@ -34,28 +35,8 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     private static final int UPDATE = 3;
     private static final int RESTART = 4;
     private TextView mTvAlpha;
-    private ProgressDialog mProgressDialog;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case UPDATE:
-                    mHostActivity.sendBroadcast(new Intent(MonthFragment.WEEK_SETTING));
-                    break;
-                case WAIT:
-                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "请稍等...");
-                    break;
-                case CANCEL:
-                    if (mProgressDialog != null) {
-                        mProgressDialog.cancel();
-                        mProgressDialog = null;
-                    }
-                    break;
-            }
-        }
-    };
+    private Handler mHandler = new SettingHandler(this);
 
     public SettingFragment() {
         super(R.layout.fragment_setting);
@@ -70,11 +51,19 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     protected void setupUI() {
         findToolbar().setNavigationOnClickListener(this);
         setupSwitchStart();
+        setupSwitchReplenish();
+
         setupWidgetAlpha();
         findViewById(R.id.rl_theme).setOnClickListener(this);
         findViewById(R.id.rl_holiday).setOnClickListener(this);
         findViewById(R.id.rl_widget_pic).setOnClickListener(this);
         findViewById(R.id.rl_ui).setOnClickListener(this);
+    }
+
+    private void setupSwitchReplenish() {
+        SwitchCompat switchCompat = findViewById(R.id.sc_replenish);
+        switchCompat.setChecked(Setting.replenish);
+        switchCompat.setOnCheckedChangeListener(this);
     }
 
     private void setupWidgetAlpha() {
@@ -135,17 +124,29 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if (isChecked && Setting.date_offset != 1) {
-            Setting.date_offset = 1;
-            Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
-            mHandler.sendEmptyMessageDelayed(UPDATE, 500);
-            WidgetManager.updateAllWidget(mHostActivity);
-        } else if (!isChecked && Setting.date_offset == 1) {
-            Setting.date_offset = 0;
-            Setting.setting(getContext(), Global.SETTING_DATE_OFFSET, Setting.date_offset);
-            mHandler.sendEmptyMessageDelayed(UPDATE, 500);
-            WidgetManager.updateAllWidget(mHostActivity);
+        switch (buttonView.getId()) {
+            case R.id.sc_start:
+                if (isChecked && Setting.date_offset != 1) {
+                    Setting.date_offset = 1;
+                    Setting.setting(mHostActivity, Global.SETTING_DATE_OFFSET, Setting.date_offset);
+                    mHandler.sendEmptyMessageDelayed(UPDATE, 500);
+                    WidgetManager.updateAllWidget(mHostActivity);
+                } else if (!isChecked && Setting.date_offset == 1) {
+                    Setting.date_offset = 0;
+                    Setting.setting(mHostActivity, Global.SETTING_DATE_OFFSET, Setting.date_offset);
+                    mHandler.sendEmptyMessageDelayed(UPDATE, 500);
+                    WidgetManager.updateAllWidget(mHostActivity);
+                }
+                break;
+            case R.id.sc_replenish:
+                if(isChecked != Setting.replenish){
+                    Setting.replenish = isChecked;
+                    Setting.setting(mHostActivity,Global.SETTING_REPLENISH,isChecked);
+                    mHostActivity.sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+                }
+                break;
         }
+
     }
 
     @Override
@@ -172,5 +173,37 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     public void onFail() {
         showSnackbar("同步失败了，请联系开发者！");
         mHandler.sendEmptyMessage(CANCEL);
+    }
+
+    public static class SettingHandler extends Handler {
+        private ProgressDialog mProgressDialog;
+
+        private WeakReference<BaseFragment> mFragment;
+
+        public SettingHandler(BaseFragment fragment) {
+            this.mFragment = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            BaseFragment fragment = mFragment.get();
+            try {
+                switch (msg.what) {
+                    case UPDATE:
+                        fragment.getActivity().sendBroadcast(new Intent(MonthFragment.WEEK_SETTING));
+                        break;
+                    case WAIT:
+                        mProgressDialog = ProgressDialog.show(fragment.getContext(), null, "请稍等...");
+                        break;
+                    case CANCEL:
+                        if (mProgressDialog != null) {
+                            mProgressDialog.cancel();
+                            mProgressDialog = null;
+                        }
+                        break;
+                }
+            } catch (NullPointerException ignored) {}
+        }
     }
 }

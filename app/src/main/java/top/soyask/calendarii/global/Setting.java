@@ -14,6 +14,7 @@ public final class Setting {
     public static int theme = 0;
     public static int widget_alpha = 33;
     public static int density_dpi = -1;
+    public static boolean replenish; //是否在日历空白填充文字
     public static String white_widget_pic = "";
 
     public static int day_size;
@@ -31,9 +32,10 @@ public final class Setting {
         Setting.density_dpi = setting.getInt(Global.SETTING_DENSITY_DPI, -1);
         Setting.day_size = setting.getInt(Global.SETTING_DAY_SIZE, -1);
         Setting.day_number_text_size = setting.getInt(Global.SETTING_DAY_NUMBER_TEXT_SIZE, -1);
-        Setting.day_lunar_text_size = setting.getInt(Global.SETTING_DAY_LUNAR_TEXT_SIZE,-1);
+        Setting.day_lunar_text_size = setting.getInt(Global.SETTING_DAY_LUNAR_TEXT_SIZE, -1);
         Setting.day_week_text_size = setting.getInt(Global.SETTING_DAY_WEEK_TEXT_SIZE, -1);
         Setting.day_holiday_text_size = setting.getInt(Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, -1);
+        Setting.replenish = setting.getBoolean(Global.SETTING_REPLENISH, true);
     }
 
     public static void setting(Context context, String name, int value) {
@@ -46,6 +48,10 @@ public final class Setting {
         editor.putFloat(name, value).commit();
     }
 
+    public static void setting(Context context, String name, boolean value) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
+        editor.putBoolean(name, value).commit();
+    }
     public static void setting(Context context, String name, String value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
         editor.putString(name, value).commit();

@@ -15,6 +15,7 @@
         <attr name="cv_weekdayTextColor" format="color|reference" />
         <attr name="cv_weekendTextColor" format="color|reference" />
         <attr name="cv_todayTextColor" format="color|reference" />
+        <attr name="cv_replenish" format="boolean" />
 
     </declare-styleable>
 </resources>

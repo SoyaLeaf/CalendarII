@@ -50,6 +50,7 @@ public class CalendarView extends View {
     private int mWeekdayTextColor;
     private int mWeekendTextColor;
     private int mTodayTextColor;
+    private boolean mReplenish = true;
     private OnDayClickListener mListener;
     private boolean initialized;
 
@@ -87,6 +88,7 @@ public class CalendarView extends View {
         mWeekdayTextColor = typedArray.getColor(R.styleable.CalendarView_cv_weekdayTextColor, Color.RED);
         mWeekendTextColor = typedArray.getColor(R.styleable.CalendarView_cv_weekendTextColor, Color.RED);
         mTodayTextColor = typedArray.getColor(R.styleable.CalendarView_cv_todayTextColor, Color.WHITE);
+        mReplenish = typedArray.getBoolean(R.styleable.CalendarView_cv_replenish, true);
         typedArray.recycle();
 
     }
@@ -326,6 +328,11 @@ public class CalendarView extends View {
         return this;
     }
 
+    public CalendarView setReplenish(boolean replenish) {
+        this.mReplenish = replenish;
+        return this;
+    }
+
     static class WeekView {
         static float paddingTop;
         static float size;
@@ -378,7 +385,9 @@ public class CalendarView extends View {
 
         void onDraw(Canvas canvas) {
             if (viewType != DATE_VIEW_TYPE_CURRENT) {
-                drawOtherMonthDay(canvas);
+                if(mReplenish){
+                    drawOtherMonthDay(canvas);
+                }
             } else {
                 drawCurrentDay(canvas);
                 if (index == mSelectPos) {

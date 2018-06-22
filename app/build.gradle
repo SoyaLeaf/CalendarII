@@ -8,7 +8,7 @@ android {
         applicationId "top.soyask.calendarii"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 18
+        versionCode 19
         versionName "2.1 beta"
     }
     buildTypes {
@@ -16,6 +16,9 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            aaptOptions.cruncherEnabled = false
+            aaptOptions.useNewCruncher = false
         }
     }
     sourceSets {
@@ -30,11 +33,11 @@ android {
 }
 
 ext {
-    supportLibVersion = "27.1.0"
+    supportLibVersion = "27.1.1"
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
