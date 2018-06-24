@@ -13,7 +13,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.utils.DayUtils;
@@ -53,6 +55,7 @@ public class CalendarView extends View {
     private boolean mReplenish = true;
     private OnDayClickListener mListener;
     private boolean initialized;
+    private Set<Runnable> mPendingList = new HashSet<>();
 
     private WeekView[] mWeekViews = new WeekView[7];
     private AbstractDateView[][] mDateViews = new AbstractDateView[6][7];
@@ -102,6 +105,12 @@ public class CalendarView extends View {
         initNextMonth(days);
         postInvalidate();
         initialized = true;
+        if(!mPendingList.isEmpty()){
+            for (Runnable runnable : mPendingList) {
+                runnable.run();
+            }
+        }
+        mPendingList.clear();
     }
 
     public boolean isInitialized() {
@@ -231,6 +240,14 @@ public class CalendarView extends View {
     }
 
     public void select(int position) {
+        if(initialized){
+            performSelect(position);
+        }else {
+            mPendingList.add(() -> performSelect(position));
+        }
+    }
+
+    private void performSelect(int position){
         if (position < 0) {
             mSelectPos = -1;
         } else if (isPositionInCurrentMonth(position)) {

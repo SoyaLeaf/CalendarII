@@ -171,11 +171,7 @@ public class MonthFragment extends BaseFragment {
                         int day = intent.getIntExtra("day", 0);
                         boolean isCurrent = (year == mYear && month == mMonth);
                         if (isCurrent) {
-                            if (mCalendarView.isInitialized()) {
-                                mCalendarView.selectCurrentMonth(day);
-                            } else {
-                                mPendingAction.addAction(() -> mCalendarView.selectCurrentMonth(day));
-                            }
+                            mCalendarView.selectCurrentMonth(day);
                         }
                     }
                     break;
@@ -184,11 +180,7 @@ public class MonthFragment extends BaseFragment {
                         int month = intent.getIntExtra("month", 0);
                         boolean isCurrent = (year == mYear && month == mMonth);
                         if (!isCurrent) {
-                            if (mCalendarView.isInitialized()) {
-                                mCalendarView.select(-1);
-                            } else {
-                                mPendingAction.addAction(() -> mCalendarView.select(-1));
-                            }
+                            mCalendarView.select(-1);
                         }
                     }
                     break;
