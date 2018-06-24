@@ -113,7 +113,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void initSelectDay() {
         mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(mHostActivity));
-        mAnimatorHandler.postDelayed(() -> onSelected(mSelectedDay), 1000);
+        mAnimatorHandler.postDelayed(() -> skipToday(), 1000);
     }
 
     private void setupOtherView() {
@@ -213,7 +213,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_today:
-                skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
+                skipToday();
                 break;
             case R.id.menu_all_event:
                 AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
@@ -235,6 +235,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void skipToday() {
+        skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
     }
 
 

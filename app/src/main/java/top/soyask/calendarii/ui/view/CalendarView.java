@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
@@ -57,12 +58,14 @@ public class CalendarView extends View {
     private boolean mUseAnimation = true;
     private OnDayClickListener mListener;
     private boolean initialized;
-    private int mSelectProgress;
+    private Path mSelectPath = new Path();
+    private Paint mSelectPaint;
     private Set<Runnable> mPendingList = new HashSet<>();
 
     private WeekView[] mWeekViews = new WeekView[7];
     private AbstractDateView[][] mDateViews = new AbstractDateView[6][7];
-    private Thread mSelectAnimProgress;
+    private Thread mSelectAnimProcess;
+    private PathHelper mPathHelper;
 
 
     public CalendarView(Context context) {
@@ -115,11 +118,6 @@ public class CalendarView extends View {
         }
         mPendingList.clear();
         postInvalidate();
-    }
-
-
-    public boolean isInitialized() {
-        return initialized;
     }
 
     private void initWeekViews() {
@@ -181,6 +179,20 @@ public class CalendarView extends View {
                 }
             }
         }
+        if (mUseAnimation) {
+            drawSelectCircle(canvas);
+        }
+    }
+
+    private void drawSelectCircle(Canvas canvas) {
+        if (mSelectPaint == null) {
+            mSelectPaint = new Paint();
+            mSelectPaint.setColor(mDateCircleColor);
+            mSelectPaint.setStrokeWidth(3);
+            mSelectPaint.setAntiAlias(true);
+            mSelectPaint.setStyle(Paint.Style.STROKE);
+        }
+        canvas.drawPath(mSelectPath, mSelectPaint);
     }
 
     private Point outSize = new Point();
@@ -277,35 +289,103 @@ public class CalendarView extends View {
     }
 
     private void onDaySelected(int position) {
+        if (mUseAnimation) {
+            analyzeSelectDate(position);
+            startSelectAnimation();
+        }
         mSelectPos = position;
         if (mListener != null) {
             IDay day = mDays.get(position - mFirstDayOfWeek);
             mListener.onDaySelected(position, day);
         }
-        if (mUseAnimation) {
-            startSelectAnimation();
+
+    }
+
+    private void analyzeSelectDate(int position) {
+        int i = position / 7;
+        int j = position % 7;
+        AbstractDateView target = mDateViews[i][j];
+        float ocx;
+        float ocy;
+        float r = mDateCircleSize / 2;
+        float tcx = target.rect.centerX();
+        float tcy = target.rect.centerY();
+
+        if (mSelectPos == -1) {
+            mSelectPos = position;
         }
+        i = mSelectPos / 7;
+        j = mSelectPos % 7;
+        AbstractDateView old = mDateViews[i][j];
+        ocx = old.rect.centerX();
+        ocy = old.rect.centerY();
+        int hor = (int) (tcx - ocx);//hor>0 新的在旧的右边
+        int ver = (int) (tcy - ocy);//ver>0 新的在旧的下面
+        int h;
+        int v;
+        if (Math.abs(hor) > Math.abs(ver)) { //左右
+            h = 0;
+            v = -1;
+        } else {
+            h = 1;
+            v = 0;
+        }
+        mPathHelper = new PathHelper(ocx, ocy
+                , tcx, tcy, ocx + r * h, ocy + r * v, tcx + r * h, tcy + r * v);
+        mPathHelper.angle = v * 90;
+        mPathHelper.flag = hor > 0 || ver > 0 ? 1 : -1;
+        mPathHelper.flag = hor < 0 && ver > 0 && h == 0 ? -1 : mPathHelper.flag;
+        mPathHelper.flag = hor > 0 && ver < 0 && h != 0 ? -1 : mPathHelper.flag;
     }
 
     private void startSelectAnimation() {
-        if (mSelectAnimProgress != null) {
-            mSelectAnimProgress.interrupt();
-            mSelectAnimProgress = null;
+        if (mSelectAnimProcess != null) {
+            mSelectAnimProcess.interrupt();
+            mSelectAnimProcess = null;
         }
-        mSelectAnimProgress = new Thread() {
+        mSelectAnimProcess = new Thread() {
             @Override
             public void run() {
-                for (int i = 0; i <= 100; i++) {
+                for (int i = 0; i <= 150; i++) {
+                    synchronized (CalendarView.this) {
+                        float r = mDateCircleSize / 2;
+                        mSelectPath.reset();
+
+                        if (i < 100) {
+                            mSelectPath.addArc(mPathHelper.center0X - r, mPathHelper.center0Y - r,
+                                    mPathHelper.center0X + r, mPathHelper.center0Y + r, mPathHelper.angle, mPathHelper.flag * 3.6f * (i - 100));
+                        }
+                        if (i > 100 && i < 150) {
+                            mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
+                            float p = (150 - i) / 50f;
+                            float x = mPathHelper.t1X - (mPathHelper.t1X - mPathHelper.t0X) * p;
+                            float y = mPathHelper.t1Y - (mPathHelper.t1Y - mPathHelper.t0Y) * p;
+                            mSelectPath.moveTo(x, y);
+                            mSelectPath.lineTo(mPathHelper.t1X, mPathHelper.t1Y);
+                        } else if (i < 50) {
+                            mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
+                            float p = i / 50f;
+                            float x = mPathHelper.t0X + (mPathHelper.t1X - mPathHelper.t0X) * p;
+                            float y = mPathHelper.t0Y + (mPathHelper.t1Y - mPathHelper.t0Y) * p;
+                            mSelectPath.lineTo(x, y);
+                        } else if (i < 150) {
+                            mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
+                            mSelectPath.lineTo(mPathHelper.t1X, mPathHelper.t1Y);
+                        }
+                        if (i > 50) {
+                            mSelectPath.addArc(mPathHelper.center1X - r, mPathHelper.center1Y - r,
+                                    mPathHelper.center1X + r, mPathHelper.center1Y + r, mPathHelper.angle, mPathHelper.flag * 3.6f * (i - 50));
+                        }
+                        postInvalidate();
+                    }
+                    SystemClock.sleep(2);
                     if (Thread.interrupted()) {
                         return;
                     }
-                    mSelectProgress = i;
-                    postInvalidate();
-                    SystemClock.sleep(5);
                 }
             }
         };
-        mSelectAnimProgress.start();
+        mSelectAnimProcess.start();
     }
 
     private void onPrevMonthClick(int position) {
@@ -444,12 +524,8 @@ public class CalendarView extends View {
                 }
             } else {
                 drawCurrentDay(canvas);
-                if (isSelected()) {
-                    if (mUseAnimation) {
-                        drawSelectCircle(canvas, mSelectProgress);
-                    } else {
-                        drawSelectCircle(canvas);
-                    }
+                if (!mUseAnimation && isSelected()) {
+                    drawSelectCircle(canvas);
                 }
             }
         }
@@ -465,6 +541,7 @@ public class CalendarView extends View {
             canvas.drawCircle(rect.centerX(), rect.centerY(), mDateCircleSize / 2, paint);
         }
 
+        @Deprecated
         private void drawSelectCircle(Canvas canvas, int progress) {
             paint.setColor(mDateCircleColor);
             paint.setStrokeWidth(3);
@@ -660,5 +737,30 @@ public class CalendarView extends View {
         void onNextMonthClick(int dayOfMonth);
 
         void onPrevMonthClick(int dayOfMonth);
+    }
+
+    static class PathHelper {
+        final float center0X;
+        final float center0Y;
+        final float center1X;
+        final float center1Y;
+        final float t0X;
+        final float t0Y;
+        final float t1X;
+        final float t1Y;
+        int flag;
+        float angle;
+
+
+        PathHelper(float center0X, float center0Y, float center1X, float center1Y, float t0X, float t0Y, float t1X, float t1Y) {
+            this.center0X = center0X;
+            this.center0Y = center0Y;
+            this.center1X = center1X;
+            this.center1Y = center1Y;
+            this.t0X = t0X;
+            this.t0Y = t0Y;
+            this.t1X = t1X;
+            this.t1Y = t1Y;
+        }
     }
 }
