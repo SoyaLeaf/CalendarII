@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -53,12 +54,15 @@ public class CalendarView extends View {
     private int mWeekendTextColor;
     private int mTodayTextColor;
     private boolean mReplenish = true;
+    private boolean mUseAnimation = true;
     private OnDayClickListener mListener;
     private boolean initialized;
+    private int mSelectProgress;
     private Set<Runnable> mPendingList = new HashSet<>();
 
     private WeekView[] mWeekViews = new WeekView[7];
     private AbstractDateView[][] mDateViews = new AbstractDateView[6][7];
+    private Thread mSelectAnimProgress;
 
 
     public CalendarView(Context context) {
@@ -105,13 +109,14 @@ public class CalendarView extends View {
         initNextMonth(days);
         postInvalidate();
         initialized = true;
-        if(!mPendingList.isEmpty()){
+        if (!mPendingList.isEmpty()) {
             for (Runnable runnable : mPendingList) {
                 runnable.run();
             }
         }
         mPendingList.clear();
     }
+
 
     public boolean isInitialized() {
         return initialized;
@@ -178,6 +183,7 @@ public class CalendarView extends View {
         }
     }
 
+    private Point outSize = new Point();
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -187,8 +193,6 @@ public class CalendarView extends View {
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-        Point outSize = new Point();
         getDisplay().getRealSize(outSize);
         mDisplayWidth = outSize.x;
         int weekHeight = mDisplayWidth / 7 / 2;
@@ -240,14 +244,14 @@ public class CalendarView extends View {
     }
 
     public void select(int position) {
-        if(initialized){
+        if (initialized) {
             performSelect(position);
-        }else {
+        } else {
             mPendingList.add(() -> performSelect(position));
         }
     }
 
-    private void performSelect(int position){
+    private void performSelect(int position) {
         if (position < 0) {
             mSelectPos = -1;
         } else if (isPositionInCurrentMonth(position)) {
@@ -258,6 +262,30 @@ public class CalendarView extends View {
             onNextMonthClick(position);
         }
         postInvalidate();
+        if(mUseAnimation){
+            startSelectAnimation();
+        }
+    }
+
+    private void startSelectAnimation() {
+        if (mSelectAnimProgress != null) {
+            mSelectAnimProgress.interrupt();
+            mSelectAnimProgress = null;
+        }
+        mSelectAnimProgress = new Thread() {
+            @Override
+            public void run() {
+                for (int i = 0; i <= 100; i++) {
+                    if (Thread.interrupted()) {
+                        return;
+                    }
+                    mSelectProgress = i;
+                    postInvalidate();
+                    SystemClock.sleep(5);
+                }
+            }
+        };
+        mSelectAnimProgress.start();
     }
 
     private boolean isPositionInCurrentMonth(int position) {
@@ -350,6 +378,12 @@ public class CalendarView extends View {
         return this;
     }
 
+    public CalendarView setUseAnimation(boolean useAnimation) {
+        this.mUseAnimation = useAnimation;
+        return this;
+    }
+
+
     static class WeekView {
         static float paddingTop;
         static float size;
@@ -375,20 +409,19 @@ public class CalendarView extends View {
 
     private class AbstractDateView {
 
-        Paint paint = new Paint();
+        private Paint paint = new Paint();
+        private int index;
+        private int viewType;
+        private RectF rect;
+        private IDay day;
 
-        int index;
-        int viewType;
-        RectF rect;
-        IDay day;
-
-        public AbstractDateView(int index, IDay day, int viewType) {
+        private AbstractDateView(int index, IDay day, int viewType) {
             this.index = index;
             this.day = day;
             this.viewType = viewType;
         }
 
-        public void init() {
+        private void init() {
             int i = index / 7;
             int j = index % 7;
             float left = mDateWidth * j;
@@ -400,20 +433,44 @@ public class CalendarView extends View {
             paint.setAntiAlias(true);
         }
 
-        void onDraw(Canvas canvas) {
+        private void onDraw(Canvas canvas) {
             if (viewType != DATE_VIEW_TYPE_CURRENT) {
-                if(mReplenish){
+                if (mReplenish) {
                     drawOtherMonthDay(canvas);
                 }
             } else {
                 drawCurrentDay(canvas);
-                if (index == mSelectPos) {
-                    paint.setColor(mDateCircleColor);
-                    paint.setStrokeWidth(3);
-                    paint.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle(rect.centerX(), rect.centerY(), mDateCircleSize / 2, paint);
+                if (isSelected()) {
+                    if(mUseAnimation){
+                        drawSelectCircle(canvas, mSelectProgress);
+                    }else {
+                        drawSelectCircle(canvas);
+                    }
                 }
             }
+        }
+
+        private boolean isSelected() {
+            return index == mSelectPos;
+        }
+
+        private void drawSelectCircle(Canvas canvas) {
+            paint.setColor(mDateCircleColor);
+            paint.setStrokeWidth(3);
+            paint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(rect.centerX(), rect.centerY(), mDateCircleSize / 2, paint);
+        }
+
+        private void drawSelectCircle(Canvas canvas, int progress) {
+            paint.setColor(mDateCircleColor);
+            paint.setStrokeWidth(3);
+            paint.setStyle(Paint.Style.STROKE);
+
+            float radius = mDateCircleSize / 2;
+            float cx = rect.centerX();
+            float cy = rect.centerY();
+            RectF rectF = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
+            canvas.drawArc(rectF, 0, (float) (progress * 360 / 100), false, paint);
         }
 
         private void drawOtherMonthDay(Canvas canvas) {

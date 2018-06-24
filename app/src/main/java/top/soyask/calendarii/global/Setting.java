@@ -15,6 +15,7 @@ public final class Setting {
     public static int widget_alpha = 33;
     public static int density_dpi = -1;
     public static boolean replenish; //是否在日历空白填充文字
+    public static boolean select_anim;
     public static String white_widget_pic = "";
 
     public static int day_size;
@@ -36,6 +37,7 @@ public final class Setting {
         Setting.day_week_text_size = setting.getInt(Global.SETTING_DAY_WEEK_TEXT_SIZE, -1);
         Setting.day_holiday_text_size = setting.getInt(Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, -1);
         Setting.replenish = setting.getBoolean(Global.SETTING_REPLENISH, true);
+        Setting.select_anim = setting.getBoolean(Global.SETTING_SELECT_ANIM, true);
     }
 
     public static void setting(Context context, String name, int value) {

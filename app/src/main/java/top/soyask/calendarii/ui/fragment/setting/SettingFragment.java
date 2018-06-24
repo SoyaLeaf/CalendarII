@@ -52,6 +52,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         findToolbar().setNavigationOnClickListener(this);
         setupSwitchStart();
         setupSwitchReplenish();
+        setupSwitchAnim();
 
         setupWidgetAlpha();
         findViewById(R.id.rl_theme).setOnClickListener(this);
@@ -63,6 +64,12 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     private void setupSwitchReplenish() {
         SwitchCompat switchCompat = findViewById(R.id.sc_replenish);
         switchCompat.setChecked(Setting.replenish);
+        switchCompat.setOnCheckedChangeListener(this);
+    }
+
+    private void setupSwitchAnim() {
+        SwitchCompat switchCompat = findViewById(R.id.sc_anim);
+        switchCompat.setChecked(Setting.select_anim);
         switchCompat.setOnCheckedChangeListener(this);
     }
 
@@ -82,7 +89,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onResume() {
         super.onResume();
-        mTvAlpha.setText(Setting.widget_alpha + "");
+        mTvAlpha.setText(String.valueOf(Setting.widget_alpha));
     }
 
     @Override
@@ -139,9 +146,17 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 }
                 break;
             case R.id.sc_replenish:
-                if(isChecked != Setting.replenish){
+                if (isChecked != Setting.replenish) {
                     Setting.replenish = isChecked;
-                    Setting.setting(mHostActivity,Global.SETTING_REPLENISH,isChecked);
+                    Setting.setting(mHostActivity, Global.SETTING_REPLENISH, isChecked);
+                    mHostActivity.sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+                }
+                break;
+
+            case R.id.sc_anim:
+                if (isChecked != Setting.select_anim) {
+                    Setting.select_anim = isChecked;
+                    Setting.setting(mHostActivity, Global.SETTING_SELECT_ANIM, isChecked);
                     mHostActivity.sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
                 }
                 break;
@@ -203,7 +218,8 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                         }
                         break;
                 }
-            } catch (NullPointerException ignored) {}
+            } catch (NullPointerException ignored) {
+            }
         }
     }
 }

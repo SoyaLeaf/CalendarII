@@ -12,6 +12,7 @@ public class Global {
     public static final String SETTING_THEME = "theme";
     public static final String SETTING_DATE_OFFSET = "date_offset";
     public static final String SETTING_REPLENISH = "setting_replenish";
+    public static final String SETTING_SELECT_ANIM = "select_anim";
     public static final String SETTING_WIDGET_ALPHA = "widget_alpha";
     public static final String SETTING_WHITE_WIDGET_PIC = "white_widget_pic";
     public static final String SETTING_DENSITY_DPI = "setting_density_dpi";

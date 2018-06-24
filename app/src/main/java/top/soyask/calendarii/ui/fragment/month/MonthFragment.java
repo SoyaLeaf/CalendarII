@@ -115,6 +115,7 @@ public class MonthFragment extends BaseFragment {
                 .setHolidayTextSize(Setting.day_holiday_text_size)
                 .setWeekTextSize(Setting.day_week_text_size)
                 .setReplenish(Setting.replenish)
+                .setUseAnimation(Setting.select_anim)
                 .postInvalidate();
         mCalendarView.setOnDaySelectedListener(new CalendarView.OnDayClickListener() {
             @Override
@@ -201,6 +202,7 @@ public class MonthFragment extends BaseFragment {
                                 .setHolidayTextSize(Setting.day_holiday_text_size == -1 ? getDimension(R.dimen.holiday_text_size) : Setting.day_holiday_text_size)
                                 .setWeekTextSize(Setting.day_week_text_size == -1 ? getDimension(R.dimen.week_text_size) : Setting.day_week_text_size)
                                 .setReplenish(Setting.replenish)
+                                .setUseAnimation(Setting.select_anim)
                                 .postInvalidate();
                         break;
                 }
