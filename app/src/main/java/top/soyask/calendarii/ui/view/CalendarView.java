@@ -107,7 +107,6 @@ public class CalendarView extends View {
         initPrevMonth(currentYear, currentMonth);
         initCurrentMonth(days);
         initNextMonth(days);
-        postInvalidate();
         initialized = true;
         if (!mPendingList.isEmpty()) {
             for (Runnable runnable : mPendingList) {
@@ -115,6 +114,7 @@ public class CalendarView extends View {
             }
         }
         mPendingList.clear();
+        postInvalidate();
     }
 
 
@@ -262,7 +262,27 @@ public class CalendarView extends View {
             onNextMonthClick(position);
         }
         postInvalidate();
-        if(mUseAnimation){
+    }
+
+    private boolean isPositionInCurrentMonth(int position) {
+        return position >= mFirstDayOfWeek && position < mFirstDayOfWeek + mDays.size();
+    }
+
+    private boolean isPositionInPrevMonth(int position) {
+        return position < mFirstDayOfWeek;
+    }
+
+    private boolean isPositionInNextMonth(int position) {
+        return position >= mFirstDayOfWeek + mDays.size();
+    }
+
+    private void onDaySelected(int position) {
+        mSelectPos = position;
+        if (mListener != null) {
+            IDay day = mDays.get(position - mFirstDayOfWeek);
+            mListener.onDaySelected(position, day);
+        }
+        if (mUseAnimation) {
             startSelectAnimation();
         }
     }
@@ -288,26 +308,6 @@ public class CalendarView extends View {
         mSelectAnimProgress.start();
     }
 
-    private boolean isPositionInCurrentMonth(int position) {
-        return position >= mFirstDayOfWeek && position < mFirstDayOfWeek + mDays.size();
-    }
-
-    private boolean isPositionInPrevMonth(int position) {
-        return position < mFirstDayOfWeek;
-    }
-
-    private boolean isPositionInNextMonth(int position) {
-        return position >= mFirstDayOfWeek + mDays.size();
-    }
-
-    private void onDaySelected(int position) {
-        mSelectPos = position;
-        if (mListener != null) {
-            IDay day = mDays.get(position - mFirstDayOfWeek);
-            mListener.onDaySelected(position, day);
-        }
-    }
-
     private void onPrevMonthClick(int position) {
         mSelectPos = -1;
         if (mListener != null) {
@@ -326,7 +326,11 @@ public class CalendarView extends View {
     }
 
     public void selectCurrentMonth(int position) {
-        select(position + mFirstDayOfWeek - 1);
+        if (initialized) {
+            select(position + mFirstDayOfWeek - 1);
+        } else {
+            mPendingList.add(() -> selectCurrentMonth(position));
+        }
     }
 
     public void setOnDaySelectedListener(OnDayClickListener listener) {
@@ -441,9 +445,9 @@ public class CalendarView extends View {
             } else {
                 drawCurrentDay(canvas);
                 if (isSelected()) {
-                    if(mUseAnimation){
+                    if (mUseAnimation) {
                         drawSelectCircle(canvas, mSelectProgress);
-                    }else {
+                    } else {
                         drawSelectCircle(canvas);
                     }
                 }
