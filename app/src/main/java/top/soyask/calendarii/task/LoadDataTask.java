@@ -3,6 +3,7 @@ package top.soyask.calendarii.task;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -20,14 +21,15 @@ import top.soyask.calendarii.utils.MonthUtils;
 public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
 
     private EventDao mEventDao;
-    private CalendarView mCalendarView;
+
+    private WeakReference<CalendarView> mCalendarView;
     private PendingAction mPendingAction;
     private Integer mYear;
     private Integer mMonth;
 
     public LoadDataTask(Context context, CalendarView calendarView, PendingAction action) {
         this.mEventDao = EventDao.getInstance(context);
-        this.mCalendarView = calendarView;
+        this.mCalendarView = new WeakReference<>(calendarView);
         this.mPendingAction = action;
     }
 
@@ -44,9 +46,12 @@ public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
 
     @Override
     protected void onPostExecute(List<Day> days) {
-        mCalendarView.setData(mYear,mMonth,days);
-        if (mPendingAction != null) {
-            mPendingAction.execute();
+        CalendarView calendarView = mCalendarView.get();
+        if(calendarView != null){
+            calendarView.setData(mYear,mMonth,days);
+            if (mPendingAction != null) {
+                mPendingAction.execute();
+            }
         }
     }
 

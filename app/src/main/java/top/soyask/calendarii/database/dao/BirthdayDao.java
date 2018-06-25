@@ -20,19 +20,17 @@ public class BirthdayDao {
     public static final String BIRTHDAY = "BIRTHDAY";
 
     private DBUtils mDBUtils;
-    private Context mContext;
 
     private static BirthdayDao mBirthdayDao;
 
-    public BirthdayDao(DBUtils dBUtils, Context context) {
+    private BirthdayDao(DBUtils dBUtils) {
         this.mDBUtils = dBUtils;
-        this.mContext = context;
     }
 
     public static BirthdayDao getInstance(Context context) {
         if (mBirthdayDao == null) {
             DBUtils dbUtils = DBUtils.getInstance(context);
-            mBirthdayDao = new BirthdayDao(dbUtils, context);
+            mBirthdayDao = new BirthdayDao(dbUtils);
         }
         return mBirthdayDao;
     }
@@ -80,6 +78,7 @@ public class BirthdayDao {
             birthday.setLunar(isLunar == 1);
             birthdays.add(birthday);
         }
+        cursor.close();
         database.close();
         return birthdays;
     }

@@ -67,17 +67,14 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
     public void onBirthdayLongClick(final int position, final Birthday birthday) {
         new AlertDialog
                 .Builder(mHostActivity)
-                .setItems(new String[]{getString(R.string.delete)}, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int id = birthday.getId();
-                        mBirthdayDao.delete(id);
-                        mBirthdays.remove(birthday);
-                        mBirthdayAdapter.notifyItemRemoved(position);
-                        mBirthdayAdapter.notifyItemRangeChanged(0, position);
-                        GlobalData.loadBirthday(mHostActivity);
-                        WidgetManager.updateAllWidget(mHostActivity);
-                    }
+                .setItems(new String[]{getString(R.string.delete)}, (dialog, which) -> {
+                    int id = birthday.getId();
+                    mBirthdayDao.delete(id);
+                    mBirthdays.remove(birthday);
+                    mBirthdayAdapter.notifyItemRemoved(position);
+                    mBirthdayAdapter.notifyItemRangeChanged(0, position);
+                    GlobalData.loadBirthday(mHostActivity);
+                    WidgetManager.updateAllWidget(mHostActivity);
                 }).show();
     }
 

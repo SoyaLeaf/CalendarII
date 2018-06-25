@@ -20,13 +20,10 @@ public class LaunchActivity extends AppCompatActivity {
         setupTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_theme);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(LaunchActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
         },200);
 
     }

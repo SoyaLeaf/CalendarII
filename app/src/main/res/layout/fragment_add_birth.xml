@@ -63,7 +63,6 @@
         android:layout_marginRight="@dimen/normal_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
@@ -76,7 +75,7 @@
             android:clickable="false"
             android:descendantFocusability="blocksDescendants"
             android:focusable="false"
-            android:theme="@style/NumberPicker"></NumberPicker>
+            android:theme="@style/NumberPicker" />
 
         <NumberPicker
             android:id="@+id/np_day"
@@ -85,6 +84,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:descendantFocusability="blocksDescendants"
-            android:theme="@style/NumberPicker"></NumberPicker>
+            android:theme="@style/NumberPicker" />
     </LinearLayout>
 </LinearLayout>

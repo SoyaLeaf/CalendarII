@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +23,12 @@ public class EventDao {
     public static final String EVENT = "EVENT";
 
     private DBUtils mDBUtils;
-    private Context mContext;
+    private WeakReference<Context> mContext;
     private static EventDao mEventDao;
 
-    public EventDao(DBUtils dBUtils, Context context) {
+    private EventDao(DBUtils dBUtils, Context context) {
         this.mDBUtils = dBUtils;
-        this.mContext = context;
+        this.mContext = new WeakReference<>(context);
     }
 
     public static EventDao getInstance(Context context) {
@@ -51,10 +52,13 @@ public class EventDao {
     }
 
     private void sendBroadcast(String action) {
-        Intent intent = new Intent();
-        intent.setAction(action);
-        mContext.sendBroadcast(intent);
-        WidgetManager.updateAllWidget(mContext);
+        Context context = mContext.get();
+        if (context != null) {
+            Intent intent = new Intent();
+            intent.setAction(action);
+            context.sendBroadcast(intent);
+            WidgetManager.updateAllWidget(context);
+        }
     }
 
     public void update(Event event) {
@@ -126,7 +130,7 @@ public class EventDao {
 
 
     public List<Event> query(String title) {
-        synchronized (mDBUtils) {
+        synchronized (EventDao.this) {
             List<Event> events = new ArrayList<>();
             try {
                 events.addAll(queryByTitle(title));

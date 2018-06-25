@@ -18,7 +18,7 @@ public class DBUtils extends SQLiteOpenHelper {
     private static final String BIRTH_SQL;
 
     static {
-        EVENT_SQL = new StringBuffer()
+        EVENT_SQL = new StringBuilder()
                 .append("create table ")
                 .append(EventDao.EVENT)
                 .append("(")
@@ -30,7 +30,7 @@ public class DBUtils extends SQLiteOpenHelper {
                 .append(");")
                 .toString();
 
-        BIRTH_SQL = new StringBuffer()
+        BIRTH_SQL = new StringBuilder()
                 .append("create table ")
                 .append(BirthdayDao.BIRTHDAY)
                 .append("(")
@@ -42,7 +42,7 @@ public class DBUtils extends SQLiteOpenHelper {
                 .toString();
     }
 
-    public DBUtils(Context context) {
+    private DBUtils(Context context) {
         super(context, "db", null, 2);
     }
 

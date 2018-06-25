@@ -113,7 +113,7 @@ public class MonthUtils {
     }
 
     private static void setHoliday(int year, int month, int dayOfMonth, Day day) {
-        String str = new StringBuffer()
+        String str = new StringBuilder()
                 .append(year)
                 .append(DATE_SP)
                 .append(month)

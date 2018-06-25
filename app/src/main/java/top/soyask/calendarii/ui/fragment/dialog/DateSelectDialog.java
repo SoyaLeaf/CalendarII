@@ -138,12 +138,7 @@ public class DateSelectDialog extends BottomSheetDialogFragment implements View.
         mNpMonth.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         mNpMonth.setMinValue(1);
         mNpMonth.setMaxValue(12);
-        mNpMonth.setFormatter(new NumberPicker.Formatter() {
-            @Override
-            public String format(int value) {
-                return value + "月";
-            }
-        });
+        mNpMonth.setFormatter(value -> value + "月");
         mNpMonth.setValue(mMonth);
         mNpMonth.setOnValueChangedListener(this);
         try {

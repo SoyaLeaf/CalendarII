@@ -11,6 +11,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.BirthdayDao;
@@ -30,32 +31,11 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
     private OnDoneClickListener mOnDoneClickListener;
 
 
-    private static final NumberPicker.Formatter LUNAR_MONTH_FORMATTER = new NumberPicker.Formatter() {
-        @Override
-        public String format(int value) {
-            return LunarUtils.LUNAR_MONTH[value - 1];
-        }
-    };
-    private static final NumberPicker.Formatter LUNAR_DAY_FORMATTER = new NumberPicker.Formatter() {
-        @Override
-        public String format(int value) {
-            return LunarUtils.getLunarDay(value);
-        }
-    };
+    private static final NumberPicker.Formatter LUNAR_MONTH_FORMATTER = value -> LunarUtils.LUNAR_MONTH[value - 1];
+    private static final NumberPicker.Formatter LUNAR_DAY_FORMATTER = LunarUtils::getLunarDay;
+    private static final NumberPicker.Formatter NORMAL_MONTH_FORMATTER = value -> String.format(Locale.CHINA, "%d月", value);
+    private static final NumberPicker.Formatter NORMAL_DAY_FORMATTER = String::valueOf;
 
-    private static final NumberPicker.Formatter NORMAL_MONTH_FORMATTER = new NumberPicker.Formatter() {
-        @Override
-        public String format(int value) {
-            return value + "月";
-        }
-    };
-
-    private static final NumberPicker.Formatter NORMAL_DAY_FORMATTER = new NumberPicker.Formatter() {
-        @Override
-        public String format(int value) {
-            return value + "";
-        }
-    };
     private RadioButton mRbNormal;
     private RadioButton mRbLunar;
 
@@ -100,15 +80,12 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
         mNpDay.setMinValue(1);
         mNpMonth.setFormatter(NORMAL_MONTH_FORMATTER);
         mNpDay.setFormatter(NORMAL_DAY_FORMATTER);
-        mNpMonth.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                if (isLunar) {
-                    mNpDay.setMaxValue(30);
-                } else {
-                    int monthDayCount = DayUtils.getMonthDayCount(newVal, 2000);
-                    mNpDay.setMaxValue(monthDayCount);
-                }
+        mNpMonth.setOnValueChangedListener((picker, oldVal, newVal) -> {
+            if (isLunar) {
+                mNpDay.setMaxValue(30);
+            } else {
+                int monthDayCount = DayUtils.getMonthDayCount(newVal, 2000);
+                mNpDay.setMaxValue(monthDayCount);
             }
         });
 
@@ -204,10 +181,10 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
         int month = mNpMonth.getValue();
         int day = mNpDay.getValue();
 
-        if(isLunar){
-            when = LunarUtils.LUNAR_MONTH[month - 1]+LunarUtils.getLunarDay(day);
-        }else {
-            when = month+"月"+day+"日";
+        if (isLunar) {
+            when = LunarUtils.LUNAR_MONTH[month - 1] + LunarUtils.getLunarDay(day);
+        } else {
+            when = month + "月" + day + "日";
         }
         return when;
     }
@@ -215,13 +192,13 @@ public class AddFragment extends BaseFragment implements AdapterView.OnItemSelec
     @NonNull
     private String getWho() {
         String who = mEtWho.getText().toString().trim();
-        if("".equals(who)){
+        if ("".equals(who)) {
             who = mEtWho.getHint().toString();
         }
         return who;
     }
 
-    public interface OnDoneClickListener{
+    public interface OnDoneClickListener {
         void onDone(Birthday birthday);
     }
 }

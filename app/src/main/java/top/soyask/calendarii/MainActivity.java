@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 
+import java.lang.ref.WeakReference;
+
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
@@ -27,24 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                .detectDiskReads()
-//                .detectDiskWrites()
-//                .detectNetwork()   // or .detectAll() for all detectable problems
-//                .penaltyLog()
-//                .build());
-//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                .detectLeakedSqlLiteObjects()
-//                .detectLeakedClosableObjects()
-//                .penaltyLog()
-//                .penaltyDeath()
-//                .build());
         checkAndUpdateDpi();
         setupTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if(savedInstanceState == null){
-            new InitTask().execute();
+            new InitTask(this).execute();
         }
     }
 
@@ -76,19 +66,30 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private class InitTask extends AsyncTask<Void,Void,Void>{
+    private static  class InitTask extends AsyncTask<Void,Void,Void>{
+        private WeakReference<MainActivity> mActivity;
+
+        InitTask(MainActivity activity){
+            mActivity = new WeakReference<>(activity);
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            GlobalData.loadBirthday(MainActivity.this);
-            GlobalData.loadHoliday(MainActivity.this);
-            GlobalData.loadWorkday(MainActivity.this);
+            MainActivity activity = mActivity.get();
+            if(activity != null){
+                GlobalData.loadBirthday(activity);
+                GlobalData.loadHoliday(activity);
+                GlobalData.loadWorkday(activity);
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            init();
+            MainActivity activity = mActivity.get();
+            if(activity !=null){
+                activity.init();
+            }
         }
     }
 

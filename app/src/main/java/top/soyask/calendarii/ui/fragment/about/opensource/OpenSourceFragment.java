@@ -38,12 +38,7 @@ public class OpenSourceFragment extends BaseFragment implements OpenSourceAdapte
         OpenSourceAdapter openSourceAdapter = new OpenSourceAdapter(mOpenSources, this);
         rv.setAdapter(openSourceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));
-        findToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeFragment(OpenSourceFragment.this);
-            }
-        });
+        findToolbar().setNavigationOnClickListener(v -> removeFragment(OpenSourceFragment.this));
     }
 
     @Override

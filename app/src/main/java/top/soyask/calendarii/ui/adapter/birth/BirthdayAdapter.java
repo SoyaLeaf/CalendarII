@@ -37,23 +37,15 @@ public class BirthdayAdapter extends RecyclerView.Adapter<BirthdayAdapter.Birthd
         if (position == mBirthdays.size()) {
             holder.tv_who.setText("新增生日");
             holder.tv_when.setText("+");
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mOnBirthdayClickListener.addBirthday();
-                }
-            });
+            holder.itemView.setOnClickListener(v -> mOnBirthdayClickListener.addBirthday());
             holder.itemView.setAlpha(0.2f);
         } else {
             final Birthday birthday = mBirthdays.get(position);
             holder.tv_when.setText(birthday.getWhen());
             holder.tv_who.setText(birthday.getWho() + "的生日");
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mOnBirthdayClickListener.onBirthdayLongClick(position, birthday);
-                    return true;
-                }
+            holder.itemView.setOnLongClickListener(v -> {
+                mOnBirthdayClickListener.onBirthdayLongClick(position, birthday);
+                return true;
             });
         }
     }
@@ -78,8 +70,8 @@ public class BirthdayAdapter extends RecyclerView.Adapter<BirthdayAdapter.Birthd
 
         public BirthdayViewHolder(View itemView) {
             super(itemView);
-            tv_who = (TextView) itemView.findViewById(R.id.tv_who);
-            tv_when = (TextView) itemView.findViewById(R.id.tv_when);
+            tv_who =  itemView.findViewById(R.id.tv_who);
+            tv_when =  itemView.findViewById(R.id.tv_when);
         }
     }
 }
