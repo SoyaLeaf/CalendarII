@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContentResolverCompat;
@@ -150,8 +151,11 @@ public class BackupFragment extends BaseFragment {
 
 
     private void clear() {
-        File cacheDir = mHostActivity.getCacheDir();
-        File[] list = cacheDir.listFiles((dir, name) -> name.endsWith(".cdt"));
+        File parent = Environment.getExternalStorageDirectory();
+        if (parent == null) {
+            parent = mHostActivity.getCacheDir();
+        }
+        File[] list = parent.listFiles((dir, name) -> name.endsWith(".cdt"));
         if (list != null) {
             for (File file : list) {
                 file.delete();

@@ -4,6 +4,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
+import android.support.v4.os.EnvironmentCompat;
 import android.util.Base64;
 import android.util.Log;
 
@@ -40,8 +42,12 @@ public class BackupUtils {
             e.printStackTrace();
         }
         byte[] data = Base64.encode(bytes, Base64.DEFAULT);
-
-        String filename = context.getCacheDir().getPath() + File.separatorChar + System.currentTimeMillis() + ".cdt";
+        File parent = Environment.getExternalStorageDirectory();
+        if (parent == null) {
+            parent = context.getCacheDir();
+        }
+        String filename = parent.getPath() + File.separatorChar + System.currentTimeMillis() + ".cdt";
+        Log.i("xxx", "save: " + filename);
         File file = new File(filename);
         try (FileOutputStream outputStream = new FileOutputStream(file);
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
@@ -69,7 +75,7 @@ public class BackupUtils {
 
     }
 
-    public static Backup load(ContentResolver resolver,Uri uri) {
+    public static Backup load(ContentResolver resolver, Uri uri) {
 
         try (InputStream in = resolver.openInputStream(uri);
              BufferedInputStream bis = new BufferedInputStream(in)

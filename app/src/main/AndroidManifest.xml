@@ -26,17 +26,19 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
-
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:host="*"
                     android:mimeType="*/*"
                     android:pathPattern=".*\\.cdt"
-                    android:scheme="file" />
+                    android:scheme="content"
+                    />
                 <data
                     android:host="*"
                     android:mimeType="*/*"
                     android:pathPattern=".*\\.cdt"
-                    android:scheme="content" />
+                    android:scheme="file"
+                    />
             </intent-filter>
         </activity>
 
