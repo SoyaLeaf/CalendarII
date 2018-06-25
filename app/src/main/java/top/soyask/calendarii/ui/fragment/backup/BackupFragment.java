@@ -1,5 +1,6 @@
 package top.soyask.calendarii.ui.fragment.backup;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContentResolverCompat;
 import android.support.v4.content.FileProvider;
 import android.text.method.ScrollingMovementMethod;
@@ -45,12 +47,15 @@ import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.utils.BackupUtils;
 import top.soyask.calendarii.utils.FileUtils;
+import top.soyask.calendarii.utils.PermissionUtils;
 
 public class BackupFragment extends BaseFragment {
 
     private static final int BACKUP_VERSION = 0;
     public static final String TAG = "BackupFragment";
     public static final int SELECT_FILE = 012;
+    public static final int REQUEST_CODE_BACKUP = 0x1;
+    public static final int REQUEST_CODE_LOAD = 0x2;
     private TextView mTvOutput;
 
     public BackupFragment() {
@@ -82,14 +87,35 @@ public class BackupFragment extends BaseFragment {
     private void click(View view) {
         switch (view.getId()) {
             case R.id.btn_backup:
-                backup();
+                if (PermissionUtils.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_CODE_BACKUP)) {
+                    backup();
+                }
                 break;
             case R.id.btn_import:
-                load();
+                if (PermissionUtils.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_CODE_LOAD)) {
+                    load();
+                }
                 break;
             case R.id.btn_clear:
                 clear();
                 break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (PermissionUtils.handleResults(permissions, grantResults)) {
+            switch (requestCode) {
+                case REQUEST_CODE_BACKUP:
+                    backup();
+                    break;
+                case REQUEST_CODE_LOAD:
+                    load();
+                    break;
+            }
+        }else {
+            PermissionUtils.manual(mHostActivity);
         }
     }
 

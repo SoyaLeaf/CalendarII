@@ -27,6 +27,7 @@ import java.io.InputStream;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.utils.PermissionUtils;
 
 public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener, View.OnTouchListener {
 
@@ -73,7 +74,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        mViewAlpha.setBackgroundColor(Color.argb(progress,0,0,0));
+        mViewAlpha.setBackgroundColor(Color.argb(progress, 0, 0, 0));
     }
 
     @Override
@@ -96,7 +97,9 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_bg:
-                select();
+                if (PermissionUtils.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, REQUEST_CODE_PERMISSION_GET)) {
+                    select();
+                }
                 break;
             default:
                 removeFragment(this);
@@ -107,7 +110,11 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        select();
+        if (PermissionUtils.handleResults(permissions, grantResults)) {
+            select();
+        } else {
+            PermissionUtils.manual(mHostActivity);
+        }
     }
 
     @Override
@@ -116,7 +123,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
         if (requestCode == GET_IMAGE && resultCode == Activity.RESULT_OK) {
             Uri uri = data.getData();
             try {
-                Bitmap bitmap = loadImage(mHostActivity,uri);
+                Bitmap bitmap = loadImage(mHostActivity, uri);
                 findViewById(R.id.rl_bg).setBackground(new BitmapDrawable(bitmap));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -126,12 +133,6 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
     }
 
     private void select() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(mHostActivity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_GET);
-                return;
-            }
-        }
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, GET_IMAGE);
@@ -152,7 +153,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
         Point point = new Point();
         display.getSize(point);
 
-        if(width > height){
+        if (width > height) {
             int t = width;
             width = height;
             height = t;
@@ -168,7 +169,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
         if (scaleY > 1 && scaleY >= scaleX) {
             scale = scaleY;
         }
-        opts.inSampleSize = scale+1;
+        opts.inSampleSize = scale + 1;
         opts.inJustDecodeBounds = false;
         in = context.getContentResolver().openInputStream(uri);
         Bitmap bitmap = BitmapFactory.decodeStream(in, null, opts);
@@ -180,7 +181,7 @@ public class AlphaSetFragment extends BaseFragment implements SeekBar.OnSeekBarC
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                float y = event.getRawY() - v.getBottom() *2;
+                float y = event.getRawY() - v.getBottom() * 2;
                 v.setY(y);
                 break;
         }
