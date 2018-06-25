@@ -41,6 +41,7 @@ import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.domain.LunarDay;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
+import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 import top.soyask.calendarii.ui.fragment.event.AllEventFragment;
@@ -232,6 +233,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             case R.id.menu_setting:
                 SettingFragment settingFragment = SettingFragment.newInstance();
                 addFragment(settingFragment);
+                break;
+            case R.id.menu_backup:
+                BackupFragment backupFragment = BackupFragment.newInstance();
+                addFragment(backupFragment);
                 break;
         }
         return super.onOptionsItemSelected(item);

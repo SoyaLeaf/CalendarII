@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
+        app:title="备份"
+        app:titleTextColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/btn_backup"
+        android:layout_width="288dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="?colorPrimary"
+        android:text="备份"
+        android:textColor="@color/text_color_primary_light" />
+
+    <Button
+        android:id="@+id/btn_import"
+        android:layout_width="288dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="?colorPrimary"
+        android:text="导入"
+        android:textColor="@color/text_color_primary_light" />
+
+    <Button
+        android:id="@+id/btn_clear"
+        android:layout_width="288dp"
+        android:layout_height="72dp"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="?colorPrimary"
+        android:text="清理备份文件"
+        android:textColor="@color/text_color_primary_light" />
+
+    <TextView
+        android:id="@+id/tv_out_put"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        android:gravity="start"
+        android:scrollbars="vertical"
+        android:fadeScrollbars="false"
+        android:padding="8dp" />
+</LinearLayout>

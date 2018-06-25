@@ -19,9 +19,15 @@
         android:id="@+id/menu_setting"
         android:title="个性化"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_backup"
+        android:title="备份"
+        app:showAsAction="never" />
+
     <item
         android:id="@+id/menu_score"
-        android:title="去评分"
+        android:title="评分"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_about"

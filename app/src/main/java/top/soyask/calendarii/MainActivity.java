@@ -1,17 +1,30 @@
 package top.soyask.calendarii;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
+import top.soyask.calendarii.database.dao.BirthdayDao;
+import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.domain.Backup;
+import top.soyask.calendarii.domain.Birthday;
+import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
+import top.soyask.calendarii.utils.BackupUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
             R.style.AppTheme_Black,
             R.style.AppTheme_Red
     };
+    public static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +47,47 @@ public class MainActivity extends AppCompatActivity {
         setupTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             new InitTask(this).execute();
         }
+        importBackup();
+    }
+
+    private void importBackup() {
+        Intent intent = getIntent();
+        if (intent != null) {
+            Uri uri = intent.getData();
+            if (uri != null) {
+                String path = uri.getPath();
+                String[] split = path.split("/");
+                String filename = split[split.length - 1];
+                showBackupDialog(uri, filename);
+            }
+        }
+    }
+
+    private void showBackupDialog(Uri uri, String filename) {
+        new AlertDialog.Builder(this)
+                .setMessage("是否导入" + filename)
+                .setPositiveButton("导入", (dialog, which) -> insertBackupData(uri))
+                .setNegativeButton("覆盖原本数据", (dialog, which) -> {
+                    EventDao.getInstance(MainActivity.this).deleteAll();
+                    BirthdayDao.getInstance(MainActivity.this).deleteAll();
+                    insertBackupData(uri);
+                })
+                .show();
+    }
+
+    private void insertBackupData(Uri uri) {
+        Backup backup = BackupUtils.load(getContentResolver(), uri);
+        if (backup == null) {
+            Toast.makeText(MainActivity.this, "无法导入，错误的文件格式", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        BackupUtils.insertBackupData(backup, this);
+        GlobalData.loadBirthday(MainActivity.this);
+        Toast.makeText(this, "导入成功", Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     private void checkAndUpdateDpi() {
@@ -66,17 +118,17 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    private static  class InitTask extends AsyncTask<Void,Void,Void>{
+    private static class InitTask extends AsyncTask<Void, Void, Void> {
         private WeakReference<MainActivity> mActivity;
 
-        InitTask(MainActivity activity){
+        InitTask(MainActivity activity) {
             mActivity = new WeakReference<>(activity);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             MainActivity activity = mActivity.get();
-            if(activity != null){
+            if (activity != null) {
                 GlobalData.loadBirthday(activity);
                 GlobalData.loadHoliday(activity);
                 GlobalData.loadWorkday(activity);
@@ -87,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             MainActivity activity = mActivity.get();
-            if(activity !=null){
+            if (activity != null) {
                 activity.init();
             }
         }

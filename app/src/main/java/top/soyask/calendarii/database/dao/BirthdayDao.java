@@ -82,4 +82,10 @@ public class BirthdayDao {
         database.close();
         return birthdays;
     }
+
+    public void deleteAll() {
+        SQLiteDatabase database = mDBUtils.getWritableDatabase();
+        database.delete(BIRTHDAY, null, null);
+        database.close();
+    }
 }

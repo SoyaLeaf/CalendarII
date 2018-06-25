@@ -27,6 +27,9 @@ import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 
 public class GlobalData {
 
+    private static final String URL_HOLIDAY = "http://owvj0u2dq.bkt.clouddn.com/holiday.json";
+    private static final String URL_WORKDAY = "http://owvj0u2dq.bkt.clouddn.com/workday.json";
+
     public static final Map<String, List<Birthday>> BIRTHDAY = new HashMap<>();
     public static final List<String> HOLIDAY = new ArrayList<>();
     /**
@@ -50,9 +53,6 @@ public class GlobalData {
         }
         context.sendBroadcast(new Intent(MonthFragment.UPDATE_EVENT));
     }
-
-    private static final String URL_HOLIDAY = "http://owvj0u2dq.bkt.clouddn.com/holiday.json";
-    private static final String URL_WORKDAY = "http://owvj0u2dq.bkt.clouddn.com/workday.json";
 
     public synchronized static final void loadHoliday(Context context) {
         SharedPreferences setting = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
