@@ -113,7 +113,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void initSelectDay() {
         mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(mHostActivity));
-        mAnimatorHandler.postDelayed(() -> skipToday(), 1000);
+        mAnimatorHandler.post(this::skipToday);
     }
 
     private void setupOtherView() {
