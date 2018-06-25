@@ -1,5 +1,6 @@
 package top.soyask.calendarii.ui.view;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +28,7 @@ import top.soyask.calendarii.utils.DayUtils;
  * Created by mxf on 2018/5/7.
  */
 
-public class CalendarView extends View {
+public class CalendarView extends View implements ValueAnimator.AnimatorUpdateListener {
 
     static final String[] WEEK_ARRAY = {"日", "一", "二", "三", "四", "五", "六",};
 
@@ -64,8 +66,8 @@ public class CalendarView extends View {
 
     private WeekView[] mWeekViews = new WeekView[7];
     private AbstractDateView[][] mDateViews = new AbstractDateView[6][7];
-    private Thread mSelectAnimProcess;
     private PathHelper mPathHelper;
+    private ValueAnimator mSelectAnimator;
 
 
     public CalendarView(Context context) {
@@ -338,54 +340,56 @@ public class CalendarView extends View {
         mPathHelper.flag = hor > 0 && ver < 0 && h != 0 ? -1 : mPathHelper.flag;
     }
 
-    private void startSelectAnimation() {
-        if (mSelectAnimProcess != null) {
-            mSelectAnimProcess.interrupt();
-            mSelectAnimProcess = null;
-        }
-        mSelectAnimProcess = new Thread() {
-            @Override
-            public void run() {
-                for (int i = 0; i <= 150; i++) {
-                    synchronized (CalendarView.this) {
-                        float r = mDateCircleSize / 2;
-                        mSelectPath.reset();
+    @Override
+    public void startAnimation(Animation animation) {
+        super.startAnimation(animation);
+    }
 
-                        if (i < 100) {
-                            mSelectPath.addArc(mPathHelper.center0X - r, mPathHelper.center0Y - r,
-                                    mPathHelper.center0X + r, mPathHelper.center0Y + r, mPathHelper.angle, mPathHelper.flag * 3.6f * (i - 100));
-                        }
-                        if (i > 100 && i < 150) {
-                            mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
-                            float p = (150 - i) / 50f;
-                            float x = mPathHelper.t1X - (mPathHelper.t1X - mPathHelper.t0X) * p;
-                            float y = mPathHelper.t1Y - (mPathHelper.t1Y - mPathHelper.t0Y) * p;
-                            mSelectPath.moveTo(x, y);
-                            mSelectPath.lineTo(mPathHelper.t1X, mPathHelper.t1Y);
-                        } else if (i < 50) {
-                            mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
-                            float p = i / 50f;
-                            float x = mPathHelper.t0X + (mPathHelper.t1X - mPathHelper.t0X) * p;
-                            float y = mPathHelper.t0Y + (mPathHelper.t1Y - mPathHelper.t0Y) * p;
-                            mSelectPath.lineTo(x, y);
-                        } else if (i < 150) {
-                            mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
-                            mSelectPath.lineTo(mPathHelper.t1X, mPathHelper.t1Y);
-                        }
-                        if (i > 50) {
-                            mSelectPath.addArc(mPathHelper.center1X - r, mPathHelper.center1Y - r,
-                                    mPathHelper.center1X + r, mPathHelper.center1Y + r, mPathHelper.angle, mPathHelper.flag * 3.6f * (i - 50));
-                        }
-                        postInvalidate();
-                    }
-                    SystemClock.sleep(2);
-                    if (Thread.interrupted()) {
-                        return;
-                    }
-                }
+    private void startSelectAnimation() {
+        if(mSelectAnimator != null && mSelectAnimator.isRunning()){
+            mSelectAnimator.cancel();
+        }
+        mSelectAnimator = ValueAnimator.ofInt(0, 150);
+        mSelectAnimator.addUpdateListener(this);
+        mSelectAnimator.setDuration(300);
+        mSelectAnimator.start();
+    }
+
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+        synchronized (CalendarView.this) {
+            int i = (int) animation.getAnimatedValue();
+            float r = mDateCircleSize / 2;
+            mSelectPath.reset();
+
+            if (i < 100) {
+                mSelectPath.addArc(mPathHelper.center0X - r, mPathHelper.center0Y - r,
+                        mPathHelper.center0X + r, mPathHelper.center0Y + r, mPathHelper.angle, mPathHelper.flag * 3.6f * (i - 100));
             }
-        };
-        mSelectAnimProcess.start();
+            if (i > 100 && i < 150) {
+                mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
+                float p = (150 - i) / 50f;
+                float x = mPathHelper.t1X - (mPathHelper.t1X - mPathHelper.t0X) * p;
+                float y = mPathHelper.t1Y - (mPathHelper.t1Y - mPathHelper.t0Y) * p;
+                mSelectPath.moveTo(x, y);
+                mSelectPath.lineTo(mPathHelper.t1X, mPathHelper.t1Y);
+            } else if (i < 50) {
+                mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
+                float p = i / 50f;
+                float x = mPathHelper.t0X + (mPathHelper.t1X - mPathHelper.t0X) * p;
+                float y = mPathHelper.t0Y + (mPathHelper.t1Y - mPathHelper.t0Y) * p;
+                mSelectPath.lineTo(x, y);
+            } else if (i < 150) {
+                mSelectPath.moveTo(mPathHelper.t0X, mPathHelper.t0Y);
+                mSelectPath.lineTo(mPathHelper.t1X, mPathHelper.t1Y);
+            }
+            if (i > 50) {
+                mSelectPath.addArc(mPathHelper.center1X - r, mPathHelper.center1Y - r,
+                        mPathHelper.center1X + r, mPathHelper.center1Y + r, mPathHelper.angle, mPathHelper.flag * 3.6f * (i - 50));
+            }
+            postInvalidate();
+        }
     }
 
     private void onPrevMonthClick(int position) {
