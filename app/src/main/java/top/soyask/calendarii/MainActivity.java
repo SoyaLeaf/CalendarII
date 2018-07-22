@@ -1,6 +1,5 @@
 package top.soyask.calendarii;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -10,17 +9,13 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
 import top.soyask.calendarii.database.dao.BirthdayDao;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.domain.Backup;
-import top.soyask.calendarii.domain.Birthday;
-import top.soyask.calendarii.domain.Event;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;

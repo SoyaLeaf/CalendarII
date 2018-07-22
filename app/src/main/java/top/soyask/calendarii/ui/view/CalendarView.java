@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 
 import java.util.HashSet;
@@ -68,6 +69,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
     private AbstractDateView[][] mDateViews = new AbstractDateView[6][7];
     private PathHelper mPathHelper;
     private ValueAnimator mSelectAnimator;
+    private int mTouchSlop;
 
 
     public CalendarView(Context context) {
@@ -103,6 +105,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
         mReplenish = typedArray.getBoolean(R.styleable.CalendarView_cv_replenish, true);
         typedArray.recycle();
 
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
     public void setData(int currentYear, int currentMonth, List<? extends IDay> days) {
@@ -123,13 +126,9 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
     }
 
     private void initWeekViews() {
-        WeekView.paddingTop = getPaddingTop();
-        WeekView.paint.setTextSize(mWeekTextSize);
-        WeekView.size = mDisplayWidth / 7;
         mDateWidth = mDisplayWidth / 7;
-        WeekView.offset = mFirstDayOffset;
         for (int i = 0; i < mWeekViews.length; i++) {
-            mWeekViews[i] = new WeekView(i);
+            mWeekViews[i] = new WeekView(i,mDisplayWidth / 7);
         }
     }
 
@@ -235,7 +234,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
                 return true;
             case MotionEvent.ACTION_MOVE:
                 if (!moved) {
-                    moved = Math.abs(event.getRawX() - mStartX) > 5 || Math.abs(event.getRawY() - mStartY) > 5;
+                    moved = Math.abs(event.getRawX() - mStartX) > mTouchSlop || Math.abs(event.getRawY() - mStartY) > mTouchSlop;
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -243,8 +242,8 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
                 if (!moved) {
                     float x = event.getX();
                     float y = event.getY();
-
-                    float v = y - WeekView.size / 2 - mDateMargin - getPaddingTop();
+                    int weekHeight = mDisplayWidth / 14;
+                    float v = y - weekHeight - mDateMargin - getPaddingTop();
                     if (v > 0) {
                         int i = (int) (v / (mDateHeight + 2 * mDateMargin));
                         int j = (int) (x / mDateWidth);
@@ -346,7 +345,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
     }
 
     private void startSelectAnimation() {
-        if(mSelectAnimator != null && mSelectAnimator.isRunning()){
+        if (mSelectAnimator != null && mSelectAnimator.isRunning()) {
             mSelectAnimator.cancel();
         }
         mSelectAnimator = ValueAnimator.ofInt(0, 150);
@@ -472,26 +471,27 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
     }
 
 
-    static class WeekView {
-        static float paddingTop;
-        static float size;
-        static Paint paint = new Paint();
-        static int offset;
-        int index;
+    private class WeekView {
+        private float paddingTop;
+        private float size;
+        private Paint paint = new Paint();
+        private int index;
 
-        private WeekView(int index) {
+        private WeekView(int index,int size) {
             this.index = index;
-        }
-
-        static {
+            this.size = size;
+            this.paddingTop = getPaddingTop();
+            paint.setTextSize(mWeekTextSize);
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setAntiAlias(true);
         }
 
+
+
         void onDraw(Canvas canvas) {
             float x = (index + 0.5f) * size;
             float y = size / 3 + paddingTop;
-            canvas.drawText(WEEK_ARRAY[(index + offset) % WEEK_ARRAY.length], x, y, paint);
+            canvas.drawText(WEEK_ARRAY[(index + mFirstDayOffset) % WEEK_ARRAY.length], x, y, paint);
         }
     }
 
@@ -513,7 +513,8 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
             int i = index / 7;
             int j = index % 7;
             float left = mDateWidth * j;
-            float top = i * mDateHeight + WeekView.size / 2 + (2 * i + 1) * mDateMargin + getPaddingTop();
+            int weekHeight = mDisplayWidth / 14;
+            float top = i * mDateHeight + weekHeight + (2 * i + 1) * mDateMargin + getPaddingTop();
             float right = left + mDateWidth;
             float bottom = top + mDateHeight;
             rect = new RectF(left, top, right, bottom);
