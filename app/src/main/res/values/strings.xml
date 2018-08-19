@@ -35,6 +35,9 @@
     <string name="do_not_save">不保存</string>
     <string name="whether_to_save">是否保存当前内容？</string>
     <string name="xx_year_xx_month_xx">%d年%d月%d日</string>
+    <string name="white_widget">白色小部件</string>
+    <string name="transparent_widget">透明小部件</string>
+    <string name="load_wall_pager">加载壁纸</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

@@ -96,7 +96,7 @@ public class MonthUtils {
     }
 
     @NonNull
-    public static final Day generateDay(Calendar calendar, EventDao eventDao) {
+    public static Day generateDay(Calendar calendar, EventDao eventDao) {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);

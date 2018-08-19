@@ -37,7 +37,7 @@ public class GlobalData {
      */
     public static final List<String> WORKDAY = new ArrayList<>();
 
-    public synchronized static final void loadBirthday(Context context) {
+    public synchronized static void loadBirthday(Context context) {
         BirthdayDao birthdayDao = BirthdayDao.getInstance(context);
         List<Birthday> birthdays = birthdayDao.queryAll();
         BIRTHDAY.clear();
@@ -54,19 +54,19 @@ public class GlobalData {
         context.sendBroadcast(new Intent(MonthFragment.UPDATE_EVENT));
     }
 
-    public synchronized static final void loadHoliday(Context context) {
+    public synchronized static void loadHoliday(Context context) {
         SharedPreferences setting = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
         Set<String> holiday = setting.getStringSet(Global.SETTING_HOLIDAY, new HashSet<>());
         GlobalData.HOLIDAY.addAll(holiday);
     }
 
-    public synchronized static final void loadWorkday(Context context) {
+    public synchronized static void loadWorkday(Context context) {
         SharedPreferences setting = context.getSharedPreferences("setting", Context.MODE_PRIVATE);
         Set<String> workday = setting.getStringSet(Global.SETTING_WORKDAY, new HashSet<>());
         GlobalData.WORKDAY.addAll(workday);
     }
 
-    public synchronized static final void synHoliday(final LoadCallBack callBack) {
+    public synchronized static void synHoliday(final LoadCallBack callBack) {
         new Thread() {
             @Override
             public void run() {

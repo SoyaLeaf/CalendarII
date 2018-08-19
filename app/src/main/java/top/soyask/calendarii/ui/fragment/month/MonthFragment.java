@@ -163,9 +163,9 @@ public class MonthFragment extends BaseFragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            if (mCalendarView != null) {
-                switch (intent.getAction()) {
+            String action = intent.getAction();
+            if (mCalendarView != null && action != null) {
+                switch (action) {
                     case SKIP: {
                         int year = intent.getIntExtra("year", 0);
                         int month = intent.getIntExtra("month", 0);

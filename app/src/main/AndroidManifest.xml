@@ -22,27 +22,28 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="*"
                     android:mimeType="*/*"
                     android:pathPattern=".*\\.cdt"
-                    android:scheme="content"
-                    />
+                    android:scheme="content" />
                 <data
                     android:host="*"
                     android:mimeType="*/*"
                     android:pathPattern=".*\\.cdt"
-                    android:scheme="file"
-                    />
+                    android:scheme="file" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.widget.transparent.MonthWidget">
+        <receiver
+            android:name=".ui.widget.transparent.MonthWidget"
+            android:label="@string/transparent_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="next" />
@@ -61,7 +62,9 @@
             android:exported="true"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name=".ui.widget.white.WhiteWidget">
+        <receiver
+            android:name=".ui.widget.white.WhiteWidget"
+            android:label="@string/white_widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -89,6 +92,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
     </application>
 
 </manifest>

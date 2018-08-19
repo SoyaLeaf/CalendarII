@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/rl"
         android:layout_width="72dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_height="match_parent"
         android:background="#000">
         <ImageView
@@ -40,16 +40,16 @@
         android:layout_height="match_parent"
         android:layout_below="@id/tv_date"
         android:layout_marginTop="4dp"
-        android:layout_toLeftOf="@id/rl"
+        android:layout_toStartOf="@id/rl"
         android:numColumns="7"
-        android:padding="@dimen/normal_space"></GridView>
+        android:padding="@dimen/normal_space" />
     <TextView
         android:id="@+id/tv_year"
         android:alpha="0.1"
         android:textSize="68sp"
         android:textColor="@color/text_color_disable_dark"
         android:text=""
-        android:paddingRight="72dp"
+        android:paddingEnd="72dp"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

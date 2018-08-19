@@ -12,7 +12,6 @@ public final class Setting {
     public static final String SETTING = "setting";
     public static int date_offset = 1;
     public static int theme = 0;
-    public static int widget_alpha = 33;
     public static int density_dpi = -1;
     public static boolean replenish; //是否在日历空白填充文字
     public static boolean select_anim;
@@ -23,12 +22,17 @@ public final class Setting {
     public static float day_lunar_text_size;
     public static float day_week_text_size;
     public static float day_holiday_text_size;
+    private static boolean isLoaded = false;
 
     public static void loadSetting(Context context) {
+        if(isLoaded){
+            return;
+        }
         SharedPreferences setting = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE);
         Setting.theme = setting.getInt(Global.SETTING_THEME, 0);
         Setting.date_offset = setting.getInt(Global.SETTING_DATE_OFFSET, 0);
-        Setting.widget_alpha = setting.getInt(Global.SETTING_WIDGET_ALPHA, 0);
+        TransparentWidget.trans_widget_alpha = setting.getInt(Global.SETTING_WIDGET_ALPHA, 0);
+        TransparentWidget.trans_widget_theme_color = setting.getInt(Global.SETTING_WIDGET_THEME_COLOR, 0);
         Setting.white_widget_pic = setting.getString(Global.SETTING_WHITE_WIDGET_PIC, null);
         Setting.density_dpi = setting.getInt(Global.SETTING_DENSITY_DPI, -1);
         Setting.day_size = setting.getInt(Global.SETTING_DAY_SIZE, -1);
@@ -38,34 +42,48 @@ public final class Setting {
         Setting.day_holiday_text_size = setting.getInt(Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, -1);
         Setting.replenish = setting.getBoolean(Global.SETTING_REPLENISH, true);
         Setting.select_anim = setting.getBoolean(Global.SETTING_SELECT_ANIM, true);
+        isLoaded = true;
+    }
+
+    public static class TransparentWidget{
+        public static int trans_widget_theme_color = 0;
+        public static int trans_widget_alpha = 33;
+        public static int trans_widget_number_font_size = 14;
+        public static int trans_widget_lunar_font_size = 8;
+        public static int trans_widget_border_size = 36;
+        public static int trans_widget_line_height = 36;
+        public static int trans_widget_lunar_month_text_size = 10;
+        public static int trans_widget_month_text_size = 28;
+        public static int trans_widget_year_text_size = 12;
+
     }
 
     public static void setting(Context context, String name, int value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
-        editor.putInt(name, value).commit();
+        editor.putInt(name, value).apply();
     }
 
     public static void setting(Context context, String name, float value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
-        editor.putFloat(name, value).commit();
+        editor.putFloat(name, value).apply();
     }
 
     public static void setting(Context context, String name, boolean value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
-        editor.putBoolean(name, value).commit();
+        editor.putBoolean(name, value).apply();
     }
     public static void setting(Context context, String name, String value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
-        editor.putString(name, value).commit();
+        editor.putString(name, value).apply();
     }
 
     public static void setting(Context context, String name, Set<String> value) {
         SharedPreferences.Editor editor = context.getSharedPreferences(SETTING, Context.MODE_PRIVATE).edit();
-        editor.putStringSet(name, value).commit();
+        editor.putStringSet(name, value).apply();
     }
 
     public static void remove(Context context, String name) {
         SharedPreferences.Editor editor = context.getSharedPreferences(Setting.SETTING, Context.MODE_PRIVATE).edit();
-        editor.remove(name).commit();
+        editor.remove(name).apply();
     }
 }

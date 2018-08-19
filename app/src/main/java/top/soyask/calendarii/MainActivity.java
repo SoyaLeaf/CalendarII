@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment, mainFragment)
-                .commit();
+                .commitAllowingStateLoss();
     }
 
     private static class InitTask extends AsyncTask<Void, Void, Void> {

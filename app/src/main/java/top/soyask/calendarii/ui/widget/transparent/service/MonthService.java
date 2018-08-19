@@ -14,6 +14,11 @@ import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.base.BaseRemoteViewFactory;
 
+import static android.util.TypedValue.COMPLEX_UNIT_SP;
+import static top.soyask.calendarii.global.Global.VIEW_DAY;
+import static top.soyask.calendarii.global.Global.VIEW_TODAY;
+import static top.soyask.calendarii.global.Global.VIEW_WEEK;
+
 public class MonthService extends RemoteViewsService {
 
     private static final String TAG = "MonthService";
@@ -42,7 +47,7 @@ public class MonthService extends RemoteViewsService {
     private class RemoteViewFactory extends BaseRemoteViewFactory {
 
 
-        public RemoteViewFactory(Context context) {
+        private RemoteViewFactory(Context context) {
             super(context);
         }
 
@@ -67,10 +72,11 @@ public class MonthService extends RemoteViewsService {
                     remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_today);
                     break;
                 case VIEW_DAY:
-                    Log.d(TAG, "position:" + position);
                     remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_day);
                     remoteViews.setTextViewText(R.id.tv_greg, "");
                     remoteViews.setTextViewText(R.id.tv_lunar, "");
+                    remoteViews.setTextViewTextSize(R.id.tv_greg, COMPLEX_UNIT_SP,Setting.TransparentWidget.trans_widget_number_font_size);
+                    remoteViews.setTextViewTextSize(R.id.tv_lunar, COMPLEX_UNIT_SP,Setting.TransparentWidget.trans_widget_lunar_font_size);
                     break;
             }
 
@@ -90,15 +96,13 @@ public class MonthService extends RemoteViewsService {
                 } else {
                     remoteViews.setInt(R.id.fl_event, "setVisibility", View.INVISIBLE);
                 }
-                Log.d(TAG, "position:" + day.getLunar());
             }
             return remoteViews;
         }
 
         @Override
         public RemoteViews getLoadingView() {
-            RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_day);
-            return remoteViews;
+            return new RemoteViews(mContext.getPackageName(), R.layout.item_widget_day);
         }
 
     }

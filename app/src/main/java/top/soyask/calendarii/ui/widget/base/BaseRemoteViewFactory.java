@@ -14,16 +14,17 @@ import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
+import static top.soyask.calendarii.global.Global.VIEW_DAY;
+import static top.soyask.calendarii.global.Global.VIEW_TODAY;
+import static top.soyask.calendarii.global.Global.VIEW_WEEK;
+
 /**
  * Created by mxf on 2017/11/19.
  */
 
 public abstract class BaseRemoteViewFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    protected static final int VIEW_WEEK = 0; //显示星期
-    protected static final int VIEW_DAY = 1; //显示日子
-    protected static final int VIEW_TODAY = 4;
-    protected static final int VIEW_EVENT = 5;
+
     protected static final String[] WEEK_ARRAY = {"日", "一", "二", "三", "四", "五", "六",};
     private static final String TAG = "RemoteViewFactory";
 
@@ -70,7 +71,7 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
         Calendar calendar = Calendar.getInstance();
         int month = calendar.get(Calendar.MONTH);
         int year = calendar.get(Calendar.YEAR);
-        int dayCount = DayUtils.getMonthDayCount(month, year);
+        int dayCount = DayUtils.getMonthDayCount(month + 1, year);
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);

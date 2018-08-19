@@ -1,13 +1,17 @@
 package top.soyask.calendarii.ui.fragment.setting;
 
+import android.annotation.AnimatorRes;
 import android.app.ProgressDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
@@ -23,18 +27,17 @@ import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
-import top.soyask.calendarii.ui.fragment.setting.widget.AlphaSetFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.PicSetFragment;
+import top.soyask.calendarii.ui.fragment.setting.widget.TransparentWidgetFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
 
 
-public class SettingFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, AlphaSetFragment.OnAlphaSetListener, GlobalData.LoadCallBack {
+public class SettingFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, GlobalData.LoadCallBack {
 
     private static final int WAIT = 0;
     private static final int CANCEL = 1;
     private static final int UPDATE = 3;
     private static final int RESTART = 4;
-    private TextView mTvAlpha;
 
     private Handler mHandler = new SettingHandler(this);
 
@@ -54,11 +57,12 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         setupSwitchReplenish();
         setupSwitchAnim();
 
-        setupWidgetAlpha();
+        findViewById(R.id.rl_birth).setOnClickListener(this);
         findViewById(R.id.rl_theme).setOnClickListener(this);
         findViewById(R.id.rl_holiday).setOnClickListener(this);
         findViewById(R.id.rl_widget_pic).setOnClickListener(this);
         findViewById(R.id.rl_ui).setOnClickListener(this);
+        findViewById(R.id.rl_trans_widget).setOnClickListener(this);
     }
 
     private void setupSwitchReplenish() {
@@ -73,13 +77,6 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         switchCompat.setOnCheckedChangeListener(this);
     }
 
-    private void setupWidgetAlpha() {
-        mTvAlpha = findViewById(R.id.tv_alpha);
-        mTvAlpha.setText(String.valueOf(Setting.widget_alpha));
-        findViewById(R.id.rl_alpha).setOnClickListener(this);
-        findViewById(R.id.rl_birth).setOnClickListener(this);
-    }
-
     private void setupSwitchStart() {
         SwitchCompat switchCompat = findViewById(R.id.sc_start);
         switchCompat.setChecked(Setting.date_offset == 1);
@@ -87,19 +84,8 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        mTvAlpha.setText(String.valueOf(Setting.widget_alpha));
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rl_alpha:
-                AlphaSetFragment alphaSetFragment = AlphaSetFragment.newInstance();
-                alphaSetFragment.setOnAlphaSetListener(this);
-                addFragment(alphaSetFragment);
-                break;
             case R.id.rl_theme:
                 ThemeFragment themeFragment = ThemeFragment.newInstance();
                 addFragment(themeFragment);
@@ -119,9 +105,24 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 Intent intent = new Intent(mHostActivity, ZoomActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.rl_trans_widget:
+                Window window = mHostActivity.getWindow();
+                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                TransparentWidgetFragment widgetFragment = TransparentWidgetFragment.newInstance();
+                addFragment(widgetFragment,R.anim.fade_in, R.anim.out_slide);
+                break;
             default:
                 removeFragment(this);
         }
+    }
+
+    protected void addFragment(Fragment fragment, @AnimatorRes int in,@AnimatorRes  int out) {
+        getFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(in,out,in,out)
+                .add(R.id.main, fragment)
+                .addToBackStack(fragment.getClass().getSimpleName())
+                .commit();
     }
 
     private void synHoliday() {
@@ -163,17 +164,6 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         }
 
     }
-
-    @Override
-    public void onAlphaSet(int alpha) {
-        Setting.widget_alpha = alpha;
-        Setting.setting(mHostActivity, Global.SETTING_WIDGET_ALPHA, alpha);
-        mTvAlpha.setText(String.valueOf(alpha));
-        AppWidgetManager appWidgetManager =
-                (AppWidgetManager) mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
-        WidgetManager.updateMonthWidget(mHostActivity, appWidgetManager);
-    }
-
 
     @Override
     public void onSuccess() {

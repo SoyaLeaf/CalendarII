@@ -396,8 +396,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         mHostActivity.unregisterReceiver(mMainReceiver);
+        super.onDestroy();
     }
 
     @Override

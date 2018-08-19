@@ -119,4 +119,9 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void setupUI();
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mHostActivity = null;
+    }
 }

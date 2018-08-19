@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#1e000000"
-    android:theme="@style/WidgetTextColor.Light"
+    android:theme="@style/WidgetTextColor"
+    android:elevation="2dp"
     android:padding="@dimen/widget_margin">
 
     <TextView
@@ -52,7 +53,7 @@
         android:layout_below="@id/tv_date"
         android:layout_marginLeft="@dimen/normal_margin"
         android:layout_marginRight="@dimen/normal_margin"
-        android:background="@color/text_color_sub_light" />
+        android:background="@color/text_color_sub_dark" />
 
     <GridView
         android:id="@+id/gv_month"

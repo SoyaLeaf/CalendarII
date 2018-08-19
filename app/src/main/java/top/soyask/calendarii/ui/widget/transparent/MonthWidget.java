@@ -6,8 +6,10 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import java.util.Calendar;
@@ -29,7 +31,6 @@ public class MonthWidget extends AppWidgetProvider {
 
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                        int appWidgetId) {
-        Log.i(TAG, "updateAppWidget");
         Setting.loadSetting(context);
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
         RemoteViews views = setupRemoteViews(context, calendar);
@@ -39,8 +40,9 @@ public class MonthWidget extends AppWidgetProvider {
 
     @NonNull
     private static RemoteViews setupRemoteViews(Context context, Calendar calendar) {
-
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.month_widget);
+        // 应该更改theme来达到目的，然而Android似乎并没有为View提供setTheme这样的功能
+        int layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.month_widget : R.layout.month_widget_light;
+        RemoteViews views = new RemoteViews(context.getPackageName(), layout);
         LunarDay lunarDay = LunarUtils.getLunar(calendar);
 
         Intent intent = new Intent(context, MonthService.class);
@@ -49,11 +51,16 @@ public class MonthWidget extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
 
         views.setOnClickPendingIntent(R.id.iv_launch, pendingIntent);
-        views.setInt(R.id.widget, "setBackgroundColor", Color.argb(Setting.widget_alpha, 0, 0, 0));
+        int themeColor = Setting.TransparentWidget.trans_widget_theme_color;
+        views.setInt(R.id.widget, "setBackgroundColor", Color.argb(Setting.TransparentWidget.trans_widget_alpha, themeColor, themeColor, themeColor));
+
         views.setRemoteAdapter(R.id.gv_month, intent);
         views.setTextViewText(R.id.tv_lunar, lunarDay.getLunarDate());
-        views.setTextViewText(R.id.tv_year, "" + calendar.get(Calendar.YEAR));
-        views.setTextViewText(R.id.tv_date, (month < 10 ? "0" : "") + month + "月");
+        views.setTextViewTextSize(R.id.tv_lunar, TypedValue.COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_lunar_month_text_size);
+        views.setTextViewTextSize(R.id.tv_year, TypedValue.COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_year_text_size);
+        views.setTextViewTextSize(R.id.tv_date, TypedValue.COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_month_text_size);
+        views.setTextViewText(R.id.tv_year, String.valueOf(calendar.get(Calendar.YEAR)));
+        views.setTextViewText(R.id.tv_date, String.format(Locale.CHINA, "%02d月", month));
         return views;
     }
 
@@ -77,5 +84,6 @@ public class MonthWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
     }
+
 }
 

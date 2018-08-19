@@ -14,6 +14,7 @@ public class Global {
     public static final String SETTING_REPLENISH = "setting_replenish";
     public static final String SETTING_SELECT_ANIM = "select_anim";
     public static final String SETTING_WIDGET_ALPHA = "widget_alpha";
+    public static final String SETTING_WIDGET_THEME_COLOR = "widget_theme_color";
     public static final String SETTING_WHITE_WIDGET_PIC = "white_widget_pic";
     public static final String SETTING_DENSITY_DPI = "setting_density_dpi";
 
@@ -25,4 +26,9 @@ public class Global {
 
     public static final String SETTING_HOLIDAY = "holiday";
     public static final String SETTING_WORKDAY = "workday";
+
+    public static final int VIEW_WEEK = 0; //显示星期
+    public static final int VIEW_DAY = 1; //显示日子
+    public static final int VIEW_TODAY = 4;
+    public static final int VIEW_EVENT = 5;
 }

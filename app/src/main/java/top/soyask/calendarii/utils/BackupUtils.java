@@ -47,7 +47,6 @@ public class BackupUtils {
             parent = context.getCacheDir();
         }
         String filename = parent.getPath() + File.separatorChar + System.currentTimeMillis() + ".cdt";
-        Log.i("xxx", "save: " + filename);
         File file = new File(filename);
         try (FileOutputStream outputStream = new FileOutputStream(file);
              BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream)) {
@@ -57,22 +56,6 @@ public class BackupUtils {
             return null;
         }
         return filename;
-    }
-
-    public static Backup load(String file) {
-        try (FileInputStream fis = new FileInputStream(file);
-             BufferedInputStream bis = new BufferedInputStream(fis)
-        ) {
-            byte[] data = new byte[bis.available()];
-            bis.read(data);
-            byte[] bytes = Base64.decode(data, Base64.DEFAULT);
-            String json = new String(bytes, "gbk");
-            return GSON.fromJson(json, Backup.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
     }
 
     public static Backup load(ContentResolver resolver, Uri uri) {

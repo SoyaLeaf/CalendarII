@@ -260,7 +260,6 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/normal_margin"
                 android:text="小部件" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1px"
@@ -269,7 +268,7 @@
                 android:background="@color/divider_dark" />
 
             <RelativeLayout
-                android:id="@+id/rl_alpha"
+                android:id="@+id/rl_trans_widget"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
@@ -278,28 +277,18 @@
                 android:paddingTop="8dp">
 
                 <TextView
-                    android:id="@+id/tv_alpha_title"
+                    android:id="@+id/rl_trans_widget_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="透明度"
+                    android:text="透明小部件"
                     android:textColor="@color/text_color_primary_dark"
                     android:textSize="@dimen/primary_font_size" />
 
                 <TextView
-                    android:id="@+id/tv_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_alpha_title"
-                    android:text="适配不同的背景，当前透明度:"
-                    android:textSize="@dimen/hint_font_size" />
-
-                <TextView
-                    android:id="@+id/tv_alpha"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_alpha_title"
-                    android:layout_toRightOf="@id/tv_content"
-                    android:text="32"
+                    android:layout_below="@id/rl_trans_widget_title"
+                    android:text="编辑透明小部件"
                     android:textSize="@dimen/hint_font_size" />
             </RelativeLayout>
 

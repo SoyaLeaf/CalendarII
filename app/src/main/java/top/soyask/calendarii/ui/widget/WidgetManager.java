@@ -12,7 +12,7 @@ import top.soyask.calendarii.ui.widget.white.WhiteWidget;
  */
 
 public class WidgetManager {
-    public static final void updateAllWidget(Context context) {
+    public static void updateAllWidget(Context context) {
         AppWidgetManager appWidgetManager =
                 (AppWidgetManager) context.getSystemService(Context.APPWIDGET_SERVICE);
         updateMonthWidget(context, appWidgetManager);

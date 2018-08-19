@@ -2,6 +2,7 @@ package top.soyask.calendarii.ui.widget.white.service;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -10,6 +11,10 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.domain.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.base.BaseRemoteViewFactory;
+
+import static top.soyask.calendarii.global.Global.VIEW_DAY;
+import static top.soyask.calendarii.global.Global.VIEW_TODAY;
+import static top.soyask.calendarii.global.Global.VIEW_WEEK;
 
 public class WhiteWidgetService extends RemoteViewsService {
     public WhiteWidgetService() {
@@ -21,7 +26,7 @@ public class WhiteWidgetService extends RemoteViewsService {
     }
 
     private class RemoteViewFactory extends BaseRemoteViewFactory {
-        public RemoteViewFactory(Context context) {
+        private RemoteViewFactory(Context context) {
             super(context);
         }
 
@@ -46,7 +51,7 @@ public class WhiteWidgetService extends RemoteViewsService {
 
             if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
                 Day day = mDays.get(position - mDateStartPos);
-                remoteViews.setTextViewText(R.id.tv_greg, "" + day.getDayOfMonth());
+                remoteViews.setTextViewText(R.id.tv_greg, String.valueOf(day.getDayOfMonth()));
                 if (day.hasBirthday()) {
                     remoteViews.setTextViewText(R.id.tv_lunar, "生日");
                     remoteViews.setInt(R.id.iv_birth, "setVisibility", View.VISIBLE);
