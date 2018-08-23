@@ -3,12 +3,16 @@ package top.soyask.calendarii.ui.fragment.setting.widget;
 import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -20,6 +24,7 @@ import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,13 +39,17 @@ import top.soyask.calendarii.domain.LunarDay;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.adapter.month.MonthDayAdapter;
+import top.soyask.calendarii.ui.floatwindow.FloatWindowService;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.LunarUtils;
 import top.soyask.calendarii.utils.MonthUtils;
+import top.soyask.calendarii.utils.PermissionUtils;
 
-public class TransparentWidgetFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
+
+public class TransparentWidgetFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener {
 
     private int mWallPagerOffset;
     private Bitmap mLastBackground;
@@ -74,18 +83,28 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
         SwitchCompat scTheme = findViewById(R.id.sc_theme);
         scTheme.setChecked(Setting.TransparentWidget.trans_widget_theme_color == 0);
         scTheme.setOnCheckedChangeListener(this::toggleWidgetTheme);
+
+        findViewById(R.id.btn_font).setOnClickListener(this::onFontButtonClick);
+    }
+
+    private void onFontButtonClick(View view) {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+        mHostActivity.startService(new Intent(mHostActivity, FloatWindowService.class));
     }
 
     private void toggleWidgetTheme(CompoundButton compoundButton, boolean b) {
         Setting.TransparentWidget.trans_widget_theme_color = b ? 0 : 255;
         int themeColor = Setting.TransparentWidget.trans_widget_theme_color;
-        Setting.setting(mHostActivity, Global.SETTING_WIDGET_THEME_COLOR, themeColor);
+        Setting.setting(mHostActivity, Global.SETTING_TRANS_WIDGET_THEME_COLOR, themeColor);
         mAdapter.notifyDataSetChanged();
         setWidgetView();
         AppWidgetManager appWidgetManager =
                 (AppWidgetManager) mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
         new Handler().postDelayed(() -> {
-            if(appWidgetManager != null){
+            if (appWidgetManager != null) {
                 WidgetManager.updateMonthWidget(mHostActivity, appWidgetManager);
             }
         }, 1500);
@@ -189,12 +208,4 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
                 break;
         }
     }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-        }
-
-    }
-
 }

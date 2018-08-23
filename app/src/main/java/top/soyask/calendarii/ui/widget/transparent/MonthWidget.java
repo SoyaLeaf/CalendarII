@@ -40,7 +40,7 @@ public class MonthWidget extends AppWidgetProvider {
 
     @NonNull
     private static RemoteViews setupRemoteViews(Context context, Calendar calendar) {
-        // 应该更改theme来达到目的，然而Android似乎并没有为View提供setTheme这样的功能
+        // 应该更改theme来达到目的，然而Android似乎并没有为View提供setTheme这样的功能 w(ﾟДﾟ)w
         int layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.month_widget : R.layout.month_widget_light;
         RemoteViews views = new RemoteViews(context.getPackageName(), layout);
         LunarDay lunarDay = LunarUtils.getLunar(calendar);

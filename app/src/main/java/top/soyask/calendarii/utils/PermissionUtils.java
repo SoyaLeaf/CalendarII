@@ -17,7 +17,7 @@ public class PermissionUtils {
         boolean had = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
+                activity.requestPermissions(new String[]{ permission }, requestCode);
                 had = false;
             }
         }
@@ -28,7 +28,7 @@ public class PermissionUtils {
         boolean had = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (fragment.getActivity().checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                fragment.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
+                fragment.requestPermissions(new String[]{permission}, requestCode);
                 had = false;
             }
         }

@@ -109,17 +109,17 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
                 Window window = mHostActivity.getWindow();
                 window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
                 TransparentWidgetFragment widgetFragment = TransparentWidgetFragment.newInstance();
-                addFragment(widgetFragment,R.anim.fade_in, R.anim.out_slide);
+                addFragment(widgetFragment, R.anim.fade_in, R.anim.out_slide);
                 break;
             default:
                 removeFragment(this);
         }
     }
 
-    protected void addFragment(Fragment fragment, @AnimatorRes int in,@AnimatorRes  int out) {
+    protected void addFragment(Fragment fragment, @AnimatorRes int in, @AnimatorRes int out) {
         getFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(in,out,in,out)
+                .setCustomAnimations(in, out, in, out)
                 .add(R.id.main, fragment)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
@@ -180,12 +180,12 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         mHandler.sendEmptyMessage(CANCEL);
     }
 
-    public static class SettingHandler extends Handler {
+    private static class SettingHandler extends Handler {
         private ProgressDialog mProgressDialog;
 
         private WeakReference<BaseFragment> mFragment;
 
-        public SettingHandler(BaseFragment fragment) {
+        private SettingHandler(BaseFragment fragment) {
             this.mFragment = new WeakReference<>(fragment);
         }
 

@@ -1,5 +1,6 @@
 package top.soyask.calendarii.ui.widget.white;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -14,6 +15,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Set;
 
+import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.white.service.WhiteWidgetService;
@@ -39,6 +41,8 @@ public class WhiteWidget extends AppWidgetProvider {
             Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.mipmap.miku);
             views.setBitmap(R.id.iv, "setImageBitmap", bitmap);
         }
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
+        views.setOnClickPendingIntent(R.id.iv, pendingIntent);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gv_month);
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
