@@ -18,6 +18,8 @@ import android.widget.RadioGroup;
 
 import com.dinuscxj.progressbar.CircleProgressBar;
 
+import java.lang.ref.WeakReference;
+
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 
@@ -33,20 +35,7 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
     private OnDeleteConfirmListener mOnDeleteConfirmListener;
     private boolean isExiting;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what < 150) {
-                mCircleProgressBar.setProgress(msg.what);
-            } else {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    exit(mContentView, -1, -1);
-                } else {
-                    removeFragment(DeleteFragment.this);
-                }
-            }
-        }
-    };
+    private Handler mHandler = new DeleteHandler(this);
 
     private Thread mThread;
     private Runnable mProgress = () -> {
@@ -190,5 +179,31 @@ public class DeleteFragment extends BaseFragment implements View.OnTouchListener
     @Override
     public void onAnimationRepeat(Animator animation) {
 
+    }
+
+    private static class DeleteHandler extends Handler {
+
+        private WeakReference<DeleteFragment> mFragment;
+
+        private DeleteHandler(DeleteFragment fragment) {
+            this.mFragment = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            DeleteFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            if (msg.what < 150) {
+                fragment.mCircleProgressBar.setProgress(msg.what);
+            } else {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    fragment.exit(fragment.mContentView, -1, -1);
+                } else {
+                    fragment.removeFragment(fragment);
+                }
+            }
+        }
     }
 }

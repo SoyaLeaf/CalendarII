@@ -1,5 +1,8 @@
 package top.soyask.calendarii;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -11,6 +14,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 
 import top.soyask.calendarii.database.dao.BirthdayDao;
@@ -20,6 +27,7 @@ import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.utils.BackupUtils;
+import top.soyask.calendarii.utils.FileUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +54,57 @@ public class MainActivity extends AppCompatActivity {
             new InitTask(this).execute();
         }
         importBackup();
+        checkCrash();
+    }
+
+    private void checkCrash() {
+        File file = new File(getCacheDir().getPath() + File.separator + "crash");
+        if (file.exists()) {
+            new AlertDialog.Builder(this)
+                    .setMessage("检测到您的App奔溃了，是否上报错误信息？")
+                    .setPositiveButton("复制并上报", (DialogInterface dialog, int which) -> {
+                        copyAndSend(file);
+                    })
+                    .setNegativeButton("取消", null)
+                    .setOnDismissListener(dialog -> file.delete())
+                    .show();
+        }
+    }
+
+    private void copyAndSend(File file) {
+        try (FileInputStream fileInputStream = new FileInputStream(file);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+        ) {
+            StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line).append("\n");
+            }
+            String info = builder.toString();
+            copy(info);
+            launchMarket();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void copy(String info) {
+        ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText("crash", info);
+        manager.setPrimaryClip(clipData);
+    }
+
+    private void launchMarket() {
+        Uri uri = Uri.parse("market://details?id=" + getPackageName());
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        if (intent.resolveActivity(getPackageManager()) != null) { //可以接收
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, R.string.no_market, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void importBackup() {
