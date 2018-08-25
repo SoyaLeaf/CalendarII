@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,10 +48,12 @@ import top.soyask.calendarii.utils.LunarUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 import top.soyask.calendarii.utils.PermissionUtils;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
 
 public class TransparentWidgetFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener {
 
+    public static final String TAG = TransparentWidgetFragment.class.getSimpleName();
     private int mWallPagerOffset;
     private Bitmap mLastBackground;
     private boolean mIsWallPagerFit;
@@ -123,6 +126,16 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
         mLoadWallPager = isChecked;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (PermissionUtils.handleResults(permissions,grantResults)) {
+            setBackground();
+        } else {
+            PermissionUtils.manual(mHostActivity);
+        }
+    }
+
     private void setWidgetView() {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
         LunarDay lunarDay = LunarUtils.getLunar(calendar);
@@ -151,6 +164,9 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
     }
 
     private void setBackground() {
+        if (!PermissionUtils.checkSelfPermission(this,READ_EXTERNAL_STORAGE,0)) {
+            return;
+        }
         Display display = mHostActivity.getWindowManager().getDefaultDisplay();
         Point out = new Point();
         display.getRealSize(out);
@@ -158,6 +174,14 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
         Bitmap bitmap = wallpaperManager.getBitmap();
 
         int offset = (bitmap.getWidth() - out.x) * mWallPagerOffset / 100;
+        if (bitmap.getWidth() < out.x) {
+            out.x = bitmap.getWidth();
+            Log.i(TAG, "Bitmap width:" + bitmap.getWidth());
+        }
+        if (bitmap.getHeight() < out.y) {
+            out.y = bitmap.getHeight();
+            Log.i(TAG, "Bitmap height:" + bitmap.getHeight());
+        }
         Bitmap background = Bitmap.createBitmap(bitmap, offset, 0, out.x, out.y);
         mContentView.setBackground(new BitmapDrawable(getResources(), background));
         if (mLastBackground != null && !mIsWallPagerFit) {
