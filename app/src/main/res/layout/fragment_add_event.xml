@@ -18,7 +18,7 @@
             android:id="@+id/ib_done"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
+            android:layout_gravity="center_vertical|end"
             android:layout_margin="@dimen/normal_margin"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_done_white_24dp" />
@@ -41,10 +41,10 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
         android:background="?attr/selectableItemBackground"
-        android:drawableLeft="@drawable/ic_date_range_grey_500_18dp"
-        android:text="17年11月11日"
+        android:drawableStart="@drawable/ic_date_range_grey_500_18dp"
         android:textColor="@color/text_color_primary_dark"
         android:textSize="@dimen/primary_font_size" />
+
 
     <!--<Button-->
         <!--android:id="@+id/btn_paste"-->

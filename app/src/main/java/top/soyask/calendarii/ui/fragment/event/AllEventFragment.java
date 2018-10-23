@@ -109,6 +109,10 @@ public class AllEventFragment extends BaseFragment implements EventAdapter.OnEve
     public void onEditClick(final int position, Event event) {
         EditEventFragment editEventFragment = EditEventFragment.newInstance(null, event);
         editEventFragment.setOnUpdateListener(() -> mEventAdapter.notifyItemChanged(position));
+        editEventFragment.setOnDeleteListener(() ->{
+            mEvents.remove(position);
+            mEventAdapter.notifyItemRemoved(position);
+        } );
         addFragment(editEventFragment);
     }
 

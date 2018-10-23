@@ -20,6 +20,7 @@ import android.widget.EditText;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
@@ -31,7 +32,8 @@ import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 
 
-public class EditEventFragment extends BaseFragment implements View.OnClickListener, Animator.AnimatorListener, DateSelectDialog.DateSelectCallback {
+public class EditEventFragment extends BaseFragment
+        implements View.OnClickListener, Animator.AnimatorListener, DateSelectDialog.DateSelectCallback {
 
     private static final String DATE = "DATE";
     private static final String EVENT = "EVENT";
@@ -42,6 +44,7 @@ public class EditEventFragment extends BaseFragment implements View.OnClickListe
     private Button mBtnDate;
     private OnUpdateListener mOnUpdateListener;
     private OnAddListener mOnAddListener;
+    private OnDeleteListener mOnDeleteListener;
     private boolean isExiting;
 
     public EditEventFragment() {
@@ -144,36 +147,69 @@ public class EditEventFragment extends BaseFragment implements View.OnClickListe
                 break;
             default:
                 String detail = mEditText.getText().toString();
-                if (detail.isEmpty()) {
-                    removeSelf();
+                if (isAddNewEvent()) {
+                    if (!hasContent(detail)) {
+                        removeSelf();
+                    } else {
+                        confirmExit();
+                    }
                 } else {
-                    new AlertDialog.Builder(mHostActivity)
-                            .setMessage(R.string.whether_to_save)
-                            .setPositiveButton(R.string.confirm, (dialog, which) -> done())
-                            .setNegativeButton(R.string.do_not_save, (dialog, which) -> removeSelf())
-                            .show();
+                    if (mEvent.getDetail().equals(detail)) {
+                        removeSelf();
+                    } else {
+                        if(hasContent(detail)){
+                            confirmExit();
+                        }else {
+                            confirmDeleteIfContentIsEmpty();
+                        }
+                    }
                 }
                 break;
         }
     }
 
+    private void confirmDeleteIfContentIsEmpty() {
+        new AlertDialog.Builder(mHostActivity)
+                .setMessage(R.string.confirm_delete)
+                .setPositiveButton(R.string.delete, (dialog, which) -> {
+                    EventDao.getInstance(mHostActivity).delete(mEvent);
+                    mOnDeleteListener.onDelete();
+                    removeSelf();
+                })
+                .setNegativeButton(R.string.do_not_delete, (dialog, which) -> removeSelf())
+                .show();
+    }
+
+    private void confirmExit() {
+        new AlertDialog.Builder(mHostActivity)
+                .setMessage(R.string.whether_to_save)
+                .setPositiveButton(R.string.confirm, (dialog, which) -> done())
+                .setNegativeButton(R.string.cancel, (dialog, which) -> removeSelf())
+                .show();
+    }
+
 
     private void done() {
         String detail = mEditText.getText().toString();
-
-        if (checkContent(detail)) {
+        EventDao eventDao = EventDao.getInstance(mHostActivity);
+        if (hasContent(detail)) {
             String title = 20 + mBtnDate.getText().toString();
-            EventDao eventDao = EventDao.getInstance(mHostActivity);
-            if (mEvent == null) {
+            if (isAddNewEvent()) {
                 addNewEvent(detail, title, eventDao);
             } else {
                 updateEvent(detail, title, eventDao);
             }
+            removeWithAnimationAndHideSoftInput();
+        }else {
+            confirmDeleteIfContentIsEmpty();
         }
-        removeWithAnimationAndHideSoftInput();
     }
 
-    private boolean checkContent(String detail) {
+    private boolean isAddNewEvent() {
+        return mEvent == null;
+    }
+
+    private boolean hasContent(String detail) {
         return detail != null && !detail.trim().isEmpty();
     }
 
@@ -253,6 +289,10 @@ public class EditEventFragment extends BaseFragment implements View.OnClickListe
         this.mOnAddListener = onAddListener;
     }
 
+    public void setOnDeleteListener(OnDeleteListener onDeleteListener) {
+        this.mOnDeleteListener = onDeleteListener;
+    }
+
     @Override
     public void onAnimationStart(Animator animation) {
 
@@ -302,5 +342,9 @@ public class EditEventFragment extends BaseFragment implements View.OnClickListe
 
     public interface OnAddListener {
         void onAdd();
+    }
+
+    public interface OnDeleteListener {
+        void onDelete();
     }
 }
