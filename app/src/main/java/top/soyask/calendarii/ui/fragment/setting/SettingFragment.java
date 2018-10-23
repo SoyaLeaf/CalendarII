@@ -1,19 +1,17 @@
 package top.soyask.calendarii.ui.fragment.setting;
 
-import android.annotation.AnimatorRes;
 import android.app.ProgressDialog;
-import android.appwidget.AppWidgetManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.AnimRes;
+import android.support.annotation.AnimatorRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -116,7 +114,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         }
     }
 
-    protected void addFragment(Fragment fragment, @AnimatorRes int in, @AnimatorRes int out) {
+    protected void addFragment(Fragment fragment, @AnimatorRes @AnimRes int in, @AnimatorRes @AnimRes int out) {
         getFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(in, out, in, out)

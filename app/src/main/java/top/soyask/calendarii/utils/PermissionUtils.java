@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 
 public class PermissionUtils {
@@ -27,7 +28,9 @@ public class PermissionUtils {
     public static boolean checkSelfPermission(Fragment fragment, String permission, int requestCode) {
         boolean had = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (fragment.getActivity().checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            FragmentActivity activity = fragment.getActivity();
+            if(activity == null) return false;
+            if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
                 fragment.requestPermissions(new String[]{permission}, requestCode);
                 had = false;
             }

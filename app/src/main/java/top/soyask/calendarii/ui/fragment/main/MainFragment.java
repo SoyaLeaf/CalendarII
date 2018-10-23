@@ -88,7 +88,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private boolean isBirthday = false;
     private int mEventViewWidth;
     private int mEventViewHeight;
-    private MonthFragmentAdapter mMonthFragmentAdapter;
 
     private Handler mAnimatorHandler = new MainHandler(this);
 
@@ -140,8 +139,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void setupViewPager() {
         int item = getCurrentMonth();
         mViewPager = findViewById(R.id.vp);
-        mMonthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), this);
-        mViewPager.setAdapter(mMonthFragmentAdapter);
+        MonthFragmentAdapter monthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), this);
+        mViewPager.setAdapter(monthFragmentAdapter);
         mViewPager.setCurrentItem(item);
         mViewPager.addOnPageChangeListener(this);
     }
@@ -170,8 +169,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setupEventView(final String title, List<Event> events) {
         if (mSelectedDay.hasBirthday()) {
-            StringBuffer buffer = getBirthdayStr();
-            mTvEvent.setText(buffer.toString());
+            String birthdayStr = getBirthdayStr();
+            mTvEvent.setText(birthdayStr);
         } else {
             mTvEvent.setText(events.get(0).getDetail());
         }
@@ -183,14 +182,14 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     @NonNull
-    private StringBuffer getBirthdayStr() {
+    private String getBirthdayStr() {
         List<Birthday> birthdays = mSelectedDay.getBirthdays();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Birthday birthday : birthdays) {
             sb.append(birthday.getWho()).append(',');
         }
         sb.deleteCharAt(sb.lastIndexOf(",")).append("的生日");
-        return sb;
+        return sb.toString();
     }
 
     private int getCurrentMonth() {
@@ -322,8 +321,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setBirthday(Day day) {
         if (day.hasBirthday()) {
-            StringBuffer buffer = getBirthdayStr();
-            mIvBirth.setText(buffer.toString());
+            String birthdayStr = getBirthdayStr();
+            mIvBirth.setText(birthdayStr);
             mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
         } else {
             mAnimatorHandler.sendEmptyMessage(BIRTHDAY_INVISIBLE);
@@ -356,6 +355,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
         } else {
             mTvDayCount.setText(R.string.today_things);
+            mTvDayCountM.setText(null);
         }
     }
 

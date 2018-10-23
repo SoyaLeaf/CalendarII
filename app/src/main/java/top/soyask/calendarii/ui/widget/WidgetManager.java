@@ -1,6 +1,6 @@
 package top.soyask.calendarii.ui.widget;
 
-import android.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;

@@ -44,7 +44,7 @@
                 android:id="@+id/ib_more"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="8dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/more_event"
@@ -80,8 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@id/tv_event"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_toRightOf="@id/tv_title"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@id/tv_title"
                 android:textColor="@color/text_color_primary_light"
                 android:textSize="@dimen/subtitle_font_size" />
 

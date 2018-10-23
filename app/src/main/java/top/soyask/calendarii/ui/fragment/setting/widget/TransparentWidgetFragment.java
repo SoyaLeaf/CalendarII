@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -129,7 +130,7 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (PermissionUtils.handleResults(permissions,grantResults)) {
+        if (PermissionUtils.handleResults(permissions, grantResults)) {
             setBackground();
         } else {
             PermissionUtils.manual(mHostActivity);
@@ -164,31 +165,33 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
     }
 
     private void setBackground() {
-        if (!PermissionUtils.checkSelfPermission(this,READ_EXTERNAL_STORAGE,0)) {
+        if (!PermissionUtils.checkSelfPermission(this, READ_EXTERNAL_STORAGE, 0)) {
             return;
         }
         Display display = mHostActivity.getWindowManager().getDefaultDisplay();
         Point out = new Point();
         display.getRealSize(out);
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(mHostActivity);
-        Bitmap bitmap = wallpaperManager.getBitmap();
-
-        int offset = (bitmap.getWidth() - out.x) * mWallPagerOffset / 100;
-        if (bitmap.getWidth() < out.x) {
-            out.x = bitmap.getWidth();
-            Log.i(TAG, "Bitmap width:" + bitmap.getWidth());
+        Drawable drawable = wallpaperManager.getDrawable();
+        if (drawable instanceof BitmapDrawable) {
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+            int offset = (bitmap.getWidth() - out.x) * mWallPagerOffset / 100;
+            if (bitmap.getWidth() < out.x) {
+                out.x = bitmap.getWidth();
+                Log.i(TAG, "Bitmap width:" + bitmap.getWidth());
+            }
+            if (bitmap.getHeight() < out.y) {
+                out.y = bitmap.getHeight();
+                Log.i(TAG, "Bitmap height:" + bitmap.getHeight());
+            }
+            Bitmap background = Bitmap.createBitmap(bitmap, offset, 0, out.x, out.y);
+            mContentView.setBackground(new BitmapDrawable(getResources(), background));
+            if (mLastBackground != null && !mIsWallPagerFit) {
+                mLastBackground.recycle();
+            }
+            mLastBackground = background;
+            mIsWallPagerFit = bitmap.getWidth() == out.x;
         }
-        if (bitmap.getHeight() < out.y) {
-            out.y = bitmap.getHeight();
-            Log.i(TAG, "Bitmap height:" + bitmap.getHeight());
-        }
-        Bitmap background = Bitmap.createBitmap(bitmap, offset, 0, out.x, out.y);
-        mContentView.setBackground(new BitmapDrawable(getResources(), background));
-        if (mLastBackground != null && !mIsWallPagerFit) {
-            mLastBackground.recycle();
-        }
-        mLastBackground = background;
-        mIsWallPagerFit = bitmap.getWidth() == out.x;
     }
 
 
