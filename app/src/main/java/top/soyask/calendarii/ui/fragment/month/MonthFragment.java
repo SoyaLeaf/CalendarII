@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.task.LoadDataTask;
 import top.soyask.calendarii.task.PendingAction;

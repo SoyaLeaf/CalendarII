@@ -35,10 +35,10 @@ import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Birthday;
-import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.entity.Birthday;
+import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.Event;
+import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;

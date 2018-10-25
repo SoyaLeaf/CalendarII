@@ -6,9 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 
@@ -17,7 +15,7 @@ import java.util.Locale;
 
 import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.transparent.service.MonthService;
 import top.soyask.calendarii.utils.LunarUtils;

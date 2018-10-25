@@ -20,14 +20,13 @@ import android.widget.EditText;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.Event;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 

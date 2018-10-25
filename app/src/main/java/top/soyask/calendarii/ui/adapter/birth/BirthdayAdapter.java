@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.Birthday;
+import top.soyask.calendarii.entity.Birthday;
 
 public class BirthdayAdapter extends RecyclerView.Adapter<BirthdayAdapter.BirthdayViewHolder> {
 

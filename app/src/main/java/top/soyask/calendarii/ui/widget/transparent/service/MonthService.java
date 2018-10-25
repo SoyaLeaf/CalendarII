@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.base.BaseRemoteViewFactory;
 

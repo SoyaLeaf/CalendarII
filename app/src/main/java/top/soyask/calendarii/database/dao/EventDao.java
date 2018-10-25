@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import top.soyask.calendarii.database.DBUtils;
-import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.entity.Event;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
 

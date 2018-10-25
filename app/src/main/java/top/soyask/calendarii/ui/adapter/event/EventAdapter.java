@@ -10,7 +10,7 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.ui.adapter.viewholder.EventViewHolder;
-import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.entity.Event;
 
 /**
  * Created by mxf on 2017/8/11.

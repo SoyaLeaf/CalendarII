@@ -2,32 +2,26 @@ package top.soyask.calendarii.utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.v4.os.EnvironmentCompat;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import top.soyask.calendarii.database.dao.BirthdayDao;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Backup;
-import top.soyask.calendarii.domain.Birthday;
-import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.entity.Backup;
+import top.soyask.calendarii.entity.Birthday;
+import top.soyask.calendarii.entity.Event;
 
 public class BackupUtils {
 

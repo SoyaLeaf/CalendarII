@@ -10,7 +10,6 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -20,6 +19,7 @@ import android.view.animation.Animation;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import top.soyask.calendarii.R;
@@ -128,7 +128,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
     private void initWeekViews() {
         mDateWidth = mDisplayWidth / 7;
         for (int i = 0; i < mWeekViews.length; i++) {
-            mWeekViews[i] = new WeekView(i,mDisplayWidth / 7);
+            mWeekViews[i] = new WeekView(i, mDisplayWidth / 7);
         }
     }
 
@@ -477,7 +477,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
         private Paint paint = new Paint();
         private int index;
 
-        private WeekView(int index,int size) {
+        private WeekView(int index, int size) {
             this.index = index;
             this.size = size;
             this.paddingTop = getPaddingTop();
@@ -485,7 +485,6 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setAntiAlias(true);
         }
-
 
 
         void onDraw(Canvas canvas) {
@@ -605,7 +604,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
             drawNumber(canvas, dateTextColor);
             drawBottomText(canvas);
             if (day.hasEvent()) {
-                drawEventRect(canvas);
+                drawEventSymbol(canvas);
             }
             if (day.isHoliday()) {
                 drawHoliday(canvas, holidayTextColor, holidayBgColor);
@@ -630,10 +629,101 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
             canvas.drawText(day.getBottomText(), rect.centerX(), bottomTextY, paint);
         }
 
-        private void drawEventRect(Canvas canvas) {
-            float eventRectLeft = rect.centerX() + rect.width() / 6;
-            canvas.drawRect(eventRectLeft, rect.centerY(),
-                    eventRectLeft + mEventRectSize, rect.centerY() + mEventRectSize, paint);
+        private void drawEventSymbol(Canvas canvas) {
+            float symbolCenterX = rect.centerX() + rect.width() / 6;
+            float symbolCenterY = rect.centerY() + mEventRectSize / 2;
+            int i = new Random().nextInt() % 5;
+            switch (i) {
+                case 0:
+                    drawEventRect(canvas, symbolCenterX, symbolCenterY);
+                    break;
+                case 1:
+                    drawEventCircle(canvas, symbolCenterX, symbolCenterY);
+                    break;
+                case 2:
+                    drawEventStar(canvas, symbolCenterX, symbolCenterY);
+                    break;
+                case 3:
+                    drawEventHeart(canvas, symbolCenterX, symbolCenterY);
+                    break;
+                default:
+                    drawEventTriangle(canvas, symbolCenterX, symbolCenterY);
+            }
+//            drawEventRect(canvas, symbolCenterX, symbolCenterY);
+//            drawEventCircle(canvas, symbolCenterX, symbolCenterY);
+//            drawEventStar(canvas, symbolCenterX, symbolCenterY);
+//            drawEventHeart(canvas, symbolCenterX, symbolCenterY);
+//            drawEventTriangle(canvas, symbolCenterX, symbolCenterY);
+
+        }
+
+
+        private void drawEventRect(Canvas canvas, float centerX, float centerY) {
+            float left = centerX - mEventRectSize / 2;
+            float right = centerX + mEventRectSize / 2;
+            float top = centerY - mEventRectSize / 2;
+            float bottom = centerY + mEventRectSize / 2;
+            canvas.drawRect(left, top, right, bottom, paint);
+        }
+
+        private void drawEventCircle(Canvas canvas, float centerX, float centerY) {
+            canvas.drawCircle(centerX, centerY, mEventRectSize / 3 * 2, paint);
+        }
+
+        private void drawEventStar(Canvas canvas, float centerX, float centerY) {
+            float starR = mEventRectSize;
+            Path path = new Path();
+            path.reset();
+            float offsetX = centerX - mEventRectSize;
+            float offsetY = centerY - mEventRectSize;
+            path.moveTo(offsetX, offsetY + starR * 0.73f);
+            path.lineTo(offsetX + starR * 2, offsetY + starR * 0.73f);
+            path.lineTo(offsetX + starR * 0.38f, offsetY + starR * 1.9f);
+            path.lineTo(offsetX + starR, offsetY + 0);
+            path.lineTo(offsetX + starR * 1.62f, offsetY + starR * 1.9f);
+            path.lineTo(offsetX + 0, offsetY + starR * 0.73f);
+            path.close();
+            canvas.drawPath(path, paint);
+        }
+
+        private void drawEventHeart(Canvas canvas, float centerX, float centerY) {
+            float heartSize = mEventRectSize * 2;
+            centerX += mEventRectSize * 0.5f; //向右移动一点儿
+            float left = centerX - mEventRectSize * 1f;
+            float right = centerX + mEventRectSize * 1f;
+
+            Path path = new Path();
+            path.moveTo(centerX, centerY);
+            float leftControlX0 = left + heartSize * 0.15f;
+            float leftControlY0 = centerY - heartSize * 0.25f;
+            float leftControlX1 = left;
+            float leftControlY1 = centerY + heartSize * 0.25f;
+            path.cubicTo(leftControlX0, leftControlY0, leftControlX1, leftControlY1, centerX, centerY + heartSize * 0.5f);
+
+            path.moveTo(centerX, centerY + heartSize * 0.5f);
+            float rightControlX0 = right;
+            float rightControlY0 = centerY + heartSize * 0.25f;
+            float rightControlX1 = right - heartSize * 0.15f;
+            float rightControlY1 = centerY - heartSize * 0.25f;
+            path.cubicTo(rightControlX0, rightControlY0, rightControlX1, rightControlY1, centerX, centerY);
+            path.close();
+            canvas.drawPath(path, paint);
+        }
+
+
+        private void drawEventTriangle(Canvas canvas, float centerX, float centerY) {
+            Path path = new Path();
+            float sqrt = (float) Math.sqrt(3) * 0.5f;
+            float top = centerY - mEventRectSize * sqrt;
+            float bottom = centerY + mEventRectSize * 0.5f;
+            float left = centerX - mEventRectSize * sqrt;
+            float right = centerX + mEventRectSize * sqrt;
+
+            path.moveTo(left, bottom);
+            path.lineTo(right, bottom);
+            path.lineTo(centerX, top);
+            path.close();
+            canvas.drawPath(path, paint);
         }
 
         private void drawHoliday(Canvas canvas, int holidayTextColor, int holidayBgColor) {

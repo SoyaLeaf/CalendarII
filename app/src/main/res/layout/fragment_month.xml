@@ -21,7 +21,7 @@
         app:cv_dateMargin="2dp"
         app:cv_dateTextColor="@color/text_color_sub_dark"
         app:cv_dateTextSize="15dp"
-        app:cv_eventRectSize="3dp"
+        app:cv_eventRectSize="3.5dp"
         app:cv_holidayTextColor="?colorPrimary"
         app:cv_holidayTextSize="5dp"
         app:cv_todayTextColor="@color/text_color_primary_light"

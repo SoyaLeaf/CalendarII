@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.BirthdayDao;
-import top.soyask.calendarii.domain.Birthday;
+import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.LunarUtils;

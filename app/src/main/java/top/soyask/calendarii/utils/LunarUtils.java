@@ -3,7 +3,7 @@ package top.soyask.calendarii.utils;
 import java.util.Calendar;
 import java.util.Date;
 
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.entity.LunarDay;
 
 import static top.soyask.calendarii.global.Global.YEAR_END;
 import static top.soyask.calendarii.global.Global.YEAR_START;

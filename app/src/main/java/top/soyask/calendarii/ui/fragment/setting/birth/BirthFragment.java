@@ -1,6 +1,5 @@
 package top.soyask.calendarii.ui.fragment.setting.birth;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +10,7 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.BirthdayDao;
-import top.soyask.calendarii.domain.Birthday;
+import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.ui.adapter.birth.BirthdayAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;

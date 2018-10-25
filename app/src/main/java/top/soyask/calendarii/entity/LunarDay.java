@@ -1,4 +1,4 @@
-package top.soyask.calendarii.domain;
+package top.soyask.calendarii.entity;
 
 import java.io.Serializable;
 

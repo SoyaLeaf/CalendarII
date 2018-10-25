@@ -22,12 +22,11 @@ import java.lang.ref.WeakReference;
 
 import top.soyask.calendarii.database.dao.BirthdayDao;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Backup;
+import top.soyask.calendarii.entity.Backup;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.main.MainFragment;
 import top.soyask.calendarii.utils.BackupUtils;
-import top.soyask.calendarii.utils.FileUtils;
 
 public class MainActivity extends AppCompatActivity {
 

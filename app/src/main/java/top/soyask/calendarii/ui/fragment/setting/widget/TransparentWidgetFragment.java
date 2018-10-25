@@ -9,10 +9,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
@@ -26,18 +24,16 @@ import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.adapter.month.MonthDayAdapter;
@@ -50,7 +46,6 @@ import top.soyask.calendarii.utils.MonthUtils;
 import top.soyask.calendarii.utils.PermissionUtils;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.SYSTEM_ALERT_WINDOW;
 
 public class TransparentWidgetFragment extends BaseFragment implements SeekBar.OnSeekBarChangeListener {
 

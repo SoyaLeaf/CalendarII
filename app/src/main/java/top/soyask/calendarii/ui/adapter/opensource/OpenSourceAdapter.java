@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.OpenSource;
+import top.soyask.calendarii.entity.OpenSource;
 
 /**
  * Created by mxf on 2017/10/29.

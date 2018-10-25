@@ -1,17 +1,15 @@
 package top.soyask.calendarii.ui.adapter.month;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
 
 import static top.soyask.calendarii.global.Global.VIEW_DAY;

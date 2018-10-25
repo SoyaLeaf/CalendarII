@@ -2,13 +2,12 @@ package top.soyask.calendarii.ui.widget.white.service;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.widget.base.BaseRemoteViewFactory;
 
