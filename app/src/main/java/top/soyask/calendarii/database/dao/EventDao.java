@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import top.soyask.calendarii.database.DBUtils;
@@ -46,6 +47,7 @@ public class EventDao {
         values.put("detail", event.getDetail());
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
+        values.put("type", event.getType());
         database.insert(EVENT, null, values);
         database.close();
         sendBroadcast(MonthFragment.ADD_EVENT);
@@ -68,6 +70,7 @@ public class EventDao {
         values.put("detail", event.getDetail());
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
+        values.put("type", event.getType());
         database.update(EVENT, values, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
         sendBroadcast(MonthFragment.UPDATE_EVENT);
@@ -114,13 +117,7 @@ public class EventDao {
         Cursor cursor = database.query(EVENT, null, null, null, null, null, "title");
         List<Event> events = new ArrayList<>();
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String title = cursor.getString(1);
-            String detail = cursor.getString(2);
-            Event event = new Event(title, detail);
-            event.setId(id);
-            event.setDelete(cursor.getInt(3) == 1);
-            event.setComplete(cursor.getInt(4) == 1);
+            Event event = map2Event(cursor);
             events.add(event);
         }
         cursor.close();
@@ -128,17 +125,28 @@ public class EventDao {
         return events;
     }
 
+    @NonNull
+    private Event map2Event(Cursor cursor) {
+        int id = cursor.getInt(0);
+        String title = cursor.getString(1);
+        String detail = cursor.getString(2);
+        int type = cursor.getInt(5);
+        Event event = new Event(title, detail, type);
+        event.setId(id);
+        event.setDelete(cursor.getInt(3) == 1);
+        event.setComplete(cursor.getInt(4) == 1);
+        return event;
+    }
+
 
     public List<Event> query(String title) {
         synchronized (EventDao.this) {
-            List<Event> events = new ArrayList<>();
             try {
-                events.addAll(queryByTitle(title));
+                return queryByTitle(title);
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                return events;
             }
+            return Collections.emptyList();
         }
     }
 
@@ -148,12 +156,7 @@ public class EventDao {
         Cursor cursor = database.query(EVENT, null, "title = ?", new String[]{title}, null, null, "title");
         List<Event> events = new ArrayList<>();
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String detail = cursor.getString(2);
-            Event event = new Event(title, detail);
-            event.setId(id);
-            event.setDelete(cursor.getInt(3) == 1);
-            event.setComplete(cursor.getInt(4) == 1);
+            Event event = map2Event(cursor);
             events.add(event);
         }
         cursor.close();
@@ -170,13 +173,7 @@ public class EventDao {
         Cursor cursor = database.query(EVENT, null, "isDelete = ?", new String[]{String.valueOf(delete)}, null, null, "title");
         List<Event> events = new ArrayList<>();
         while (cursor.moveToNext()) {
-            int id = cursor.getInt(0);
-            String title = cursor.getString(1);
-            String detail = cursor.getString(2);
-            Event event = new Event(title, detail);
-            event.setId(id);
-            event.setDelete(cursor.getInt(3) == 1);
-            event.setComplete(cursor.getInt(4) == 1);
+            Event event = map2Event(cursor);
             events.add(event);
         }
         cursor.close();

@@ -25,7 +25,8 @@ public class DBUtils extends SQLiteOpenHelper {
                 "title varchar(255)," +
                 "detail text," +
                 "isDelete boolean," +
-                "isComplete boolean" +
+                "isComplete boolean," +
+                "type int" +
                 ");";
 
         BIRTH_SQL = "create table " +
@@ -39,12 +40,12 @@ public class DBUtils extends SQLiteOpenHelper {
     }
 
     private DBUtils(Context context) {
-        super(context, "db", null, 2);
+        super(context, "db", null, 3);
     }
 
 
-    public static DBUtils getInstance(Context context){
-        if(dbUtils == null){
+    public static DBUtils getInstance(Context context) {
+        if (dbUtils == null) {
             dbUtils = new DBUtils(context);
         }
         return dbUtils;
@@ -61,6 +62,8 @@ public class DBUtils extends SQLiteOpenHelper {
         switch (oldVersion) {
             case 1:
                 db.execSQL(BIRTH_SQL);
+            case 2:
+                db.execSQL("alter table "+EventDao.EVENT+" add column type int");
                 break;
         }
     }

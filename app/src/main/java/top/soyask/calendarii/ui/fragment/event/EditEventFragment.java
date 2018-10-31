@@ -10,13 +10,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,6 +33,8 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.Event;
+import top.soyask.calendarii.entity.Symbol;
+import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 
@@ -45,6 +53,7 @@ public class EditEventFragment extends BaseFragment
     private OnAddListener mOnAddListener;
     private OnDeleteListener mOnDeleteListener;
     private boolean isExiting;
+    private Spinner mSpinnerEventType;
 
     public EditEventFragment() {
         super(R.layout.fragment_add_event);
@@ -66,7 +75,6 @@ public class EditEventFragment extends BaseFragment
         mEditText = findViewById(R.id.et);
         mBtnDate = findViewById(R.id.btn_date);
         mBtnDate.setOnClickListener(this);
-
         if (mEvent != null) {
             String title = mEvent.getTitle();
             mEditText.setText(mEvent.getDetail());
@@ -77,6 +85,11 @@ public class EditEventFragment extends BaseFragment
             mBtnDate.setText(date.substring(2));
         }
         mEditText.requestFocus();
+
+        mSpinnerEventType = findViewById(R.id.spinner_event_type);
+        mSpinnerEventType.setAdapter(mAdapter);
+        int position = mEvent != null ? mEvent.getType() : Setting.default_event_type;
+        mSpinnerEventType.setSelection(position);
     }
 
     @Override
@@ -156,9 +169,9 @@ public class EditEventFragment extends BaseFragment
                     if (mEvent.getDetail().equals(detail)) {
                         removeSelf();
                     } else {
-                        if(hasContent(detail)){
+                        if (hasContent(detail)) {
                             confirmExit();
-                        }else {
+                        } else {
                             confirmDeleteIfContentIsEmpty();
                         }
                     }
@@ -199,8 +212,10 @@ public class EditEventFragment extends BaseFragment
                 updateEvent(detail, title, eventDao);
             }
             removeWithAnimationAndHideSoftInput();
-        }else {
-            confirmDeleteIfContentIsEmpty();
+        } else {
+            if(!isAddNewEvent()){
+                confirmDeleteIfContentIsEmpty();
+            }
         }
     }
 
@@ -213,7 +228,8 @@ public class EditEventFragment extends BaseFragment
     }
 
     private void addNewEvent(String detail, String title, EventDao eventDao) {
-        Event event = new Event(title, detail);
+        int position = mSpinnerEventType.getSelectedItemPosition();
+        Event event = new Event(title, detail, position);
         eventDao.add(event);
         if (mOnAddListener != null) {
             mOnAddListener.onAdd();
@@ -221,8 +237,10 @@ public class EditEventFragment extends BaseFragment
     }
 
     private void updateEvent(String detail, String title, EventDao eventDao) {
+        int position = mSpinnerEventType.getSelectedItemPosition();
         mEvent.setTitle(title);
         mEvent.setDetail(detail);
+        mEvent.setType(position);
         eventDao.update(mEvent);
         if (mOnUpdateListener != null) {
             mOnUpdateListener.onUpdate();
@@ -279,6 +297,47 @@ public class EditEventFragment extends BaseFragment
             new AlertDialog.Builder(mHostActivity).setMessage("剪切板里什么也没有 >_<").show();
         }
     }
+
+    private  BaseAdapter mAdapter = new BaseAdapter() {
+        Symbol[] symbols = Symbol.values();
+        int[] resIds = {
+                R.drawable.ic_rect_black_24dp,
+                R.drawable.ic_circle_black_24dp,
+                R.drawable.ic_triangle_black_24dp,
+                R.drawable.ic_star_black_24dp,
+                R.drawable.ic_favorite_black_24dp,
+        };
+
+        @Override
+        public int getCount() {
+            return symbols.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return symbols[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Symbol symbol = symbols[position];
+            if (convertView == null) {
+                convertView = LayoutInflater.from(mHostActivity).inflate(R.layout.spinner_item_symbol, null);
+            }
+            TextView textView = convertView.findViewById(R.id.tv);
+            ImageView imageView = convertView.findViewById(R.id.iv);
+            String comment = Setting.symbol_comment.get(symbol.KEY);
+            textView.setText(comment);
+            imageView.setImageResource(resIds[position]);
+            return convertView;
+        }
+    };
+
 
     public void setOnUpdateListener(OnUpdateListener onUpdateListener) {
         this.mOnUpdateListener = onUpdateListener;

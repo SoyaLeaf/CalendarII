@@ -12,10 +12,16 @@ public class Event implements Serializable {
     private String detail;
     private boolean isDelete;
     private boolean isComplete;
+    private int type;
 
     public Event(String title, String detail) {
+        this(title, detail, 0);
+    }
+
+    public Event(String title, String detail, int type) {
         this.detail = detail;
         this.title = title;
+        this.type = type;
     }
 
     public Event() {
@@ -59,5 +65,13 @@ public class Event implements Serializable {
 
     public void setDelete(boolean delete) {
         isDelete = delete;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 }

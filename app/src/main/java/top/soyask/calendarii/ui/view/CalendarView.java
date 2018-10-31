@@ -23,6 +23,7 @@ import java.util.Random;
 import java.util.Set;
 
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.entity.Symbol;
 import top.soyask.calendarii.utils.DayUtils;
 
 /**
@@ -632,29 +633,23 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
         private void drawEventSymbol(Canvas canvas) {
             float symbolCenterX = rect.centerX() + rect.width() / 6;
             float symbolCenterY = rect.centerY() + mEventRectSize / 2;
-            int i = new Random().nextInt() % 5;
-            switch (i) {
-                case 0:
-                    drawEventRect(canvas, symbolCenterX, symbolCenterY);
+            Symbol symbol = day.getSymbol();
+            switch (symbol) {
+                case TRIANGLE:
+                    drawEventTriangle(canvas, symbolCenterX, symbolCenterY);
                     break;
-                case 1:
+                case CIRCLE:
                     drawEventCircle(canvas, symbolCenterX, symbolCenterY);
                     break;
-                case 2:
+                case STAR:
                     drawEventStar(canvas, symbolCenterX, symbolCenterY);
                     break;
-                case 3:
+                case HEART:
                     drawEventHeart(canvas, symbolCenterX, symbolCenterY);
                     break;
                 default:
-                    drawEventTriangle(canvas, symbolCenterX, symbolCenterY);
+                    drawEventRect(canvas, symbolCenterX, symbolCenterY);
             }
-//            drawEventRect(canvas, symbolCenterX, symbolCenterY);
-//            drawEventCircle(canvas, symbolCenterX, symbolCenterY);
-//            drawEventStar(canvas, symbolCenterX, symbolCenterY);
-//            drawEventHeart(canvas, symbolCenterX, symbolCenterY);
-//            drawEventTriangle(canvas, symbolCenterX, symbolCenterY);
-
         }
 
 
@@ -775,6 +770,8 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
 
         boolean hasBirthday();
 
+        Symbol getSymbol();
+
     }
 
     private class OtherMonthDay implements IDay {
@@ -823,6 +820,11 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
         @Override
         public boolean hasBirthday() {
             return false;
+        }
+
+        @Override
+        public Symbol getSymbol() {
+            return null;
         }
     }
 

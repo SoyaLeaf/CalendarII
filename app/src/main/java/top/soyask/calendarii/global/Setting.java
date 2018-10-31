@@ -3,7 +3,11 @@ package top.soyask.calendarii.global;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+
+import top.soyask.calendarii.entity.Symbol;
 
 /**
  * Created by mxf on 2017/10/11.
@@ -22,6 +26,9 @@ public final class Setting {
     public static float day_lunar_text_size;
     public static float day_week_text_size;
     public static float day_holiday_text_size;
+    public static Map<String, String> symbol_comment = new HashMap<>();
+    public static int default_event_type;
+
     private static boolean isLoaded = false;
 
     public static void loadSetting(Context context) {
@@ -42,9 +49,20 @@ public final class Setting {
         Setting.replenish = setting.getBoolean(Global.SETTING_REPLENISH, true);
         Setting.select_anim = setting.getBoolean(Global.SETTING_SELECT_ANIM, true);
 
+        Setting.default_event_type = setting.getInt(Global.DEFAULT_EVENT_TYPE, 0);
+        putEventType(setting, Symbol.STAR.KEY, "默认");
+        putEventType(setting, Symbol.RECT.KEY, "默认");
+        putEventType(setting, Symbol.CIRCLE.KEY, "默认");
+        putEventType(setting, Symbol.TRIANGLE.KEY, "默认");
+        putEventType(setting, Symbol.HEART.KEY, "默认");
+
         TransparentWidget.loadSetting(setting);
 
         isLoaded = true;
+    }
+
+    private static void putEventType(SharedPreferences setting, String key, String defaultVal) {
+        symbol_comment.put(key, setting.getString(key, defaultVal));
     }
 
     public static class TransparentWidget {
@@ -53,7 +71,7 @@ public final class Setting {
         public static int trans_widget_week_font_size = 14;
         public static int trans_widget_number_font_size = 14;
         public static int trans_widget_lunar_font_size = 8;
-//        public static int trans_widget_line_height = 100;
+        //        public static int trans_widget_line_height = 100;
         public static int trans_widget_lunar_month_text_size = 10;
         public static int trans_widget_month_text_size = 28;
         public static int trans_widget_year_text_size = 12;

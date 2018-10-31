@@ -150,6 +150,17 @@ public class Day implements CalendarView.IDay, Serializable {
         return birthdays != null && !birthdays.isEmpty();
     }
 
+    @Override
+    public Symbol getSymbol() {
+        if(hasEvent()){
+            Event event = events.get(0);
+            int type = event.getType();
+            Symbol[] values = Symbol.values();
+            return values[type];
+        }
+        return null;
+    }
+
     public boolean hasEvent() {
         return events != null && !events.isEmpty();
     }

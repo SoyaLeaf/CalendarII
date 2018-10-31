@@ -40,4 +40,5 @@ public class Global {
     public static final int VIEW_DAY = 1; //显示日子
     public static final int VIEW_TODAY = 4;
     public static final int VIEW_EVENT = 5;
+    public static final String DEFAULT_EVENT_TYPE = "default_event_type";
 }
