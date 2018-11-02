@@ -24,6 +24,7 @@ import top.soyask.calendarii.ui.activity.ZoomActivity;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.birth.BirthFragment;
+import top.soyask.calendarii.ui.fragment.setting.symbol.SymbolFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.PicSetFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.TransparentWidgetFragment;
@@ -60,6 +61,7 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
         findViewById(R.id.rl_holiday).setOnClickListener(this);
         findViewById(R.id.rl_widget_pic).setOnClickListener(this);
         findViewById(R.id.rl_ui).setOnClickListener(this);
+        findViewById(R.id.rl_symbol).setOnClickListener(this);
         findViewById(R.id.rl_trans_widget).setOnClickListener(this);
     }
 
@@ -102,6 +104,10 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
             case R.id.rl_ui:
                 Intent intent = new Intent(mHostActivity, ZoomActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.rl_symbol:
+                SymbolFragment symbolFragment = SymbolFragment.newInstance();
+                addFragment(symbolFragment);
                 break;
             case R.id.rl_trans_widget:
                 Window window = mHostActivity.getWindow();

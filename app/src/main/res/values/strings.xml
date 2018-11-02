@@ -40,6 +40,8 @@
     <string name="transparent_widget">透明小部件</string>
     <string name="load_wall_pager">加载壁纸</string>
     <string name="confirm_delete">是否删除该事件？</string>
+    <string name="long_press_edit">长按编辑</string>
+    <string name="custom_symbol_comment">自定义符号备注</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>
