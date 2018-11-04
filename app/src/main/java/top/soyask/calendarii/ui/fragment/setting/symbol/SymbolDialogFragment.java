@@ -16,6 +16,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.entity.Symbol;
 import top.soyask.calendarii.global.Setting;
@@ -65,11 +67,18 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        new Handler().postDelayed(() -> {
+        new Handler().postDelayed(this::showSoftInput, 200);
+    }
+
+    private void showSoftInput() {
+        try {
             InputMethodManager methodManager = (InputMethodManager)
-                    getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+            assert methodManager != null;
             methodManager.showSoftInput(mEditText, InputMethodManager.SHOW_FORCED);
-        }, 500);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void done(View view) {

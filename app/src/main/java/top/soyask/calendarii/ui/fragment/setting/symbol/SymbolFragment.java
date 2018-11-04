@@ -3,6 +3,7 @@ package top.soyask.calendarii.ui.fragment.setting.symbol;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Objects;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.entity.Symbol;
@@ -95,9 +98,17 @@ public class SymbolFragment extends BaseFragment {
 
     private void dialogDismiss() {
         mContentView.requestFocus();
-        InputMethodManager methodManager = (InputMethodManager)
-                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        boolean t = methodManager.hideSoftInputFromWindow(mContentView.getApplicationWindowToken(), 0);
+        mContentView.postDelayed(this::hideSoftInput, 200);
+    }
+
+    private void hideSoftInput() {
+        try {
+            InputMethodManager methodManager = (InputMethodManager)
+                    Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
+            Objects.requireNonNull(methodManager).hideSoftInputFromWindow(mContentView.getApplicationWindowToken(), 0);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     private void update() {
