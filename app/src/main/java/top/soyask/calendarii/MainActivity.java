@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void copyAndSend(File file) {
         try (FileInputStream fileInputStream = new FileInputStream(file);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+             BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream))
         ) {
             StringBuilder builder = new StringBuilder();
             String line;

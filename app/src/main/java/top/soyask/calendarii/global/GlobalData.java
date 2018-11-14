@@ -75,7 +75,7 @@ public class GlobalData {
                     loadData(URL_WORKDAY, WORKDAY);
                     callBack.onSuccess();
                 } catch (Exception e) {
-                    callBack.onFail();
+                    callBack.onFail(e.getMessage());
                     e.printStackTrace();
                 }
             }
@@ -85,7 +85,7 @@ public class GlobalData {
     public interface LoadCallBack {
         void onSuccess();
 
-        void onFail();
+        void onFail(String error);
     }
 
     private static void loadData(String url, List<String> container) throws Exception {

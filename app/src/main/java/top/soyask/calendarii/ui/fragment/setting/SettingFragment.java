@@ -1,6 +1,8 @@
 package top.soyask.calendarii.ui.fragment.setting;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -29,6 +32,8 @@ import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.PicSetFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.TransparentWidgetFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 
 public class SettingFragment extends BaseFragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener, GlobalData.LoadCallBack {
@@ -179,8 +184,13 @@ public class SettingFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onFail() {
-        showSnackbar("同步失败了，请联系开发者！");
+    public void onFail(String error) {
+        showSnackbar("同步失败了，请联系开发者！", "复制错误信息", v -> {
+            ClipboardManager manager = (ClipboardManager) mHostActivity.getSystemService(CLIPBOARD_SERVICE);
+            ClipData clipData = ClipData.newPlainText("exception", error);
+            manager.setPrimaryClip(clipData);
+            Toast.makeText(mHostActivity, "信息已复制", Toast.LENGTH_SHORT).show();
+        });
         mHandler.sendEmptyMessage(CANCEL);
     }
 
