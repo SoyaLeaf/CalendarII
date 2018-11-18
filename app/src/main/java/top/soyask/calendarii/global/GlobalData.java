@@ -3,6 +3,7 @@ package top.soyask.calendarii.global;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,8 +28,8 @@ import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 
 public class GlobalData {
 
-    private static final String URL_HOLIDAY = "http://owvj0u2dq.bkt.clouddn.com/holiday.json";
-    private static final String URL_WORKDAY = "http://owvj0u2dq.bkt.clouddn.com/workday.json";
+    private static final String URL_HOLIDAY = "http://qiniu.soyask.top/holiday.json";
+    private static final String URL_WORKDAY = "http://qiniu.soyask.top/workday.json";
 
     public static final Map<String, List<Birthday>> BIRTHDAY = new HashMap<>();
     public static final List<String> HOLIDAY = new ArrayList<>();
@@ -36,6 +37,7 @@ public class GlobalData {
      * 调休的日子
      */
     public static final List<String> WORKDAY = new ArrayList<>();
+    public static final String TAG = "GlobalData";
 
     public synchronized static void loadBirthday(Context context) {
         BirthdayDao birthdayDao = BirthdayDao.getInstance(context);
@@ -94,6 +96,7 @@ public class GlobalData {
         Response response = okHttpClient.newCall(request).execute();
         String json = response.body().string();
         Gson gson = new Gson();
+        Log.i(TAG, "loadData: " + json);
         List<String> list = gson.fromJson(json, new TypeToken<ArrayList<String>>() {
         }.getType());
         container.clear();

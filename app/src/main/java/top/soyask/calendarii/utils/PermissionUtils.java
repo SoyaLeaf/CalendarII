@@ -2,6 +2,7 @@ package top.soyask.calendarii.utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -51,11 +52,15 @@ public class PermissionUtils {
         new AlertDialog.Builder(activity)
                 .setMessage("你拒绝授予权限，该功能将无法正常使用...")
                 .setPositiveButton("手动授权", (dialog, which) -> {
-                    Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
-                    activity.startActivity(intent);
+                    toSettings(activity);
                 })
                 .setNegativeButton("不使用该功能", null)
                 .show();
+    }
+
+    public static void toSettings(Context context) {
+        Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+        context.startActivity(intent);
     }
 }

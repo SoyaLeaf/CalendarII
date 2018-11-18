@@ -6,8 +6,11 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.utils.PermissionUtils;
 
 public class FloatWindowService extends Service {
 
@@ -25,7 +28,14 @@ public class FloatWindowService extends Service {
     public void onCreate() {
         super.onCreate();
         mFloatWindow = FloatWindowManager.getInstance();
-        mFloatWindow.show(this);
+        try {
+            mFloatWindow.show(this);
+        } catch (WindowManager.BadTokenException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "请在设置里开启悬浮窗权限", Toast.LENGTH_SHORT).show();
+            PermissionUtils.toSettings(this);
+        }
+
     }
 
     @Override

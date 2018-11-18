@@ -48,7 +48,6 @@ public class FloatWindowManager implements SeekBar.OnSeekBarChangeListener {
             return;
         }
         windowManager.addView(mContentView, mParams);
-
     }
 
     private void createContentAndFindView(Context context) {
