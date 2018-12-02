@@ -130,12 +130,12 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == REQUEST_CODE_SYSTEM_ALERT_WINDOW){
+        if (requestCode == REQUEST_CODE_SYSTEM_ALERT_WINDOW) {
             new AlertDialog.Builder(mHostActivity)
                     .setMessage("请授予悬浮窗权限")
                     .setPositiveButton("设置", (dialog, which) -> PermissionUtils.toSettings(mHostActivity))
                     .show();
-        }else {
+        } else {
             if (PermissionUtils.handleResults(permissions, grantResults)) {
                 setBackground();
             } else {
@@ -159,7 +159,7 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
         int month = calendar.get(Calendar.MONTH) + 1;
         ((TextView) findViewById(R.id.tv_date)).setText(String.format(Locale.CHINA, "%02d月", month));
         int year = calendar.get(Calendar.YEAR);
-        int dayCount = DayUtils.getMonthDayCount(month + 1, year);
+        int dayCount = DayUtils.getMonthDayCount(month, year);
         EventDao dao = EventDao.getInstance(mHostActivity);
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < dayCount; i++) {

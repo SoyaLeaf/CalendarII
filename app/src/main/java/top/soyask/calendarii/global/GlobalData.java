@@ -37,7 +37,7 @@ public class GlobalData {
      * 调休的日子
      */
     public static final List<String> WORKDAY = new ArrayList<>();
-    public static final String TAG = "GlobalData";
+    private static final String TAG = "GlobalData";
 
     public synchronized static void loadBirthday(Context context) {
         BirthdayDao birthdayDao = BirthdayDao.getInstance(context);

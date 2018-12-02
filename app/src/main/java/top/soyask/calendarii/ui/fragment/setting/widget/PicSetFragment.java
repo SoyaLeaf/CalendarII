@@ -56,7 +56,7 @@ public class PicSetFragment extends BaseFragment implements View.OnClickListener
         findViewById(R.id.btn_default).setOnClickListener(this);
         mImageView = findViewById(R.id.iv);
         mImageView.setOnClickListener(this);
-        if(Setting.white_widget_pic != null){
+        if (Setting.white_widget_pic != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(Setting.white_widget_pic);
             mImageView.setImageBitmap(bitmap);
         }
@@ -82,9 +82,10 @@ public class PicSetFragment extends BaseFragment implements View.OnClickListener
 
     private void changeToDefault() {
         Setting.remove(mHostActivity, Global.SETTING_WHITE_WIDGET_PIC);
+        Setting.white_widget_pic = null;
         mImageView.setImageDrawable(getResources().getDrawable(R.mipmap.miku));
         AppWidgetManager appWidgetManager =
-                (AppWidgetManager)mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
+                (AppWidgetManager) mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
         WidgetManager.updateWhiteWidget(mHostActivity, appWidgetManager);
     }
 
@@ -110,14 +111,14 @@ public class PicSetFragment extends BaseFragment implements View.OnClickListener
     }
 
     private void setupBitmap(Bitmap bitmap) throws FileNotFoundException {
-        File filesDir =mHostActivity.getFilesDir();
+        File filesDir = mHostActivity.getFilesDir();
         Setting.white_widget_pic = filesDir + File.separator + Global.SETTING_WHITE_WIDGET_PIC + ".png";
         FileOutputStream fos = new FileOutputStream(Setting.white_widget_pic);
         boolean compress = bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
         if (compress) {
-            Setting.setting(mHostActivity,Global.SETTING_WHITE_WIDGET_PIC,Setting.white_widget_pic);
+            Setting.setting(mHostActivity, Global.SETTING_WHITE_WIDGET_PIC, Setting.white_widget_pic);
             AppWidgetManager appWidgetManager =
-                    (AppWidgetManager)mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
+                    (AppWidgetManager) mHostActivity.getSystemService(Context.APPWIDGET_SERVICE);
             WidgetManager.updateWhiteWidget(mHostActivity, appWidgetManager);
         }
     }
