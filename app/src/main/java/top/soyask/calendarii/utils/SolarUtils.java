@@ -1,5 +1,8 @@
 package top.soyask.calendarii.utils;
 
+import android.util.SparseArray;
+
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +12,7 @@ import java.util.Map;
  */
 public class SolarUtils {
 
-    public static final String[] SOLAR = {
+    private static final String[] SOLAR = {
             "立春", "雨水", "惊蛰", "春分", "清明", "谷雨",
             "立夏", "小满", "芒种", "夏至", "小暑", "大暑",
             "立秋", "处暑", "白露", "秋分", "寒露", "霜降",
@@ -33,16 +36,32 @@ public class SolarUtils {
     private static final double[][] C = {C_IN_20, C_IN_21};
 
     private static final Float D = 0.2422f;
-    private static Map<Integer, Map<String, Integer>> SOLAR_MAP = new HashMap<>();
+    private static SparseArray<Map<String, Integer>> SOLAR_MAP = new SparseArray<>();
 
-    public static String getSolar(Calendar calendar) {
+    private static final int[][] PLUS = {
+            null, null, null, {2084}, null, null,
+            {1911}, {2008}, {1902}, {1928}, {1925, 2016}, {1922},
+            {2002}, null, {1927}, {1942}, null, {2089},
+            {2089}, {1978}, {1954}, null, {1982}, {2082},
+    };
+    private static final int[][] SUBDUCTION = {
+            null, null, null, null, null, null,
+            null, null, null, null, null, null,
+            null, null, null, null, null, null,
+            null, null, null, {1918, 2021}, {2019}, null
+    };
+
+    static String getSolar(Calendar calendar) {
         int year = calendar.get(Calendar.YEAR);
         String result = null;
-        if (SOLAR_MAP.containsKey(year)) {
+        if (SOLAR_MAP.indexOfKey(year) != -1) {
             Map<String, Integer> solarOfYear = SOLAR_MAP.get(year);
-            Integer integer = solarOfYear.get(calendar.get(Calendar.MONTH) + "/" + calendar.get(Calendar.DAY_OF_MONTH));
-            if (integer != null && integer >= 0 && integer < 24) {
-                result = SOLAR[integer];
+            int month = calendar.get(Calendar.MONTH);
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+            String key = MessageFormat.format("{0}/{1}", month, dayOfMonth);
+            Integer i = solarOfYear.get(key);
+            if (i != null && i >= 0 && i < 24) {
+                result = SOLAR[i];
             }
         } else {
             initSolar(year);
@@ -53,10 +72,25 @@ public class SolarUtils {
 
     private static void initSolar(int year) {
         Map<String, Integer> solarOfYear = new HashMap<>();
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < SOLAR.length; i++) {
             int solarDay = getSolarDay(year, i);
-            int m = (i / 2 + 1) % 12;
-            solarOfYear.put(m + "/" + solarDay, i);
+            int month = (i / 2 + 1) % 12;
+            if (PLUS[i] != null) {
+                for (int y : PLUS[i]) {
+                    if (y == year) {
+                        solarDay++;
+                    }
+                }
+            }
+            if (SUBDUCTION[i] != null) {
+                for (int y : SUBDUCTION[i]) {
+                    if (y == year) {
+                        solarDay--;
+                    }
+                }
+            }
+            String key = MessageFormat.format("{0}/{1}", month, solarDay);
+            solarOfYear.put(key, i);
         }
         SOLAR_MAP.put(year, solarOfYear);
     }
