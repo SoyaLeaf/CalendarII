@@ -32,7 +32,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected <T extends View> T findViewById(@IdRes int id) {
-        return (T) mContentView.findViewById(id);
+        return  mContentView.findViewById(id);
     }
     protected Toolbar findToolbar(@IdRes int id){
         return findViewById(id);
@@ -119,4 +119,9 @@ public abstract class BaseFragment extends Fragment {
      */
     protected abstract void setupUI();
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mHostActivity = null;
+    }
 }

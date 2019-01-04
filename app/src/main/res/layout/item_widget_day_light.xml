@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:theme="@style/WidgetTextColor"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rl"
+        android:layout_width="@dimen/item_widget_day_size"
+        android:layout_height="@dimen/item_widget_day_size"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp">
+        <ImageView
+            android:id="@+id/iv_birth"
+            android:visibility="invisible"
+            android:layout_alignParentEnd="true"
+            android:src="?transparentBirthIcon"
+            android:layout_width="10dp"
+            android:layout_height="10dp" />
+        <TextView
+            android:id="@+id/tv_greg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal|bottom"
+            android:padding="0dp"
+            android:textColor="?attr/transparentWidgetTextColor"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tv_lunar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_greg"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal|top"
+            android:textColor="?attr/transparentWidgetTextColor"
+            android:textSize="8sp" />
+
+        <FrameLayout
+            android:id="@+id/fl_event"
+            android:layout_width="3dp"
+            android:layout_height="3dp"
+            android:layout_above="@id/tv_lunar"
+            android:layout_toEndOf="@id/tv_greg"
+            android:background="?attr/transparentEventColor"
+            android:visibility="gone" />
+    </RelativeLayout>
+</FrameLayout>
+

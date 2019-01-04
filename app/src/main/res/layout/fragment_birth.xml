@@ -10,8 +10,7 @@
         style="@style/Toolbar"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:title="生日"
-        app:titleTextColor="@android:color/white">
-    </android.support.v7.widget.Toolbar>
+        app:titleTextColor="@android:color/white" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_birth"
         android:layout_width="match_parent"

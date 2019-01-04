@@ -17,7 +17,7 @@
             android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
             app:navigationIcon="@drawable/ic_clear_white_24dp"
             app:title="界面调节"
-            app:titleTextColor="@android:color/white"></android.support.v7.widget.Toolbar>
+            app:titleTextColor="@android:color/white" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -37,18 +37,54 @@
                 android:text="注意：因系统而异，部分内容可能需要重启才可正常显示。"
                 android:textColor="#f00" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv"
+
+            <top.soyask.calendarii.ui.view.CalendarView
+                android:id="@+id/cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginTop="8dp"
                 android:background="#fff"
                 android:elevation="2dp"
+                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp"></android.support.v7.widget.RecyclerView>
+                app:cv_dateBottomTextSize="@dimen/bottom_text_size"
+                app:cv_dateCircleColor="?colorPrimary"
+                app:cv_dateCircleSize="@dimen/date_circle_size"
+                app:cv_dateHeight="@dimen/item_day_size"
+                app:cv_dateMargin="2dp"
+                app:cv_dateTextColor="@color/text_color_sub_dark"
+                app:cv_dateTextSize="@dimen/date_text_size"
+                app:cv_eventRectSize="3dp"
+                app:cv_holidayTextColor="?colorPrimary"
+                app:cv_holidayTextSize="@dimen/holiday_text_size"
+                app:cv_todayTextColor="@color/text_color_primary_light"
+                app:cv_weekTextSize="@dimen/week_text_size"
+                app:cv_weekdayTextColor="@color/text_color_primary_light"
+                app:cv_weekendTextColor="?colorPrimary" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_dpi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp" />
+
+                <Button
+                    android:id="@+id/btn_reset_dpi"
+                    style="@style/reset_btn"
+                    android:onClick="reset"
+                    android:text="重置" />
+            </FrameLayout>
+
+
+            <SeekBar
+                android:id="@+id/sb_dpi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="960" />
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -61,9 +97,9 @@
                     android:padding="8dp" />
 
                 <Button
-                    android:onClick="reset"
                     android:id="@+id/btn_reset_day_size"
                     style="@style/reset_btn"
+                    android:onClick="reset"
                     android:text="重置" />
             </FrameLayout>
 
@@ -84,9 +120,9 @@
                     android:padding="8dp" />
 
                 <Button
-                    android:onClick="reset"
                     android:id="@+id/btn_reset_number"
                     style="@style/reset_btn"
+                    android:onClick="reset"
                     android:text="重置" />
             </FrameLayout>
 
@@ -107,9 +143,9 @@
                     android:padding="8dp" />
 
                 <Button
-                    android:onClick="reset"
                     android:id="@+id/btn_reset_lunar"
                     style="@style/reset_btn"
+                    android:onClick="reset"
                     android:text="重置" />
             </FrameLayout>
 
@@ -129,9 +165,9 @@
                     android:padding="8dp" />
 
                 <Button
-                    android:onClick="reset"
                     android:id="@+id/btn_reset_week"
                     style="@style/reset_btn"
+                    android:onClick="reset"
                     android:text="重置" />
             </FrameLayout>
 
@@ -152,9 +188,9 @@
                     android:padding="8dp" />
 
                 <Button
-                    android:onClick="reset"
                     android:id="@+id/btn_reset_holiday"
                     style="@style/reset_btn"
+                    android:onClick="reset"
                     android:text="重置" />
             </FrameLayout>
 
@@ -163,30 +199,6 @@
                 android:id="@+id/sb_holiday_size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_dpi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp" />
-
-                <Button
-                    android:onClick="reset"
-                    android:id="@+id/btn_reset_dpi"
-                    style="@style/reset_btn"
-                    android:text="重置" />
-            </FrameLayout>
-
-
-            <SeekBar
-                android:id="@+id/sb_dpi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="960" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

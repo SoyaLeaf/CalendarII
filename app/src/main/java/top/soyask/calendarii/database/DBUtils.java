@@ -18,37 +18,34 @@ public class DBUtils extends SQLiteOpenHelper {
     private static final String BIRTH_SQL;
 
     static {
-        EVENT_SQL = new StringBuffer()
-                .append("create table ")
-                .append(EventDao.EVENT)
-                .append("(")
-                .append("id Integer primary key autoincrement,")
-                .append("title varchar(255),")
-                .append("detail text,")
-                .append("isDelete boolean,")
-                .append("isComplete boolean")
-                .append(");")
-                .toString();
+        EVENT_SQL = "create table " +
+                EventDao.EVENT +
+                "(" +
+                "id Integer primary key autoincrement," +
+                "title varchar(255)," +
+                "detail text," +
+                "isDelete boolean," +
+                "isComplete boolean," +
+                "type int" +
+                ");";
 
-        BIRTH_SQL = new StringBuffer()
-                .append("create table ")
-                .append(BirthdayDao.BIRTHDAY)
-                .append("(")
-                .append("id Integer primary key autoincrement,")
-                .append("who varchar(255),")
-                .append("when_ varchar(255),")
-                .append("isLunar boolean")
-                .append(");")
-                .toString();
+        BIRTH_SQL = "create table " +
+                BirthdayDao.BIRTHDAY +
+                "(" +
+                "id Integer primary key autoincrement," +
+                "who varchar(255)," +
+                "when_ varchar(255)," +
+                "isLunar boolean" +
+                ");";
     }
 
-    public DBUtils(Context context) {
-        super(context, "db", null, 2);
+    private DBUtils(Context context) {
+        super(context, "db", null, 3);
     }
 
 
-    public static DBUtils getInstance(Context context){
-        if(dbUtils == null){
+    public static DBUtils getInstance(Context context) {
+        if (dbUtils == null) {
             dbUtils = new DBUtils(context);
         }
         return dbUtils;
@@ -61,10 +58,12 @@ public class DBUtils extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase     db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         switch (oldVersion) {
             case 1:
                 db.execSQL(BIRTH_SQL);
+            case 2:
+                db.execSQL("alter table "+EventDao.EVENT+" add column type int");
                 break;
         }
     }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CalendarView">
+        <attr name="cv_weekTextSize" format="dimension|reference" />
+        <attr name="cv_dateHeight" format="dimension|reference" />
+        <attr name="cv_dateTextSize" format="dimension|reference" />
+        <attr name="cv_dateTextColor" format="color|reference" />
+        <attr name="cv_dateMargin" format="dimension|reference" />
+        <attr name="cv_dateBottomTextSize" format="dimension|reference" />
+        <attr name="cv_dateCircleSize" format="dimension|reference" />
+        <attr name="cv_dateCircleColor" format="color|reference" />
+        <attr name="cv_eventRectSize" format="dimension|reference" />
+        <attr name="cv_holidayTextSize" format="dimension|reference" />
+        <attr name="cv_holidayTextColor" format="color|reference" />
+        <attr name="cv_weekdayTextColor" format="color|reference" />
+        <attr name="cv_weekendTextColor" format="color|reference" />
+        <attr name="cv_todayTextColor" format="color|reference" />
+        <attr name="cv_replenish" format="boolean" />
+
+    </declare-styleable>
+</resources>

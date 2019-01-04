@@ -1,18 +1,31 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".ui.fragment.month.MonthFragment">
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_date"
+
+    <top.soyask.calendarii.ui.view.CalendarView
+        android:id="@+id/cv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:background="#fff"
         android:elevation="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        app:cv_dateBottomTextSize="8dp"
+        app:cv_dateCircleColor="?colorPrimary"
+        app:cv_dateCircleSize="@dimen/item_day_size"
+        app:cv_dateHeight="@dimen/item_day_size"
+        app:cv_dateMargin="2dp"
+        app:cv_dateTextColor="@color/text_color_sub_dark"
+        app:cv_dateTextSize="15dp"
+        app:cv_eventRectSize="3.5dp"
+        app:cv_holidayTextColor="?colorPrimary"
+        app:cv_holidayTextSize="5dp"
+        app:cv_todayTextColor="@color/text_color_primary_light"
+        app:cv_weekTextSize="16dp"
+        app:cv_weekdayTextColor="@color/text_color_primary_light"
+        app:cv_weekendTextColor="?colorPrimary" />
 </RelativeLayout>

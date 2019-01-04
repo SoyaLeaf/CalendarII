@@ -1,22 +1,28 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "top.soyask.calendarii"
         minSdkVersion 21
-        targetSdkVersion 27
-        versionCode 17
-        versionName "真·2.0"
+        targetSdkVersion 28
+        versionCode 28
+        versionName "2.3.5"
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            aaptOptions.cruncherEnabled = false
+            aaptOptions.useNewCruncher = false
         }
+//        debug{ 导入正式版的备份文件时要这样子搞
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
     }
     sourceSets {
         main {
@@ -29,20 +35,21 @@ android {
     }
 }
 
-ext{
-    supportLibVersion = "27.1.0"
+ext {
+    supportLibVersion = "28.0.0"
 }
 
 dependencies {
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'junit:junit:4.12'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:support-v4:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
-    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.1'
+    implementation "com.android.support:support-annotations:$supportLibVersion"
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     implementation 'com.dinuscxj:circleprogressbar:1.1.1'
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
 }

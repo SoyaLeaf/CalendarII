@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:theme="@style/WidgetTextColor.Light"
     android:layout_height="wrap_content">
 
     <RelativeLayout
@@ -15,8 +17,8 @@
             android:id="@+id/iv_birth"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_svg_birthday"
+            android:layout_alignParentEnd="true"
+            android:src="?transparentBirthIcon"
             android:visibility="invisible" />
 
         <TextView
@@ -26,7 +28,7 @@
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|bottom"
             android:padding="0dp"
-            android:textColor="@android:color/white"
+            android:textColor="?attr/transparentWidgetTextColor"
             android:textSize="14sp" />
 
         <TextView
@@ -36,17 +38,18 @@
             android:layout_below="@id/tv_greg"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|top"
-            android:textColor="@android:color/white"
-            android:textSize="8sp" />
+            android:textColor="?attr/transparentWidgetTextColor"
+            android:textSize="8sp"
+            tools:ignore="SmallSp" />
 
         <FrameLayout
             android:id="@+id/fl_event"
             android:layout_width="3dp"
             android:layout_height="3dp"
             android:layout_above="@id/tv_lunar"
-            android:layout_toRightOf="@id/tv_greg"
-            android:background="#fff"
-            android:visibility="gone"></FrameLayout>
+            android:layout_toEndOf="@id/tv_greg"
+            android:textColor="?attr/transparentEventColor"
+            android:visibility="gone" />
     </RelativeLayout>
 </FrameLayout>
 

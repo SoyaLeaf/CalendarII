@@ -18,7 +18,7 @@
             android:id="@+id/ib_done"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
+            android:layout_gravity="center_vertical|end"
             android:layout_margin="@dimen/normal_margin"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_done_white_24dp" />
@@ -41,22 +41,33 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="8dp"
         android:background="?attr/selectableItemBackground"
-        android:drawableLeft="@drawable/ic_date_range_grey_500_18dp"
-        android:text="17年11月11日"
+        android:drawableStart="@drawable/ic_date_range_grey_500_18dp"
         android:textColor="@color/text_color_primary_dark"
         android:textSize="@dimen/primary_font_size" />
 
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/spinner_event_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
+        android:background="@null" />
+
     <!--<Button-->
-        <!--android:id="@+id/btn_paste"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_margin="8dp"-->
-        <!--android:background="?attr/selectableItemBackground"-->
-        <!--android:drawableLeft="@drawable/ic_content_paste_grey_500_18dp"-->
-        <!--android:minWidth="0dp"-->
-        <!--android:text="剪切板"-->
-        <!--android:textColor="@color/text_color_primary_dark"-->
-        <!--android:textSize="@dimen/primary_font_size" />-->
+    <!--android:id="@+id/btn_paste"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_margin="8dp"-->
+    <!--android:background="?attr/selectableItemBackground"-->
+    <!--android:drawableLeft="@drawable/ic_content_paste_grey_500_18dp"-->
+    <!--android:minWidth="0dp"-->
+    <!--android:text="剪切板"-->
+    <!--android:textColor="@color/text_color_primary_dark"-->
+    <!--android:textSize="@dimen/primary_font_size" />-->
 </RelativeLayout>

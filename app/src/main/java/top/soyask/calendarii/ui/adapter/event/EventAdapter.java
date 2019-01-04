@@ -10,7 +10,7 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.ui.adapter.viewholder.EventViewHolder;
-import top.soyask.calendarii.domain.Event;
+import top.soyask.calendarii.entity.Event;
 
 /**
  * Created by mxf on 2017/8/11.
@@ -43,31 +43,20 @@ public class EventAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         eventViewHolder.tv_title.setText(event.getTitle());
         eventViewHolder.tv_event.setText(event.getDetail());
         eventViewHolder.collapse();
-        eventViewHolder.ib_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnEventItemClickListener != null) {
-                    mOnEventItemClickListener.onEditClick(position, mEvents.get(position));
-                }
+        eventViewHolder.ib_edit.setOnClickListener(v -> {
+            if (mOnEventItemClickListener != null) {
+                mOnEventItemClickListener.onEditClick(position, mEvents.get(position));
             }
         });
 
-        eventViewHolder.ib_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mOnEventItemClickListener != null) {
-                    eventViewHolder.collapse();
-                    mOnEventItemClickListener.onDeleteClick(position, mEvents.get(position));
-                }
+        eventViewHolder.ib_delete.setOnClickListener(v -> {
+            if (mOnEventItemClickListener != null) {
+                eventViewHolder.collapse();
+                mOnEventItemClickListener.onDeleteClick(position, mEvents.get(position));
             }
         });
 
-        eventViewHolder.ib_share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnEventItemClickListener.onShare(mEvents.get(position));
-            }
-        });
+        eventViewHolder.ib_share.setOnClickListener(v -> mOnEventItemClickListener.onShare(mEvents.get(position)));
 
         eventViewHolder.setOnTextPressListener(new EventViewHolder.OnTextPressListener() {
             @Override

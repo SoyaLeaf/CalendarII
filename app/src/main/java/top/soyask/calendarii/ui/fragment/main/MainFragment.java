@@ -2,7 +2,6 @@ package top.soyask.calendarii.ui.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,23 +28,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.URISyntaxException;
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Birthday;
-import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.entity.Birthday;
+import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.Event;
+import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
+import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
-import top.soyask.calendarii.ui.fragment.event.AddEventFragment;
 import top.soyask.calendarii.ui.fragment.event.AllEventFragment;
+import top.soyask.calendarii.ui.fragment.event.EditEventFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.EraUtils;
@@ -58,9 +58,8 @@ import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
-public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, AddEventFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
+public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditEventFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 
-    public static final String SKIP = "skip";
     private static final int BIRTHDAY_INVISIBLE = 0x233;
     private static final int BIRTHDAY_VISIBLE = 0x234;
 
@@ -89,179 +88,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private boolean isBirthday = false;
     private int mEventViewWidth;
     private int mEventViewHeight;
-    private MonthFragmentAdapter mMonthFragmentAdapter;
 
-
-    private Handler mAnimatorHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            if (mEventViewAnimator != null) {
-                mEventViewAnimator.cancel();
-                mEventViewAnimator = null;
-            }
-            switch (msg.what) {
-                case View.INVISIBLE:
-                    if (isEventViewVisible) {
-                        isEventViewVisible = false;
-                        hideEventView();
-                        showLeftBottom();
-                        movePoint();
-                    }
-                    break;
-                case View.VISIBLE:
-                    if (!isEventViewVisible) {
-                        isEventViewVisible = true;
-                        showEventView();
-                        hideLeftBottom();
-                        sendEmptyMessage(BIRTHDAY_INVISIBLE);
-                    }
-                    break;
-                case BIRTHDAY_INVISIBLE:
-                    if (isBirthday) {
-                        hideFlBirth();
-                    }
-                    break;
-                case BIRTHDAY_VISIBLE:
-                    if (!isBirthday && !isEventViewVisible) {
-                        if (!mSelectedDay.hasEvent()) {
-                            showFlBirth();
-                        }
-                    }
-                    break;
-            }
-        }
-
-        private void hideLeftBottom() {
-            hideWithCircularReveal(mLeftBottom, 0, mLeftBottom.getHeight(), mLeftBottom.getHeight(), 0, new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLeftBottom.setVisibility(!isEventViewVisible ? View.VISIBLE : View.INVISIBLE);
-                }
-            });
-        }
-
-        private void hideEventView() {
-            hideWithCircularReveal(mEventView, mEventViewWidth / 2, mEventViewHeight / 2, mEventViewWidth, 0, new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mEventView.setVisibility(isEventViewVisible ? View.VISIBLE : View.INVISIBLE);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        mEventView.setElevation(0);
-                    }
-                }
-            });
-        }
-
-        private void hideFlBirth() {
-            isBirthday = false;
-            int width = mFlBirth.getWidth();
-            int height = mFlBirth.getHeight();
-            hideWithCircularReveal(mFlBirth, width / 2, height / 2, width, 0, new AnimatorListenerAdapter() {
-
-                @Override
-                public void onAnimationEnd(Animator anim) {
-                    mFlBirth.setVisibility(isBirthday ? View.VISIBLE : View.INVISIBLE);
-                    Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.point_2);
-                    animation.setDuration(300);
-                    mPoint.startAnimation(animation);
-                }
-            });
-        }
-
-        private void hideWithCircularReveal(View view, int centerX, int centerY, float startRadius, float endRadius, Animator.AnimatorListener listener) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                animator.setDuration(400);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.addListener(listener);
-                animator.start();
-            } else {
-                view.setVisibility(View.INVISIBLE);
-            }
-        }
-
-        private void showEventView() {
-            mEventView.setVisibility(View.VISIBLE);
-            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.in_from_top);
-            animation.setDuration(800);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        float dimension = getResources().getDimension(R.dimen.card_normal_elevation);
-                        mEventView.setElevation(dimension);
-                    }
-                }
-
-            });
-            mEventView.startAnimation(animation);
-        }
-
-        private void showLeftBottom() {
-            showWithCircularReveal(mLeftBottom, 0, mLeftBottom.getHeight(), 0, mLeftBottom.getHeight(), new AnimatorListenerAdapter() {
-            });
-        }
-
-        private void showFlBirth() {
-            isBirthday = true;
-            int width = mFlBirth.getWidth();
-            int height = mFlBirth.getHeight();
-            showWithCircularReveal(mFlBirth, width / 2, height / 2, 0, width, new AnimatorListenerAdapter() {
-            });
-        }
-
-        private void showWithCircularReveal(View view, int centerX, int centerY, float startRadius, float endRadius, Animator.AnimatorListener listener) {
-            view.setVisibility(View.VISIBLE);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                animator.setDuration(400);
-                animator.addListener(listener);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.start();
-            }
-        }
-
-
-        private void movePoint() {
-            Animation animation = AnimationUtils.loadAnimation(getContext(), R.anim.point);
-            animation.setDuration(800);
-            mPoint.startAnimation(animation);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (mSelectedDay.hasBirthday()) {
-                        mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
-                    } else {
-                        animation = AnimationUtils.loadAnimation(getContext(), R.anim.point_2);
-                        animation.setDuration(300);
-                        mPoint.startAnimation(animation);
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
-        }
-    };
-
-    private static final String INTENT_FULL_URL = "intent://platformapi/startapp?saId=10000007&" +
-            "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2FFKX01613AS644I1LR9US96%3F_s" +
-            "%3Dweb-other&_t=1472443966571#Intent;" +
-            "scheme=alipayqr;package=com.eg.android.AlipayGphone;end";
-
+    private Handler mAnimatorHandler = new MainHandler(this);
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -285,7 +113,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void initSelectDay() {
         mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(mHostActivity));
-        mAnimatorHandler.postDelayed(() -> onSelected(mSelectedDay), 1000);
+        mAnimatorHandler.post(this::skipToday);
     }
 
     private void setupOtherView() {
@@ -311,8 +139,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void setupViewPager() {
         int item = getCurrentMonth();
         mViewPager = findViewById(R.id.vp);
-        mMonthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), this);
-        mViewPager.setAdapter(mMonthFragmentAdapter);
+        MonthFragmentAdapter monthFragmentAdapter = new MonthFragmentAdapter(getChildFragmentManager(), this);
+        mViewPager.setAdapter(monthFragmentAdapter);
         mViewPager.setCurrentItem(item);
         mViewPager.addOnPageChangeListener(this);
     }
@@ -341,8 +169,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setupEventView(final String title, List<Event> events) {
         if (mSelectedDay.hasBirthday()) {
-            StringBuffer buffer = getBirthdayStr();
-            mTvEvent.setText(buffer.toString());
+            String birthdayStr = getBirthdayStr();
+            mTvEvent.setText(birthdayStr);
         } else {
             mTvEvent.setText(events.get(0).getDetail());
         }
@@ -354,14 +182,14 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     @NonNull
-    private StringBuffer getBirthdayStr() {
+    private String getBirthdayStr() {
         List<Birthday> birthdays = mSelectedDay.getBirthdays();
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (Birthday birthday : birthdays) {
             sb.append(birthday.getWho()).append(',');
         }
         sb.deleteCharAt(sb.lastIndexOf(",")).append("的生日");
-        return sb;
+        return sb.toString();
     }
 
     private int getCurrentMonth() {
@@ -385,7 +213,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_today:
-                skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
+                skipToday();
                 break;
             case R.id.menu_all_event:
                 AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
@@ -405,32 +233,18 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 SettingFragment settingFragment = SettingFragment.newInstance();
                 addFragment(settingFragment);
                 break;
-            case R.id.menu_donate:
-                donate();
+            case R.id.menu_backup:
+                BackupFragment backupFragment = BackupFragment.newInstance();
+                addFragment(backupFragment);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void donate() {
-        new AlertDialog.Builder(mHostActivity)
-                .setTitle(R.string.donate)
-                .setMessage(R.string.thank_you)
-                .setNegativeButton(R.string.not_interested, (dialog, which) -> Toast.makeText(mHostActivity, R.string.however_thanks, Toast.LENGTH_SHORT).show())
-                .setPositiveButton(R.string.donate_little, (dialog, which) -> {
-                    try {
-                        toDonate();
-                        Toast.makeText(mHostActivity, R.string.thanks_very_much, Toast.LENGTH_SHORT).show();
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                }).show();
+    private void skipToday() {
+        skipToOneDay(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1, mCalendar.get(DAY_OF_MONTH));
     }
 
-    private void toDonate() throws URISyntaxException {
-        Intent intent = Intent.parseUri(INTENT_FULL_URL, Intent.URI_INTENT_SCHEME);
-        startActivity(intent);
-    }
 
     private void showSelectDialog() {
         DateSelectDialog dateSelectDialog = DateSelectDialog.newInstance(mSelectedDay.getYear(), mSelectedDay.getMonth(), mSelectedDay.getDayOfMonth());
@@ -439,15 +253,15 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void score() {
-        Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+        Uri uri = Uri.parse("market://details?id=" + mHostActivity.getPackageName());
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(uri);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) { //可以接收
+        if (intent.resolveActivity(mHostActivity.getPackageManager()) != null) { //可以接收
             startActivity(intent);
         } else {
-            Toast.makeText(getActivity(), R.string.no_market, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mHostActivity, R.string.no_market, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -481,24 +295,34 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public void onClick(View v) {
-        AddEventFragment addEventFragment = AddEventFragment.newInstance(mSelectedDay, null);
-        addEventFragment.setOnAddListener(this);
-        addFragment(addEventFragment);
+        EditEventFragment editEventFragment = EditEventFragment.newInstance(mSelectedDay, null);
+        editEventFragment.setOnAddListener(this);
+        addFragment(editEventFragment);
     }
 
     @Override
     public synchronized void onSelected(Day day) {
         this.mSelectedDay = day;
         setBirthday(day);
-        setEvent(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
+        setEvent(getString(R.string.xx_year_xx_month_xx, day.getYear(), day.getMonth(), day.getDayOfMonth()));
         setLunarInfo();
         calculateDelta_T();
     }
 
+    @Override
+    public void skipToNextMonth(int dayOfMonth) {
+        skipToOneDay(1, dayOfMonth);
+    }
+
+    @Override
+    public void skipToPrevMonth(int dayOfMonth) {
+        skipToOneDay(-1, dayOfMonth);
+    }
+
     private void setBirthday(Day day) {
         if (day.hasBirthday()) {
-            StringBuffer buffer = getBirthdayStr();
-            mIvBirth.setText(buffer.toString());
+            String birthdayStr = getBirthdayStr();
+            mIvBirth.setText(birthdayStr);
             mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
         } else {
             mAnimatorHandler.sendEmptyMessage(BIRTHDAY_INVISIBLE);
@@ -531,6 +355,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
         } else {
             mTvDayCount.setText(R.string.today_things);
+            mTvDayCountM.setText(null);
         }
     }
 
@@ -563,16 +388,16 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private void setupReceiver() {
         mMainReceiver = new MainReceiver();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(EventDao.ADD);
-        filter.addAction(EventDao.UPDATE);
-        filter.addAction(EventDao.DELETE);
+        filter.addAction(MonthFragment.ADD_EVENT);
+        filter.addAction(MonthFragment.UPDATE_EVENT);
+        filter.addAction(MonthFragment.DELETE_EVENT);
         mHostActivity.registerReceiver(mMainReceiver, filter);
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         mHostActivity.unregisterReceiver(mMainReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -592,14 +417,26 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         skipToOneDay(year, month, day);
     }
 
-    private void skipToOneDay(int year, int month, int day) {
-        int position = (year - MonthFragmentAdapter.YEAR_START) * 12 + month - 1;
+    private void skipToOneDay(int offset, int dayOfMonth) {
+        int position = mViewPager.getCurrentItem() + offset;
+        int year = position / MONTH_COUNT + YEAR_START_REAL;
+        int month = position % MONTH_COUNT + 1;
         mViewPager.setCurrentItem(position);
-        Intent intent = new Intent(SKIP);
+        Intent intent = new Intent(MonthFragment.SKIP);
         intent.putExtra("year", year);
         intent.putExtra("month", month);
-        intent.putExtra("day", day);
+        intent.putExtra("day", dayOfMonth);
         mHostActivity.sendBroadcast(intent);
+    }
+
+    private void skipToOneDay(int year, int month, int day) {
+        int position = (year - MonthFragmentAdapter.YEAR_START) * 12 + month - 1;
+        skipToOneDay(position - mViewPager.getCurrentItem(), day);
+    }
+
+    @Override
+    public void onAdd() {
+        showSnackbar("成功添加了新事件");
     }
 
     public class MainReceiver extends BroadcastReceiver {
@@ -609,8 +446,209 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         }
     }
 
-    @Override
-    public void onAdd() {
-        showSnackbar("成功添加了新事件");
+    private static class MainHandler extends Handler {
+        private final WeakReference<MainFragment> mFragment;
+
+        private MainHandler(MainFragment fragment) {
+            mFragment = new WeakReference<>(fragment);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            if (fragment.mEventViewAnimator != null) {
+                fragment.mEventViewAnimator.cancel();
+                fragment.mEventViewAnimator = null;
+            }
+            switch (msg.what) {
+                case View.INVISIBLE:
+                    if (fragment.isEventViewVisible) {
+                        fragment.isEventViewVisible = false;
+                        hideEventView();
+                        showLeftBottom();
+                        movePoint();
+                    }
+                    break;
+                case View.VISIBLE:
+                    if (!fragment.isEventViewVisible) {
+                        fragment.isEventViewVisible = true;
+                        showEventView();
+                        hideLeftBottom();
+                        sendEmptyMessage(BIRTHDAY_INVISIBLE);
+                    }
+                    break;
+                case BIRTHDAY_INVISIBLE:
+                    if (fragment.isBirthday) {
+                        hideFlBirth();
+                    }
+                    break;
+                case BIRTHDAY_VISIBLE:
+                    if (!fragment.isBirthday && !fragment.isEventViewVisible) {
+                        if (!fragment.mSelectedDay.hasEvent()) {
+                            showFlBirth();
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void hideLeftBottom() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            View leftBottom = fragment.mLeftBottom;
+            hideWithCircularReveal(leftBottom, 0, leftBottom.getHeight(), leftBottom.getHeight(), 0, new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    leftBottom.setVisibility(!fragment.isEventViewVisible ? View.VISIBLE : View.INVISIBLE);
+                }
+            });
+        }
+
+        private void hideEventView() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            View eventView = fragment.mEventView;
+            hideWithCircularReveal(eventView, fragment.mEventViewWidth / 2, fragment.mEventViewHeight / 2, fragment.mEventViewWidth, 0, new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    eventView.setVisibility(fragment.isEventViewVisible ? View.VISIBLE : View.INVISIBLE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        eventView.setElevation(0);
+                    }
+                }
+            });
+        }
+
+        private void hideFlBirth() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            fragment.isBirthday = false;
+            int width = fragment.mFlBirth.getWidth();
+            int height = fragment.mFlBirth.getHeight();
+            hideWithCircularReveal(fragment.mFlBirth, width / 2, height / 2, width, 0, new AnimatorListenerAdapter() {
+
+                @Override
+                public void onAnimationEnd(Animator anim) {
+                    fragment.mFlBirth.setVisibility(fragment.isBirthday ? View.VISIBLE : View.INVISIBLE);
+                    Animation animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point_2);
+                    animation.setDuration(300);
+                    fragment.mPoint.startAnimation(animation);
+                }
+            });
+        }
+
+        private void hideWithCircularReveal(View view, int centerX, int centerY, float startRadius, float endRadius, Animator.AnimatorListener listener) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+                animator.setDuration(400);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.addListener(listener);
+                animator.start();
+            } else {
+                view.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        private void showEventView() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            fragment.mEventView.setVisibility(View.VISIBLE);
+            Animation animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.in_from_top);
+            animation.setDuration(800);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        float dimension = fragment.getResources().getDimension(R.dimen.card_normal_elevation);
+                        fragment.mEventView.setElevation(dimension);
+                    }
+                }
+
+            });
+            fragment.mEventView.startAnimation(animation);
+        }
+
+        private void showLeftBottom() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            showWithCircularReveal(fragment.mLeftBottom, 0, fragment.mLeftBottom.getHeight(), 0, fragment.mLeftBottom.getHeight(), new AnimatorListenerAdapter() {
+            });
+        }
+
+        private void showFlBirth() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            fragment.isBirthday = true;
+            int width = fragment.mFlBirth.getWidth();
+            int height = fragment.mFlBirth.getHeight();
+            showWithCircularReveal(fragment.mFlBirth, width / 2, height / 2, 0, width, new AnimatorListenerAdapter() {
+            });
+        }
+
+        private void showWithCircularReveal(View view, int centerX, int centerY, float startRadius, float endRadius, Animator.AnimatorListener listener) {
+            view.setVisibility(View.VISIBLE);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+                animator.setDuration(400);
+                animator.addListener(listener);
+                animator.setInterpolator(new AccelerateDecelerateInterpolator());
+                animator.start();
+            }
+        }
+
+
+        private void movePoint() {
+            MainFragment fragment = mFragment.get();
+            if (fragment == null) {
+                return;
+            }
+            Animation animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point);
+            animation.setDuration(800);
+            fragment.mPoint.startAnimation(animation);
+            animation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    if (fragment.mSelectedDay.hasBirthday()) {
+                        fragment.mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
+                    } else {
+                        animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point_2);
+                        animation.setDuration(300);
+                        fragment.mPoint.startAnimation(animation);
+                    }
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+        }
     }
+
 }

@@ -5,8 +5,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.SeekBar;
@@ -18,25 +16,21 @@ import java.util.List;
 
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Day;
+import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.task.LoadDataTask;
-import top.soyask.calendarii.ui.adapter.month.MonthAdapter;
+import top.soyask.calendarii.ui.fragment.month.MonthFragment;
+import top.soyask.calendarii.ui.view.CalendarView;
 
 import static android.content.res.Configuration.DENSITY_DPI_UNDEFINED;
 import static top.soyask.calendarii.MainActivity.THEMES;
-import static top.soyask.calendarii.global.Global.DEFAULT_HOLIDAY_SIZE;
-import static top.soyask.calendarii.global.Global.DEFAULT_LUNAR_SIZE;
-import static top.soyask.calendarii.global.Global.DEFAULT_NUMBER_SIZE;
-import static top.soyask.calendarii.global.Global.DEFAULT_WEEK_SIZE;
 
 public class ZoomActivity extends AppCompatActivity
-        implements SeekBar.OnSeekBarChangeListener, MonthAdapter.OnItemClickListener, View.OnClickListener {
+        implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
     private List<Day> mDays = new ArrayList<>();
     private EventDao mEventDao;
-    private MonthAdapter mMonthAdapter;
     private Configuration mConfig;
     private TextView mTvDaySize;
     private TextView mTvLunarSize;
@@ -44,6 +38,7 @@ public class ZoomActivity extends AppCompatActivity
     private TextView mTvWeekSize;
     private TextView mTvDpi;
     private TextView mTvHolidaySize;
+    private CalendarView mCalendarView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +46,10 @@ public class ZoomActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zoom);
         setupUI();
-        LoadDataTask task = new LoadDataTask(this, mMonthAdapter);
+        updateCalendarSetting();
+        LoadDataTask task = new LoadDataTask(this, mCalendarView);
         Calendar calendar = Calendar.getInstance();
-        task.execute(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH));
+        task.execute(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1);
     }
 
     private void setupTheme() {
@@ -65,7 +61,7 @@ public class ZoomActivity extends AppCompatActivity
         setupToolbar();
         findTextView();
         setupSeekBar();
-        setupRecyclerView();
+        mCalendarView = findViewById(R.id.cv);
     }
 
     private void findTextView() {
@@ -100,29 +96,33 @@ public class ZoomActivity extends AppCompatActivity
         findViewById(R.id.btn_reset_day_size).setVisibility(Setting.day_size == -1 ? View.INVISIBLE : View.VISIBLE);
 
         SeekBar sbLunarSize = findViewById(R.id.sb_lunar_size);
-        sbLunarSize.setMax(DEFAULT_LUNAR_SIZE * 4);
-        sbLunarSize.setProgress(Setting.day_lunar_text_size == -1 ? DEFAULT_LUNAR_SIZE : (int) Setting.day_lunar_text_size);
+        int bottomTextSize = getDimension(R.dimen.bottom_text_size);
+        sbLunarSize.setMax(bottomTextSize * 4);
+        sbLunarSize.setProgress(Setting.day_lunar_text_size == -1 ? bottomTextSize : (int) Setting.day_lunar_text_size);
         sbLunarSize.setOnSeekBarChangeListener(this);
         mTvLunarSize.setText(getString(R.string.current_lunar_size, sbLunarSize.getProgress()));
         findViewById(R.id.btn_reset_lunar).setVisibility(Setting.day_lunar_text_size == -1 ? View.INVISIBLE : View.VISIBLE);
 
         SeekBar sbNumberSize = findViewById(R.id.sb_number_size);
-        sbNumberSize.setMax(DEFAULT_NUMBER_SIZE * 2);
-        sbNumberSize.setProgress(Setting.day_number_text_size == -1 ? DEFAULT_NUMBER_SIZE : (int) Setting.day_number_text_size);
+        int dateTextSize = getDimension(R.dimen.date_text_size);
+        sbNumberSize.setMax(dateTextSize * 2);
+        sbNumberSize.setProgress(Setting.day_number_text_size == -1 ? dateTextSize : (int) Setting.day_number_text_size);
         sbNumberSize.setOnSeekBarChangeListener(this);
         mTvNumberSize.setText(getString(R.string.current_number_size, sbNumberSize.getProgress()));
         findViewById(R.id.btn_reset_number).setVisibility(Setting.day_number_text_size == -1 ? View.INVISIBLE : View.VISIBLE);
 
         SeekBar sbWeekSize = findViewById(R.id.sb_week_size);
-        sbWeekSize.setMax(DEFAULT_WEEK_SIZE * 2);
-        sbWeekSize.setProgress(Setting.day_week_text_size == -1 ? DEFAULT_WEEK_SIZE : (int) Setting.day_week_text_size);
+        int weekTextSize = getDimension(R.dimen.week_text_size);
+        sbWeekSize.setMax(weekTextSize * 2);
+        sbWeekSize.setProgress(Setting.day_week_text_size == -1 ? weekTextSize : (int) Setting.day_week_text_size);
         sbWeekSize.setOnSeekBarChangeListener(this);
         mTvWeekSize.setText(getString(R.string.current_week_size, sbWeekSize.getProgress()));
         findViewById(R.id.btn_reset_week).setVisibility(Setting.day_week_text_size == -1 ? View.INVISIBLE : View.VISIBLE);
 
         SeekBar sbHolidaySize = findViewById(R.id.sb_holiday_size);
-        sbHolidaySize.setMax(DEFAULT_HOLIDAY_SIZE * 2);
-        sbHolidaySize.setProgress(Setting.day_holiday_text_size == -1 ? DEFAULT_HOLIDAY_SIZE : (int) Setting.day_holiday_text_size);
+        int holidayTextSize = getDimension(R.dimen.holiday_text_size);
+        sbHolidaySize.setMax(holidayTextSize * 2);
+        sbHolidaySize.setProgress(Setting.day_holiday_text_size == -1 ? holidayTextSize : (int) Setting.day_holiday_text_size);
         sbHolidaySize.setOnSeekBarChangeListener(this);
         mTvHolidaySize.setText(getString(R.string.current_holiday_size, sbHolidaySize.getProgress()));
         findViewById(R.id.btn_reset_holiday).setVisibility(Setting.day_holiday_text_size == -1 ? View.INVISIBLE : View.VISIBLE);
@@ -131,20 +131,6 @@ public class ZoomActivity extends AppCompatActivity
 
     private int getDimension(int resId) {
         return getResources().getDimensionPixelOffset(resId);
-    }
-
-    private void setupRecyclerView() {
-        mMonthAdapter = new MonthAdapter(this);
-        RecyclerView recyclerView = findViewById(R.id.rv);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 7));
-        recyclerView.setAdapter(mMonthAdapter);
-        recyclerView.setItemAnimator(null);
-    }
-
-
-    @Override
-    public void onDayClick(int position, Day day) {
-
     }
 
     @Override
@@ -213,8 +199,8 @@ public class ZoomActivity extends AppCompatActivity
                     Setting.setting(this, Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, progress);
                     break;
             }
-            sendBroadcast(new Intent(EventDao.UPDATE));
-            mMonthAdapter.notifyDataSetChanged();
+            sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+            updateCalendarSetting();
         }
     }
 
@@ -280,10 +266,21 @@ public class ZoomActivity extends AppCompatActivity
                 break;
         }
         setupSeekBar();
-        sendBroadcast(new Intent(EventDao.UPDATE));
-        mMonthAdapter.notifyDataSetChanged();
+        sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+        updateCalendarSetting();
     }
 
+    private void updateCalendarSetting() {
+        mCalendarView.setFirstDayOffset(Setting.date_offset)
+                .setDateCircleSize(Setting.day_size == -1 ? getDimension(R.dimen.item_day_size) : Setting.day_size)
+                .setDateTextSize(Setting.day_number_text_size == -1 ? getDimension(R.dimen.date_text_size) : Setting.day_number_text_size)
+                .setDateBottomTextSize(Setting.day_lunar_text_size == -1 ? getDimension(R.dimen.bottom_text_size) : Setting.day_lunar_text_size)
+                .setHolidayTextSize(Setting.day_holiday_text_size == -1 ? getDimension(R.dimen.holiday_text_size) : Setting.day_holiday_text_size)
+                .setWeekTextSize(Setting.day_week_text_size == -1 ? getDimension(R.dimen.week_text_size) : Setting.day_week_text_size)
+                .setReplenish(Setting.replenish)
+                .setUseAnimation(Setting.select_anim)
+                .postInvalidate();
+    }
 
     private void resetDpi() {
         Setting.remove(this, Global.SETTING_DENSITY_DPI);

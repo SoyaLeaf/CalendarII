@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 
+import java.lang.ref.WeakReference;
+
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.activity.LaunchActivity;
@@ -31,25 +33,7 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
     private int mCurrentTheme;
     private ProgressDialog mProgressDialog;
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case WAIT:
-                    mProgressDialog = ProgressDialog.show(mHostActivity, null, "请稍等...", true);
-                    break;
-                case CANCEL:
-                    if (mProgressDialog != null) {
-                        mProgressDialog.dismiss();
-                        mProgressDialog = null;
-                    }
-                    break;
-                case UPDATE:
-                    setupTheme(msg.arg1);
-                    break;
-            }
-        }
-    };
+    private Handler mHandler = new ThemeHandler(this);
 
     public ThemeFragment() {
         super(R.layout.fragment_theme);
@@ -78,7 +62,7 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
 
     private void setupTheme(int theme) {
         SharedPreferences.Editor setting = mHostActivity.getSharedPreferences("setting", Context.MODE_PRIVATE).edit();
-        setting.putInt("theme", theme).commit();
+        setting.putInt("theme", theme).apply();
         Setting.theme = theme;
         Intent intent = new Intent(mHostActivity, LaunchActivity.class);
         startActivity(intent);
@@ -112,6 +96,37 @@ public class ThemeFragment extends BaseFragment implements View.OnClickListener,
                     }.start();
                     break;
                 }
+            }
+        }
+    }
+
+
+    public static class ThemeHandler extends Handler{
+
+        WeakReference<ThemeFragment> mFragment;
+
+        ThemeHandler(ThemeFragment fragment){
+            mFragment = new WeakReference<>(fragment);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            ThemeFragment fragment = mFragment.get();
+            if(fragment == null){
+                return;
+            }
+            switch (msg.what) {
+                case WAIT:
+                    fragment.mProgressDialog = ProgressDialog.show(fragment.mHostActivity, null, "请稍等...", true);
+                    break;
+                case CANCEL:
+                    if (fragment.mProgressDialog != null) {
+                        fragment.mProgressDialog.dismiss();
+                        fragment.mProgressDialog = null;
+                    }
+                    break;
+                case UPDATE:
+                    fragment.setupTheme(msg.arg1);
+                    break;
             }
         }
     }

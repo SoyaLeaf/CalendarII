@@ -9,7 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.OpenSource;
+import top.soyask.calendarii.entity.OpenSource;
 
 /**
  * Created by mxf on 2017/10/29.
@@ -36,12 +36,7 @@ public class OpenSourceAdapter extends RecyclerView.Adapter<OpenSourceAdapter.Op
         final OpenSource openSource = mOpenSources.get(position);
         holder.tv_title.setText(openSource.getTitle());
         holder.tv_content.setText(openSource.getDetail());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnOpenSourceClickListener.onOpenSourceClick(openSource.getUrl());
-            }
-        });
+        holder.itemView.setOnClickListener(v -> mOnOpenSourceClickListener.onOpenSourceClick(openSource.getUrl()));
     }
 
     @Override
@@ -59,8 +54,8 @@ public class OpenSourceAdapter extends RecyclerView.Adapter<OpenSourceAdapter.Op
 
         public OpenSourceViewHolder(View itemView) {
             super(itemView);
-            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
-            tv_content = (TextView) itemView.findViewById(R.id.tv_content);
+            tv_title =  itemView.findViewById(R.id.tv_title);
+            tv_content =  itemView.findViewById(R.id.tv_content);
         }
     }
 }

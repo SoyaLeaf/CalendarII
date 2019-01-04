@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Locale;
 
 import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.domain.Birthday;
-import top.soyask.calendarii.domain.Day;
-import top.soyask.calendarii.domain.Event;
-import top.soyask.calendarii.domain.LunarDay;
+import top.soyask.calendarii.entity.Birthday;
+import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.Event;
+import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.global.GlobalData;
 
 /**
@@ -96,7 +96,7 @@ public class MonthUtils {
     }
 
     @NonNull
-    public static final Day generateDay(Calendar calendar, EventDao eventDao) {
+    public static Day generateDay(Calendar calendar, EventDao eventDao) {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
@@ -113,7 +113,7 @@ public class MonthUtils {
     }
 
     private static void setHoliday(int year, int month, int dayOfMonth, Day day) {
-        String str = new StringBuffer()
+        String str = new StringBuilder()
                 .append(year)
                 .append(DATE_SP)
                 .append(month)

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content"
+    android:layout_width="wrap_content"
+    android:layout_height="120dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#eeffffff"
+        android:minHeight="200dp"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:paddingStart="@dimen/normal_margin"
+        android:theme="@style/AppTheme.Black">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/normal_margin"
+                android:text="小部件调节"
+                android:textSize="@dimen/appbar_font_size" />
+
+            <Button
+                android:id="@+id/btn_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="56dp"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:text="重置" />
+
+            <ImageButton
+                android:id="@+id/fab_close"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_close_black_24dp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="月份" />
+
+        <SeekBar
+            android:id="@+id/sb_month"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="50" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="年份" />
+
+        <SeekBar
+            android:id="@+id/sb_year"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="50" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="月份（农历）" />
+
+        <SeekBar
+            android:id="@+id/sb_lunar_month"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="50" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="星期" />
+
+        <SeekBar
+            android:id="@+id/sb_week"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="50" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日期" />
+
+        <SeekBar
+            android:id="@+id/sb_day"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="50" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="日期（农历）" />
+
+        <SeekBar
+            android:id="@+id/sb_lunar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="50" />
+
+        <!--<TextView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="日期间距" />-->
+
+        <!--<SeekBar-->
+            <!--android:id="@+id/sb_line"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:max="150" />-->
+    </LinearLayout>
+
+</ScrollView>

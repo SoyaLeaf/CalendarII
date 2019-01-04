@@ -80,14 +80,15 @@ public class HolidayUtils {
                         break;
 
                     case Calendar.MAY:
-                        if (dayOfMonth == 4) {
-                            return "青年节";
-                        } else if (dayOfMonth == 12) {
-                            return "护士节";
-                        } else if (dayOfMonth == 15) {
-                            return "博物馆日";
-                        } else {
-                            return calculateHolidayForWeek(calendar);
+                        switch (dayOfMonth) {
+                            case 4:
+                                return "青年节";
+                            case 12:
+                                return "护士节";
+                            case 15:
+                                return "博物馆日";
+                            default:
+                                return calculateHolidayForWeek(calendar);
                         }
                     case Calendar.JUNE:
                         return calculateHolidayForWeek(calendar);

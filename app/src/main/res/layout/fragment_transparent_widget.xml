@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#727272"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:paddingTop="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#7fffffff"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/sc_load_wallpager"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/load_wall_pager" />
+
+        <SeekBar
+            android:id="@+id/sb_wallpager_offset"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/widget_container"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:padding="@dimen/widget_margin" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#44ffffff">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/tv_alpha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="透明度"
+                android:textColor="@color/text_color_primary_dark" />
+
+            <SeekBar
+                android:id="@+id/sb_alpha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_alpha"
+                android:max="255" />
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/sc_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sb_alpha"
+                android:layout_margin="8dp"
+                android:text="深色主题" />
+
+            <Button
+                android:id="@+id/btn_font"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_below="@id/sc_theme"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/normal_margin"
+                android:background="@drawable/bg_primary_r60"
+                android:elevation="2dp"
+                android:text="字体\n调整"
+                android:textColor="@color/text_color_primary_light" />
+        </RelativeLayout>
+    </ScrollView>
+</LinearLayout>

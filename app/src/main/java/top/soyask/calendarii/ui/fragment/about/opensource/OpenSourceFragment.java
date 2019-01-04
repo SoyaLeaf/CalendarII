@@ -5,13 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.domain.OpenSource;
+import top.soyask.calendarii.entity.OpenSource;
 import top.soyask.calendarii.ui.adapter.opensource.OpenSourceAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 
@@ -38,12 +37,7 @@ public class OpenSourceFragment extends BaseFragment implements OpenSourceAdapte
         OpenSourceAdapter openSourceAdapter = new OpenSourceAdapter(mOpenSources, this);
         rv.setAdapter(openSourceAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));
-        findToolbar().setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeFragment(OpenSourceFragment.this);
-            }
-        });
+        findToolbar().setNavigationOnClickListener(v -> removeFragment(OpenSourceFragment.this));
     }
 
     @Override

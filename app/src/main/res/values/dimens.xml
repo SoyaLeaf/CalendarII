@@ -40,6 +40,7 @@
     <!--文字到屏幕左边的距离-->
     <dimen name="text_left_margin">72dp</dimen>
     <dimen name="item_day_size">40dp</dimen>
+    <dimen name="date_circle_size">40dp</dimen>
     <dimen name="item_widget_day_size">36dp</dimen>
     <dimen name="item_white_widget_day_size">28dp</dimen>
     <dimen name="card_float_elevation">8dp</dimen>
@@ -53,5 +54,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="lunar_text_size">10dp</dimen>
     <dimen name="greg_text_size">14dp</dimen>
     <dimen name="holiday_text_size">5dp</dimen>
-    <dimen name="week_text_size">14dp</dimen>
+    <dimen name="week_text_size">15dp</dimen>
+    <dimen name="date_text_size">15dp</dimen>
+    <dimen name="bottom_text_size">8dp</dimen>
 </resources>

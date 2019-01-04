@@ -4,6 +4,12 @@
     <attr name="colorPrimary" format="color" />
     <attr name="colorPrimaryDark" format="color" />
     <attr name="colorAccent" format="color" />
+
+    <attr name="transparentWidgetTextColor" format="color|reference" />
+    <attr name="transparentWidgetCircleSolid" format="color|reference" />
+    <attr name="transparentEventColor" format="color|reference" />
+    <attr name="transparentLaunchIcon" format="reference" />
+    <attr name="transparentBirthIcon" format="color|reference" />
     <!-- Base application theme. -->
 
     <style name="NumberPicker">
@@ -28,6 +34,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">?actionBarSize</item>
         <item name="android:background">?colorPrimary</item>
+        <item name="android:elevation">4dp</item>
     </style>
 
     <style name="ColorSquare">
@@ -111,6 +118,12 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">12dp</item>
     </style>
+    
+    <style name="AppTheme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
 
     <style name="reset_btn">
         <item name="android:layout_gravity">right|center_vertical</item>
@@ -120,5 +133,21 @@
         <item name="android:background">?android:selectableItemBackground</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="WidgetTextColor">
+        <item name="transparentWidgetTextColor">@color/text_color_primary_dark</item>
+        <item name="transparentEventColor">@color/text_color_primary_dark</item>
+        <item name="transparentLaunchIcon">@drawable/ic_open_in_new_black_24dp</item>
+        <item name="transparentBirthIcon">@drawable/ic_svg_black_birthday</item>
+        <item name="transparentWidgetCircleSolid">#33ffffff</item>
+    </style>
+
+    <style name="WidgetTextColor.Light">
+        <item name="transparentWidgetTextColor">@color/text_color_primary_light</item>
+        <item name="transparentEventColor">@color/text_color_primary_light</item>
+        <item name="transparentLaunchIcon">@drawable/ic_open_in_new_white_24dp</item>
+        <item name="transparentBirthIcon">@drawable/ic_svg_birthday</item>
+        <item name="transparentWidgetCircleSolid">#33333333</item>
     </style>
 </resources>
