@@ -48,17 +48,21 @@ public class MonthDayAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         int type = getItemViewType(position);
+        int layout;
         switch (type) {
             case VIEW_WEEK:
                 int index = (position + Setting.date_offset) % WEEK_ARRAY.length;
-                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_widget_week, parent, false);
+                layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.item_widget_week : R.layout.item_widget_week_light;
+                convertView = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
                 ((TextView) convertView).setText(WEEK_ARRAY[index]);
                 break;
             case VIEW_TODAY:
-                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_widget_today, parent, false);
+                layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.item_widget_today : R.layout.item_widget_today_light;
+                convertView = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
                 break;
             case VIEW_DAY:
-                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_widget_day, parent, false);
+                layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.item_widget_day : R.layout.item_widget_day_light;
+                convertView = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
                 break;
         }
         if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {

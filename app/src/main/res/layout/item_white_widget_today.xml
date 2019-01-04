@@ -11,7 +11,7 @@
         android:id="@+id/iv_birth"
         android:layout_width="8dp"
         android:layout_height="8dp"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_margin="1dp"
         android:src="@drawable/ic_svg_black_birthday"
         android:visibility="invisible" />
@@ -43,7 +43,7 @@
         android:layout_width="3dp"
         android:layout_height="3dp"
         android:layout_above="@id/tv_lunar"
-        android:layout_toRightOf="@id/tv_greg"
+        android:layout_toEndOf="@id/tv_greg"
         android:background="#000"
-        android:visibility="gone"></FrameLayout>
+        android:visibility="gone" />
 </RelativeLayout>

@@ -63,18 +63,22 @@ public class MonthService extends RemoteViewsService {
         public RemoteViews getViewAt(int position) {
 
             RemoteViews remoteViews = null;
+            int layout;
             switch (getItemViewType(position)) {
                 case VIEW_WEEK:
                     int index = (position + Setting.date_offset) % WEEK_ARRAY.length;
-                    remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_week);
+                    layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.item_widget_week : R.layout.item_widget_week_light;
+                    remoteViews = new RemoteViews(mContext.getPackageName(), layout);
                     remoteViews.setTextViewText(R.id.tv, WEEK_ARRAY[index]);
                     remoteViews.setTextViewTextSize(R.id.tv, COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_week_font_size);
                     break;
                 case VIEW_TODAY:
-                    remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_today);
+                    layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.item_widget_today : R.layout.item_widget_today_light;
+                    remoteViews = new RemoteViews(mContext.getPackageName(), layout);
                     break;
                 case VIEW_DAY:
-                    remoteViews = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_day);
+                    layout = Setting.TransparentWidget.trans_widget_theme_color == 0 ? R.layout.item_widget_day : R.layout.item_widget_day_light;
+                    remoteViews = new RemoteViews(mContext.getPackageName(), layout);
                     remoteViews.setTextViewText(R.id.tv_greg, "");
                     remoteViews.setTextViewText(R.id.tv_lunar, "");
                     break;
@@ -85,16 +89,16 @@ public class MonthService extends RemoteViewsService {
                 remoteViews.setTextViewText(R.id.tv_greg, String.format(Locale.CHINA, "%d", day.getDayOfMonth()));
                 if (day.hasBirthday()) {
                     remoteViews.setTextViewText(R.id.tv_lunar, "生日");
-                    remoteViews.setViewVisibility(R.id.iv_birth,View.VISIBLE);
+                    remoteViews.setViewVisibility(R.id.iv_birth, View.VISIBLE);
                 } else {
                     remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar().getSimpleLunar());
-                    remoteViews.setViewVisibility(R.id.iv_birth,View.INVISIBLE);
+                    remoteViews.setViewVisibility(R.id.iv_birth, View.INVISIBLE);
                 }
 
                 if (day.hasEvent()) {
                     remoteViews.setViewVisibility(R.id.fl_event, View.VISIBLE);
                 } else {
-                    remoteViews.setViewVisibility(R.id.fl_event,View.INVISIBLE);
+                    remoteViews.setViewVisibility(R.id.fl_event, View.INVISIBLE);
                 }
                 remoteViews.setTextViewTextSize(R.id.tv_greg, COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_number_font_size);
                 remoteViews.setTextViewTextSize(R.id.tv_lunar, COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_lunar_font_size);

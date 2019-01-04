@@ -61,7 +61,6 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
         } else {
             this.mDateStartPos = 6;
         }
-        Log.d(TAG, "mDateStartPos:" + mDateStartPos);
         this.mEndPosition = mDateStartPos + mDays.size();
     }
 
