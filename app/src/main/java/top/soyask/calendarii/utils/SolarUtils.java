@@ -54,7 +54,7 @@ public class SolarUtils {
     static String getSolar(Calendar calendar) {
         int year = calendar.get(Calendar.YEAR);
         String result = null;
-        if (SOLAR_MAP.indexOfKey(year) != -1) {
+        if (SOLAR_MAP.indexOfKey(year) >= 0) {
             Map<String, Integer> solarOfYear = SOLAR_MAP.get(year);
             int month = calendar.get(Calendar.MONTH);
             int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
