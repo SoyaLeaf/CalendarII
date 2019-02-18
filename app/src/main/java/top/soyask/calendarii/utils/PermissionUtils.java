@@ -1,9 +1,7 @@
 package top.soyask.calendarii.utils;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -61,6 +59,7 @@ public class PermissionUtils {
     public static void toSettings(Context context) {
         Uri uri = Uri.fromParts("package", context.getPackageName(), null);
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, uri);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 }
