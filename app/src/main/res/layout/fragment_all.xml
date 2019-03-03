@@ -6,7 +6,7 @@
     android:background="#fff"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/Toolbar"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
@@ -21,13 +21,13 @@
             android:layout_margin="@dimen/normal_margin"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete_forever_white_24dp" />
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_event"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/eventBackground"
         android:layoutAnimation="@anim/in_from_bottom_layout">
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 </LinearLayout>

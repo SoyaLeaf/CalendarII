@@ -6,7 +6,7 @@
     android:background="#fff"
     android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         style="@style/Toolbar"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
@@ -52,7 +52,7 @@
                     android:text="每周从周一开始计"
                     android:textSize="@dimen/hint_font_size" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/sc_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:text="将会在空白处填充临近月份的日期"
                     android:textSize="@dimen/hint_font_size" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/sc_replenish"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                     android:text="点击选择日期时将启用动画（若导致不流畅可将此选项关闭）"
                     android:textSize="@dimen/hint_font_size" />
 
-                <android.support.v7.widget.SwitchCompat
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/sc_anim"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

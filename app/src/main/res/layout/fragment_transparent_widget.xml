@@ -13,7 +13,7 @@
         android:background="#7fffffff"
         android:orientation="horizontal">
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/sc_load_wallpager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
                 android:layout_below="@id/tv_alpha"
                 android:max="255" />
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/sc_theme"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

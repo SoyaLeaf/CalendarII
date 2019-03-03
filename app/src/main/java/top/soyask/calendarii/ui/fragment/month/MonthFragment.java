@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.DimenRes;
-import android.support.annotation.Nullable;
+import androidx.annotation.DimenRes;
+import androidx.annotation.Nullable;
 import android.view.View;
 
 import top.soyask.calendarii.R;

@@ -12,6 +12,7 @@
 bin/
 gen/
 out/
+class_files.txt
 
 # Gradle files
 .gradle/
