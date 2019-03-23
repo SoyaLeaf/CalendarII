@@ -6,6 +6,7 @@ import java.io.Serializable;
  * Created by mxf on 2017/10/29.
  */
 
+@Deprecated
 public class Birthday implements Serializable {
 
     private int id;
