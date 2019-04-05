@@ -1,6 +1,8 @@
 package top.soyask.calendarii.entity;
 
-public class MemorialDay {
+import java.io.Serializable;
+
+public class MemorialDay implements Serializable {
     
     private int id;
     private String who;
@@ -9,7 +11,7 @@ public class MemorialDay {
     private int year;
     private int month;
     private int day;
-    private boolean isLunar;
+    private boolean lunar;
 
     public int getId() {
         return id;
@@ -68,10 +70,10 @@ public class MemorialDay {
     }
 
     public boolean isLunar() {
-        return isLunar;
+        return lunar;
     }
 
     public void setLunar(boolean lunar) {
-        isLunar = lunar;
+        this.lunar = lunar;
     }
 }

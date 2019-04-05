@@ -1,15 +1,16 @@
 package top.soyask.calendarii.utils;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.regex.Pattern;
 
 public class SqlGenerator {
+    private static final Pattern PATTERN = Pattern.compile("(?=[A-Z])");
 
     public static String createTableSQL(Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
@@ -28,7 +29,7 @@ public class SqlGenerator {
             sb.append(" ");
             sb.append(type(field));
             if (fieldName.toUpperCase().equals("ID")) {
-                sb.append(" PRIMARY KEY AUTOINCREMENT ");
+                sb.append(" PRIMARY key AUTOINCREMENT ");
             }
             sb.append(',');
         }
@@ -37,6 +38,60 @@ public class SqlGenerator {
         }
         sb.append(");");
         return sb.toString();
+    }
+
+    private static String type(Field field) {
+        String ct = getColumnType(field);
+        if (ct != null) {
+            return ct;
+        }
+        Class<?> type = field.getType();
+        switch (type.getSimpleName()) {
+            case "String":
+                return "VARCHAR(255)";
+            case "int":
+            case "Integer":
+                return "INTEGER";
+            case "long":
+            case "Long":
+                return "INTEGER";
+            case "Boolean":
+            case "boolean":
+                return "TINYINT(1)";
+            case "Double":
+            case "double":
+                return "DOUBLE";
+            case "Float":
+            case "float":
+                return "FLOAT";
+        }
+        throw new RuntimeException("未知类型");
+    }
+
+    private static String getColumnType(Field field) {
+        ColumnType columnType = field.getAnnotation(ColumnType.class);
+        if (columnType != null) {
+            String ct = columnType.value();
+            if (!"".equals(ct)) {
+                return ct;
+            }
+        }
+        return null;
+    }
+
+    public static String convertWordWithUnderline(String fieldName) {
+        String[] split = PATTERN.split(fieldName);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String s : split) {
+            if (s != null && !s.isEmpty()) {
+                stringBuilder.append(s);
+                stringBuilder.append("_");
+            }
+        }
+        if (stringBuilder.length() > 0) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+        return stringBuilder.toString().toUpperCase();
     }
 
     public static ContentValues getContentValues(Object obj) {
@@ -64,96 +119,6 @@ public class SqlGenerator {
         return values;
     }
 
-    public static <T> T cursor2Object(Class<T> clazz, Cursor cursor) {
-        try {
-            return cursor2ObjectThrowException(clazz, cursor);
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static <T> T cursor2ObjectThrowException(Class<T> clazz, Cursor cursor)
-            throws InstantiationException, IllegalAccessException {
-        T t = clazz.newInstance();
-        Field[] fields = clazz.getFields();
-        for (Field field : fields) {
-            String columnName = convertWordWithUnderline(field.getName());
-            field.setAccessible(true);
-            int index = cursor.getColumnIndex(columnName);
-            switch (field.getType().getSimpleName()) {
-                case "String":
-                    field.set(t, cursor.getString(index));
-                    break;
-                case "Integer":
-                case "int":
-                    field.set(t, cursor.getInt(index));
-                    break;
-                case "Boolean":
-                case "boolean":
-                    field.set(t, cursor.getInt(index) == 1);
-                    break;
-                case "Float":
-                case "float":
-                    field.set(t, cursor.getFloat(index));
-                    break;
-                case "Double":
-                case "double":
-                    field.set(t, cursor.getFloat(index));
-            }
-        }
-        return t;
-    }
-
-
-    private static String convertWordWithUnderline(String fieldName) {
-        String[] split = fieldName.split("(?=[A-Z])");
-        StringBuilder stringBuilder = new StringBuilder();
-        for (String s : split) {
-            stringBuilder.append(s);
-            stringBuilder.append("_");
-        }
-        if (stringBuilder.length() > 0) {
-            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        }
-        return stringBuilder.toString().toUpperCase();
-    }
-
-    private static String type(Field field) {
-        String ct = getColumnType(field);
-        if (ct != null) {
-            return ct;
-        }
-        Class<?> type = field.getType();
-        switch (type.getSimpleName()) {
-            case "String":
-                return "VARCHAR(255)";
-            case "int":
-            case "Integer":
-                return "INTEGER";
-            case "Boolean":
-            case "boolean":
-                return "TINYINT(1)";
-            case "Double":
-            case "double":
-                return "DOUBLE";
-            case "Float":
-            case "float":
-                return "FLOAT";
-        }
-        throw new RuntimeException("未知类型");
-    }
-
-    private static String getColumnType(Field field) {
-        ColumnType columnType = field.getAnnotation(ColumnType.class);
-        if (columnType != null) {
-            String ct = columnType.value();
-            if (!"".equals(ct)) {
-                return ct;
-            }
-        }
-        return null;
-    }
 
     @Target(ElementType.FIELD)
     @Retention(RetentionPolicy.RUNTIME)
