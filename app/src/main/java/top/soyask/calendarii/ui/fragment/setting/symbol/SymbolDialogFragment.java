@@ -52,7 +52,7 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
         if (arguments != null) {
             int position = arguments.getInt(POSITION);
             mSymbol = Symbol.values()[position];
-            String comment = Setting.symbol_comment.get(mSymbol.KEY);
+            String comment = Setting.symbol_comment.get(mSymbol.key);
             if (!"默认".equals(comment)) {
                 mEditText.setText(comment);
                 mEditText.setSelection(comment.length());
@@ -83,11 +83,11 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
         String comment = mEditText.getText().toString();
         if (comment.isEmpty()) {
             comment = "默认";
-            Setting.remove(getContext(), mSymbol.KEY);
+            Setting.remove(getContext(), mSymbol.key);
         } else {
-            Setting.setting(getContext(), mSymbol.KEY, comment);
+            Setting.setting(getContext(), mSymbol.key, comment);
         }
-        Setting.symbol_comment.put(mSymbol.KEY, comment);
+        Setting.symbol_comment.put(mSymbol.key, comment);
         if (mOnDoneListener != null) {
             mOnDoneListener.onDone();
         }

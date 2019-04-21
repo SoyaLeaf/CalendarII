@@ -5,15 +5,14 @@ public enum Symbol {
     CIRCLE("circle", 2),
     TRIANGLE("triangle", 3),
     STAR("star", 4),
-    HEART("heart", 5),
-    ;
+    HEART("heart", 5);
 
-    public final String KEY;
-    public final int VALUE;
+    public final String key;
+    public final int value;
 
     Symbol(String key, int value) {
-        this.KEY = key;
-        this.VALUE = value;
+        this.key = key;
+        this.value = value;
     }
 
 }

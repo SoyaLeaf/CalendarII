@@ -50,11 +50,11 @@ public final class Setting {
         Setting.select_anim = setting.getBoolean(Global.SETTING_SELECT_ANIM, true);
 
         Setting.default_event_type = setting.getInt(Global.DEFAULT_EVENT_TYPE, 0);
-        putEventType(setting, Symbol.STAR.KEY, "默认");
-        putEventType(setting, Symbol.RECT.KEY, "默认");
-        putEventType(setting, Symbol.CIRCLE.KEY, "默认");
-        putEventType(setting, Symbol.TRIANGLE.KEY, "默认");
-        putEventType(setting, Symbol.HEART.KEY, "默认");
+        putEventType(setting, Symbol.STAR.key, "默认");
+        putEventType(setting, Symbol.RECT.key, "默认");
+        putEventType(setting, Symbol.CIRCLE.key, "默认");
+        putEventType(setting, Symbol.TRIANGLE.key, "默认");
+        putEventType(setting, Symbol.HEART.key, "默认");
 
         TransparentWidget.loadSetting(setting);
 

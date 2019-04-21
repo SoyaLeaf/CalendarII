@@ -64,7 +64,7 @@ public class SymbolFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(@NonNull SymbolViewHolder holder, int position) {
             Symbol symbol = Symbol.values()[position];
-            String comment = Setting.symbol_comment.get(symbol.KEY);
+            String comment = Setting.symbol_comment.get(symbol.key);
             holder.iv.setImageResource(resIds[position]);
             holder.tv.setText(comment);
             boolean checked = Setting.default_event_type == position;
