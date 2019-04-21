@@ -26,7 +26,6 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,7 +58,7 @@ import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
-public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
+public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 
     private static final int BIRTHDAY_INVISIBLE = 0x233;
     private static final int BIRTHDAY_VISIBLE = 0x234;
@@ -118,7 +117,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setupOtherView() {
-        findViewById(R.id.add_event).setOnClickListener(this);
         mPoint = findViewById(R.id.point);
         mTvDayCount = findViewById(R.id.tv_day_count);
         mTvDayCountM = findViewById(R.id.tv_day_count_m);
@@ -128,6 +126,19 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         mIvYear = findViewById(R.id.iv_year);
         mIvBirth = findViewById(R.id.tv_birth);
         mFlBirth = findViewById(R.id.fl_birth);
+        findViewById(R.id.fab_show_action).setOnClickListener(v -> {
+            FloatActionFragment fragment = FloatActionFragment.newInstance(mSelectedDay);
+            fragment.setCallback(() -> {
+                EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
+                thingFragment.setOnAddListener(this);
+                addFragment(thingFragment);
+            });
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.main, fragment)
+                    .addToBackStack(fragment.getClass().getSimpleName())
+                    .commit();
+        });
     }
 
     private void setupCard() {
@@ -154,7 +165,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     private void setThing(int year, int month, int dayOfMonth) {
         ThingDao thingDao = ThingDao.getInstance(mHostActivity);
-        long begin = DayUtils.getDateBegin(year, month , dayOfMonth);
+        long begin = DayUtils.getDateBegin(year, month, dayOfMonth);
         List<Thing> things = thingDao.listByDate(begin);
         String title = getString(R.string.xx_year_xx_month_xx, year, month, dayOfMonth);
         mTvTitle.setText(title);
@@ -296,12 +307,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public void onPageScrollStateChanged(int state) {
     }
 
-    @Override
-    public void onClick(View v) {
-        EditThingFragment editThingFragment = EditThingFragment.newInstance(mSelectedDay, null);
-        editThingFragment.setOnAddListener(this);
-        addFragment(editThingFragment);
-    }
 
     @Override
     public synchronized void onSelected(Day day) {

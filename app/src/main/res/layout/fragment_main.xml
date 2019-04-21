@@ -89,7 +89,7 @@
     </androidx.cardview.widget.CardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_event"
+        android:id="@+id/fab_show_action"
         android:layout_width="@dimen/floating_button_normal_size"
         android:layout_height="@dimen/floating_button_normal_size"
         android:layout_gravity="bottom|right"
