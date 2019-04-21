@@ -10,11 +10,11 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import top.soyask.calendarii.database.dao.BirthdayDao;
-import top.soyask.calendarii.database.dao.EventDao;
+import androidx.annotation.NonNull;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.MemorialDay;
 import top.soyask.calendarii.entity.Thing;
@@ -27,30 +27,6 @@ public class DBUtils extends SQLiteOpenHelper {
 
 
     private static DBUtils dbUtils;
-    private static final String EVENT_SQL;
-    private static final String BIRTH_SQL;
-
-    static {
-        EVENT_SQL = "create table " +
-                EventDao.TABLE +
-                "(" +
-                "id Integer primary key autoincrement," +
-                "title varchar(255)," +
-                "detail text," +
-                "isDelete boolean," +
-                "isComplete boolean," +
-                "type int" +
-                ");";
-
-        BIRTH_SQL = "create table " +
-                BirthdayDao.TABLE +
-                "(" +
-                "id Integer primary key autoincrement," +
-                "who varchar(255)," +
-                "when_ varchar(255)," +
-                "isLunar boolean" +
-                ");";
-    }
 
     private DBUtils(Context context) {
         super(context, "db", null, 4);
@@ -94,7 +70,7 @@ public class DBUtils extends SQLiteOpenHelper {
 
     private void migrateEvent2Thing(SQLiteDatabase db) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
-        Cursor cursor = db.query(EventDao.TABLE, null, null, null, null, null, null);
+        Cursor cursor = db.query("EVENT", null, null, null, null, null, null);
         while (cursor.moveToNext()) {
             String title = cursor.getString(cursor.getColumnIndex("title"));
             String detail = cursor.getString(cursor.getColumnIndex("detail"));
@@ -191,7 +167,7 @@ public class DBUtils extends SQLiteOpenHelper {
         }
         String[] args = new String[objs.length];
         for (int i = 0; i < args.length; i++) {
-            args[i] = String.valueOf(args[i]);
+            args[i] = String.valueOf(objs[i]);
         }
         return args;
     }
@@ -265,6 +241,19 @@ public class DBUtils extends SQLiteOpenHelper {
         public Query setLimit(String limit) {
             this.limit = limit;
             return this;
+        }
+
+        @Override
+        public String toString() {
+            return "Query{" +
+                    "columns=" + Arrays.toString(columns) +
+                    ", selection='" + selection + '\'' +
+                    ", selectionArgs=" + Arrays.toString(selectionArgs) +
+                    ", groupBy='" + groupBy + '\'' +
+                    ", having='" + having + '\'' +
+                    ", orderBy='" + orderBy + '\'' +
+                    ", limit='" + limit + '\'' +
+                    '}';
         }
     }
 }

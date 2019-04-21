@@ -4,19 +4,15 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.EventDao;
-import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.task.LoadDataTask;
@@ -29,8 +25,6 @@ import static top.soyask.calendarii.MainActivity.THEMES;
 public class ZoomActivity extends AppCompatActivity
         implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
-    private List<Day> mDays = new ArrayList<>();
-    private EventDao mEventDao;
     private Configuration mConfig;
     private TextView mTvDaySize;
     private TextView mTvLunarSize;

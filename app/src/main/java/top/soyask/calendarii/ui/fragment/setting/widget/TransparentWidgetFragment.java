@@ -12,8 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -31,8 +29,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.global.Global;
@@ -143,7 +143,7 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
     }
 
     private void setWidgetView() {
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        Calendar calendar = Calendar.getInstance();
         LunarDay lunarDay = LunarUtils.getLunar(calendar);
         int themeColor = Setting.TransparentWidget.trans_widget_theme_color;
         int layout = themeColor == 0 ? R.layout.month_widget : R.layout.month_widget_light;
@@ -158,7 +158,7 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
         ((TextView) findViewById(R.id.tv_date)).setText(String.format(Locale.CHINA, "%02d月", month));
         int year = calendar.get(Calendar.YEAR);
         int dayCount = DayUtils.getMonthDayCount(month, year);
-        EventDao dao = EventDao.getInstance(mHostActivity);
+        ThingDao dao = ThingDao.getInstance(mHostActivity);
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);

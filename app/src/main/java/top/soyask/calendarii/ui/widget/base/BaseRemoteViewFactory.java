@@ -1,14 +1,13 @@
 package top.soyask.calendarii.ui.widget.base;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.RemoteViewsService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.utils.DayUtils;
@@ -32,13 +31,13 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
     protected int mDateStartPos = 0;
     protected int mEndPosition;
     protected Context mContext;
-    protected EventDao mEventDao;
+    protected ThingDao mThingDao;
 
     public BaseRemoteViewFactory(Context context) {
         Setting.loadSetting(context);
         this.mContext = context;
         this.mDays = new ArrayList<>();
-        this.mEventDao = EventDao.getInstance(context);
+        this.mThingDao = ThingDao.getInstance(context);
         setupData();
         updateCount();
     }
@@ -74,7 +73,7 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-            Day day = MonthUtils.generateDay(calendar, mEventDao);
+            Day day = MonthUtils.generateDay(calendar, mThingDao);
             mDays.add(day);
         }
     }

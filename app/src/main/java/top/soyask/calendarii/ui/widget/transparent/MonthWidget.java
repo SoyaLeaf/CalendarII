@@ -30,7 +30,7 @@ public class MonthWidget extends AppWidgetProvider {
     public static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                        int appWidgetId) {
         Setting.loadSetting(context);
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        Calendar calendar = Calendar.getInstance();
         RemoteViews views = setupRemoteViews(context, calendar);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.gv_month);
         appWidgetManager.updateAppWidget(appWidgetId, views);

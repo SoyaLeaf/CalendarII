@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.ui.view.CalendarView;
 import top.soyask.calendarii.utils.DayUtils;
@@ -20,7 +20,7 @@ import top.soyask.calendarii.utils.MonthUtils;
 
 public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
 
-    private EventDao mEventDao;
+    private ThingDao mThingDao;
 
     private WeakReference<CalendarView> mCalendarView;
     private PendingAction mPendingAction;
@@ -28,7 +28,7 @@ public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
     private Integer mMonth;
 
     public LoadDataTask(Context context, CalendarView calendarView, PendingAction action) {
-        this.mEventDao = EventDao.getInstance(context);
+        this.mThingDao = ThingDao.getInstance(context);
         this.mCalendarView = new WeakReference<>(calendarView);
         this.mPendingAction = action;
     }
@@ -41,7 +41,7 @@ public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
     protected List<Day> doInBackground(Integer... integers) {
         mYear = integers[0];
         mMonth = integers[1];
-        return loadData(mYear, mMonth, mEventDao);
+        return loadData(mYear, mMonth, mThingDao);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
     }
 
 
-    private static List<Day> loadData(int year, int month, EventDao eventDao) {
+    private static List<Day> loadData(int year, int month, ThingDao thingDao) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month - 1);
@@ -64,7 +64,7 @@ public class LoadDataTask extends AsyncTask<Integer, Void, List<Day>> {
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-            Day day = MonthUtils.generateDay(calendar, eventDao);
+            Day day = MonthUtils.generateDay(calendar, thingDao);
             days.add(day);
         }
         return days;

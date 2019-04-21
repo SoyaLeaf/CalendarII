@@ -34,11 +34,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.entity.Day;
-import top.soyask.calendarii.entity.Event;
 import top.soyask.calendarii.entity.LunarDay;
+import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
@@ -48,6 +48,7 @@ import top.soyask.calendarii.ui.fragment.event.AllThingsFragment;
 import top.soyask.calendarii.ui.fragment.event.EditThingFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
+import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.EraUtils;
 import top.soyask.calendarii.utils.MonthUtils;
 
@@ -63,7 +64,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private static final int BIRTHDAY_INVISIBLE = 0x233;
     private static final int BIRTHDAY_VISIBLE = 0x234;
 
-    private Calendar mCalendar = Calendar.getInstance(Locale.CHINA);
+    private Calendar mCalendar = Calendar.getInstance();
     private ViewPager mViewPager;
     private Day mSelectedDay;
     private ActionBar mActionBar;
@@ -112,7 +113,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void initSelectDay() {
-        mSelectedDay = MonthUtils.generateDay(mCalendar, EventDao.getInstance(mHostActivity));
+        mSelectedDay = MonthUtils.generateDay(mCalendar, ThingDao.getInstance(mHostActivity));
         mAnimatorHandler.post(this::skipToday);
     }
 
@@ -151,28 +152,30 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         setToolbarDate(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1);
     }
 
-    private void setEvent(final String title) {
-        EventDao eventDao = EventDao.getInstance(mHostActivity);
-        List<Event> events = eventDao.query(title);
+    private void setThing(int year, int month, int dayOfMonth) {
+        ThingDao thingDao = ThingDao.getInstance(mHostActivity);
+        long begin = DayUtils.getDateBegin(year, month , dayOfMonth);
+        List<Thing> things = thingDao.listByDate(begin);
+        String title = getString(R.string.xx_year_xx_month_xx, year, month, dayOfMonth);
         mTvTitle.setText(title);
         if (mEventViewWidth == 0) {
             mEventViewWidth = mEventView.getWidth();
             mEventViewHeight = mEventView.getHeight();
         }
-        if (!events.isEmpty()) {
-            setupEventView(title, events);
+        if (!things.isEmpty()) {
+            setupThingView(title, things);
         } else {
             mTvEvent.setText(R.string.nothing);
             mAnimatorHandler.sendEmptyMessage(View.INVISIBLE);
         }
     }
 
-    private void setupEventView(final String title, List<Event> events) {
+    private void setupThingView(final String title, List<Thing> things) {
         if (mSelectedDay.hasBirthday()) {
             String birthdayStr = getBirthdayStr();
             mTvEvent.setText(birthdayStr);
         } else {
-            mTvEvent.setText(events.get(0).getDetail());
+            mTvEvent.setText(things.get(0).getDetail());
         }
         mIBtnMore.setOnClickListener(v -> {
             AllThingsFragment allEventFragment = AllThingsFragment.newInstance(title);
@@ -304,7 +307,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public synchronized void onSelected(Day day) {
         this.mSelectedDay = day;
         setBirthday(day);
-        setEvent(getString(R.string.xx_year_xx_month_xx, day.getYear(), day.getMonth(), day.getDayOfMonth()));
+        setThing(day.getYear(), day.getMonth(), day.getDayOfMonth());
         setLunarInfo();
         calculateDelta_T();
     }

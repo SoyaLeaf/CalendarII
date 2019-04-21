@@ -123,7 +123,7 @@ public class EditThingFragment extends BaseFragment
 
         if (mDay == null && mThing != null) {
             long createTime = mThing.getTargetTime();
-            Calendar calendar = Calendar.getInstance(Locale.CHINA);
+            Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(createTime);
             mDay = new Day(calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH) + 1,

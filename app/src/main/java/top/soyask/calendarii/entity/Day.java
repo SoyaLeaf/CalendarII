@@ -21,7 +21,7 @@ public class Day implements CalendarView.IDay, Serializable {
     private boolean isHoliday;
     private boolean isWorkday; //是否被调休
     private List<Birthday> birthdays;
-    private List<Event> events;
+    private List<Thing> things;
 
     public Day(int year, int month, LunarDay lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
         this.year = year;
@@ -64,12 +64,12 @@ public class Day implements CalendarView.IDay, Serializable {
         this.dayOfMonth = dayOfMonth;
     }
 
-    public void setEvents(List<Event> events) {
-        this.events = events;
+    public void setThings(List<Thing> things) {
+        this.things = things;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<Thing> getThings() {
+        return things;
     }
 
     public int getDayOfMonth() {
@@ -153,8 +153,8 @@ public class Day implements CalendarView.IDay, Serializable {
     @Override
     public Symbol getSymbol() {
         if(hasEvent()){
-            Event event = events.get(0);
-            int type = event.getType();
+            Thing thing = things.get(0);
+            int type = thing.getType();
             Symbol[] values = Symbol.values();
             return values[type];
         }
@@ -162,7 +162,7 @@ public class Day implements CalendarView.IDay, Serializable {
     }
 
     public boolean hasEvent() {
-        return events != null && !events.isEmpty();
+        return things != null && !things.isEmpty();
     }
 
     public boolean isWorkday() {

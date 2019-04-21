@@ -1,16 +1,15 @@
 package top.soyask.calendarii.utils;
 
-import androidx.annotation.NonNull;
-
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import top.soyask.calendarii.database.dao.EventDao;
+import androidx.annotation.NonNull;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.entity.Day;
-import top.soyask.calendarii.entity.Event;
 import top.soyask.calendarii.entity.LunarDay;
+import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.global.GlobalData;
 
 /**
@@ -96,7 +95,7 @@ public class MonthUtils {
     }
 
     @NonNull
-    public static Day generateDay(Calendar calendar, EventDao eventDao) {
+    public static Day generateDay(Calendar calendar, ThingDao thingDao) {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
@@ -108,7 +107,7 @@ public class MonthUtils {
         Day day = new Day(year, month, lunarDay, isToday, dayOfMonth, dayOfWeek);
         setBirthday(month, dayOfMonth, lunarDay, day);
         setHoliday(year, month, dayOfMonth, day);
-        setEvent(eventDao, day);
+        setThing(thingDao, day);
         return day;
     }
 
@@ -131,13 +130,15 @@ public class MonthUtils {
         day.addBirthday(birthday1);
     }
 
-    private static void setEvent(EventDao eventDao, Day day) {
-        List<Event> events = eventDao.query(day.getYear() + "年" + day.getMonth() + "月" + day.getDayOfMonth() + "日");
-        day.setEvents(events);
+    private static void setThing(ThingDao thingDao, Day day) {
+        Calendar.getInstance();
+        long begin = DayUtils.getDateBegin(day.getYear(), day.getMonth(), day.getDayOfMonth());
+        List<Thing> things = thingDao.listByDate(begin);
+        day.setThings(things);
     }
 
     private static boolean isToday(int dayOfMonth, int year, int month) {
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.DAY_OF_MONTH) == dayOfMonth
                 && calendar.get(Calendar.YEAR) == year
                 && calendar.get(Calendar.MONTH) + 1 == month;

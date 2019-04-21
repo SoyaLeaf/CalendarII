@@ -23,6 +23,14 @@ public class ThingDao {
         return new ThingDao(context);
     }
 
+    public List<Thing> listByDate(long date) {
+        DBUtils.Query query = new DBUtils.Query()
+                .setSelection("TARGET_TIME = ?", date)
+                .setOrderBy("UPDATE_TIME desc");
+        System.out.println(query);
+        return mDbUtils.query(TABLE, Thing.class, query);
+    }
+
     public List<Thing> list(int page) {
         int limit = (page - 1) * 10;
         DBUtils.Query query = new DBUtils.Query()
@@ -54,10 +62,10 @@ public class ThingDao {
     }
 
     public void deleteAll() {
-        mDbUtils.delete(TABLE,null);
+        mDbUtils.delete(TABLE, null);
     }
 
     public int count() {
-       return mDbUtils.count(TABLE);
+        return mDbUtils.count(TABLE);
     }
 }

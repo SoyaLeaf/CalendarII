@@ -30,7 +30,7 @@ public class WhiteWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.white_widget);
         Intent intent = new Intent(context, WhiteWidgetService.class);
         Setting.loadSetting(context);
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        Calendar calendar = Calendar.getInstance();
         views.setTextViewText(R.id.tv_year, String.valueOf(calendar.get(Calendar.YEAR)));
         views.setTextViewText(R.id.tv_month, String.valueOf(calendar.get(Calendar.MONTH) + 1) + "月");
         views.setRemoteAdapter(R.id.gv_month, intent);
