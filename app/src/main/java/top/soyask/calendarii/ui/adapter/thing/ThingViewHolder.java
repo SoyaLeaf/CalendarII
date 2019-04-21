@@ -1,7 +1,6 @@
-package top.soyask.calendarii.ui.adapter.viewholder;
+package top.soyask.calendarii.ui.adapter.thing;
 
 import android.os.Build;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -9,12 +8,12 @@ import android.widget.TextView;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
 
+import androidx.recyclerview.widget.RecyclerView;
 import top.soyask.calendarii.R;
 
-/**
- * Created by mxf on 2017/8/16.
- */
-public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnTouchListener {
+public class ThingViewHolder extends RecyclerView.ViewHolder
+        implements View.OnClickListener, View.OnTouchListener {
+
 
     public ExpandableLayout el;
     public ImageButton ib_down;
@@ -25,8 +24,10 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
     public TextView tv_title;
     public TextView tv_event;
     private OnTextPressListener mOnTextPressListener;
+    private float mStartX;
 
-    public EventViewHolder(View itemView) {
+
+    public ThingViewHolder(View itemView) {
         super(itemView);
         findView(itemView);
         init();
@@ -82,13 +83,12 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
         this.mOnTextPressListener = onTextPressListener;
     }
 
-    float startX;
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                startX = event.getRawX();
+                mStartX = event.getRawX();
                 itemView.setAlpha(0.8f);
                 break;
             case MotionEvent.ACTION_UP:
@@ -104,11 +104,11 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
         itemView.setAlpha(1f);
         float rawX = event.getRawX();
         int width = tv_title.getWidth() / 4;
-        if (rawX - startX > width) {
+        if (rawX - mStartX > width) {
             if (mOnTextPressListener != null) {
                 mOnTextPressListener.onCross();
             }
-        } else if (startX - rawX > width) {
+        } else if (mStartX - rawX > width) {
             if (mOnTextPressListener != null) {
                 mOnTextPressListener.onLineClear();
             }

@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import top.soyask.calendarii.database.dao.BirthdayDao;
@@ -90,9 +92,8 @@ public class DBUtils extends SQLiteOpenHelper {
     }
 
 
-
     private void migrateEvent2Thing(SQLiteDatabase db) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月DD日", Locale.CHINA);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
         Cursor cursor = db.query(EventDao.TABLE, null, null, null, null, null, null);
         while (cursor.moveToNext()) {
             String title = cursor.getString(cursor.getColumnIndex("title"));
@@ -105,7 +106,7 @@ public class DBUtils extends SQLiteOpenHelper {
             thing.setType(type);
             thing.setDone(complete);
             thing.setUpdateTime(System.currentTimeMillis());
-            thing.setCreateTime(title2Time(format, title));
+            thing.setTargetTime(title2Time(format, title));
             ContentValues values = SqlGenerator.getContentValues(thing);
             db.insert(ThingDao.TABLE, null, values);
         }
@@ -169,5 +170,101 @@ public class DBUtils extends SQLiteOpenHelper {
             }
         }
         return t;
+    }
+
+    public boolean insert(String table, String nullColumnHack, ContentValues values) {
+        SQLiteDatabase database = getWritableDatabase();
+        long count = database.insert(table, nullColumnHack, values);
+        return count > 0;
+    }
+
+    public boolean update(String table, ContentValues values, String whereClause, Object... whereArgs) {
+        SQLiteDatabase database = getWritableDatabase();
+        String[] args = convertObjects(whereArgs);
+        long count = database.update(table, values, whereClause, args);
+        return count > 0;
+    }
+
+    private static String[] convertObjects(Object[] objs) {
+        if (objs == null) {
+            return null;
+        }
+        String[] args = new String[objs.length];
+        for (int i = 0; i < args.length; i++) {
+            args[i] = String.valueOf(args[i]);
+        }
+        return args;
+    }
+
+    public void delete(String table, String whereClause, Object... whereArgs) {
+        SQLiteDatabase database = getWritableDatabase();
+        String[] args = convertObjects(whereArgs);
+        database.delete(table, whereClause, args);
+    }
+
+    public <T> List<T> query(String table, Class<T> clazz, Query query) {
+        SQLiteDatabase database = getReadableDatabase();
+        Cursor cursor = database.query(table, query.columns, query.selection,
+                query.selectionArgs, query.groupBy, query.having, query.orderBy, query.limit);
+        List<T> list = new ArrayList<>(cursor.getCount());
+        while (cursor.moveToNext()) {
+            T t = DBUtils.cursor2Object(clazz, cursor);
+            list.add(t);
+        }
+        cursor.close();
+        return list;
+    }
+
+    public int count(String table) {
+        SQLiteDatabase database = getReadableDatabase();
+        String sql = "select count(*) from " + table;
+        Cursor cursor = database.rawQuery(sql, null);
+        if (cursor.moveToNext()) {
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count;
+        }
+        return 0;
+    }
+
+    public static class Query {
+        private String[] columns;
+        private String selection;
+        private String[] selectionArgs;
+        private String groupBy;
+        private String having;
+        private String orderBy;
+        private String limit;
+
+        public Query setColumns(String... columns) {
+            this.columns = columns;
+            return this;
+        }
+
+        public Query setGroupBy(String groupBy) {
+            this.groupBy = groupBy;
+            return this;
+        }
+
+        public Query setOrderBy(String orderBy) {
+            this.orderBy = orderBy;
+            return this;
+        }
+
+        public Query setSelection(String selection, Object... selectionArgs) {
+            this.selection = selection;
+            this.selectionArgs = convertObjects(selectionArgs);
+            return this;
+        }
+
+        public Query setHaving(String having) {
+            this.having = having;
+            return this;
+        }
+
+        public Query setLimit(String limit) {
+            this.limit = limit;
+            return this;
+        }
     }
 }

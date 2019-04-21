@@ -54,7 +54,7 @@ public class SqlGenerator {
                 return "INTEGER";
             case "long":
             case "Long":
-                return "INTEGER";
+                return "LONG";
             case "Boolean":
             case "boolean":
                 return "TINYINT(1)";
@@ -104,16 +104,18 @@ public class SqlGenerator {
     }
 
 
-    private static ContentValues getContentValuesThrowException(Object obj) throws IllegalAccessException {
+    private static ContentValues getContentValuesThrowException(Object obj)
+            throws IllegalAccessException {
         ContentValues values = new ContentValues();
         Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field : fields) {
-            if ("id".equals(field.getName())) {
-                continue;
-            }
             field.setAccessible(true);
             Object value = field.get(obj);
-            String key = convertWordWithUnderline(field.getName());
+            String fieldName = field.getName();
+            if ("id".equals(fieldName) && "0".equals(String.valueOf(value))) {
+                continue;
+            }
+            String key = convertWordWithUnderline(fieldName);
             values.put(key, String.valueOf(value));
         }
         return values;

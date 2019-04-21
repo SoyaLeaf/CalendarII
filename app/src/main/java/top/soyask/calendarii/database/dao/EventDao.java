@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
 import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
@@ -21,7 +22,7 @@ import top.soyask.calendarii.ui.widget.WidgetManager;
  * Created by mxf on 2017/8/16.
  */
 public class EventDao {
-    public static final String EVENT = "EVENT";
+    public static final String TABLE = "EVENT";
 
     private DBUtils mDBUtils;
     private WeakReference<Context> mContext;
@@ -48,7 +49,7 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         values.put("type", event.getType());
-        database.insert(EVENT, null, values);
+        database.insert(TABLE, null, values);
         database.close();
         sendBroadcast(MonthFragment.ADD_EVENT);
     }
@@ -71,42 +72,42 @@ public class EventDao {
         values.put("isDelete", event.isDelete());
         values.put("isComplete", event.isComplete());
         values.put("type", event.getType());
-        database.update(EVENT, values, "id = ?", new String[]{String.valueOf(event.getId())});
+        database.update(TABLE, values, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
         sendBroadcast(MonthFragment.UPDATE_EVENT);
     }
 
     public void delete(Event event) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(EVENT, "id = ?", new String[]{String.valueOf(event.getId())});
+        database.delete(TABLE, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
         sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void delete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(EVENT, "title = ?", new String[]{title});
+        database.delete(TABLE, "title = ?", new String[]{title});
         database.close();
         sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteAll() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(EVENT, null, null);
+        database.delete(TABLE, null, null);
         database.close();
         sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteComplete() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(EVENT, "isComplete = ?", new String[]{String.valueOf(1)});
+        database.delete(TABLE, "isComplete = ?", new String[]{String.valueOf(1)});
         database.close();
         sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteComplete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(EVENT, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
+        database.delete(TABLE, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
         database.close();
         sendBroadcast(MonthFragment.DELETE_EVENT);
     }
@@ -114,7 +115,7 @@ public class EventDao {
 
     public List<Event> queryAll() {
         SQLiteDatabase database = mDBUtils.getReadableDatabase();
-        Cursor cursor = database.query(EVENT, null, null, null, null, null, "title");
+        Cursor cursor = database.query(TABLE, null, null, null, null, null, "title");
         List<Event> events = new ArrayList<>();
         while (cursor.moveToNext()) {
             Event event = map2Event(cursor);
@@ -126,7 +127,7 @@ public class EventDao {
     }
 
     @NonNull
-    private Event map2Event(Cursor cursor) {
+    public static Event map2Event(Cursor cursor) {
         int id = cursor.getInt(0);
         String title = cursor.getString(1);
         String detail = cursor.getString(2);
@@ -140,20 +141,13 @@ public class EventDao {
 
 
     public List<Event> query(String title) {
-        synchronized (EventDao.this) {
-            try {
-                return queryByTitle(title);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return Collections.emptyList();
-        }
+        return Collections.emptyList();
     }
 
     @NonNull
     private List<Event> queryByTitle(String title) {
         SQLiteDatabase database = mDBUtils.getReadableDatabase();
-        Cursor cursor = database.query(EVENT, null, "title = ?", new String[]{title}, null, null, "title");
+        Cursor cursor = database.query(TABLE, null, "title = ?", new String[]{title}, null, null, "title");
         List<Event> events = new ArrayList<>();
         while (cursor.moveToNext()) {
             Event event = map2Event(cursor);
@@ -170,7 +164,7 @@ public class EventDao {
     @Deprecated
     public List<Event> query(boolean delete) {
         SQLiteDatabase database = mDBUtils.getReadableDatabase();
-        Cursor cursor = database.query(EVENT, null, "isDelete = ?", new String[]{String.valueOf(delete)}, null, null, "title");
+        Cursor cursor = database.query(TABLE, null, "isDelete = ?", new String[]{String.valueOf(delete)}, null, null, "title");
         List<Event> events = new ArrayList<>();
         while (cursor.moveToNext()) {
             Event event = map2Event(cursor);

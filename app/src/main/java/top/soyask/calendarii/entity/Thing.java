@@ -8,7 +8,7 @@ public class Thing implements Serializable {
     private String detail;
     private int type;
     private boolean done;
-    private long createTime;
+    private long targetTime;
     private long updateTime;
 
     public int getId() {
@@ -43,12 +43,12 @@ public class Thing implements Serializable {
         this.done = done;
     }
 
-    public long getCreateTime() {
-        return createTime;
+    public long getTargetTime() {
+        return targetTime;
     }
 
-    public void setCreateTime(long createTime) {
-        this.createTime = createTime;
+    public void setTargetTime(long targetTime) {
+        this.targetTime = targetTime;
     }
 
     public long getUpdateTime() {
@@ -66,7 +66,7 @@ public class Thing implements Serializable {
                 ", detail='" + detail + '\'' +
                 ", type=" + type +
                 ", done=" + done +
-                ", createTime=" + createTime +
+                ", createTime=" + targetTime +
                 ", updateTime=" + updateTime +
                 '}';
     }

@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import top.soyask.calendarii.R;
@@ -32,19 +33,21 @@ public class AllThingsFragment extends BaseFragment
     private static final String TITLE = "TITLE";
     private ThingAdapter mThingAdapter;
     private ThingDao mThingDao;
-    private List<Thing> mThings;
-    private List<Thing> mDoneThings;
+    private List<Thing> mThings = new ArrayList<>();
+    private List<Thing> mDoneThings = new ArrayList<>();
     private ProgressDialog mProgressDialog;
 
-    private Handler mHandler = new EventHandler(this);
+    private Handler mHandler = new ThingHandler(this);
 
 
     private Comparator<Thing> mComparator = (o1, o2) -> {
         long time1 = o1.getTargetTime();
         long time2 = o2.getTargetTime();
-        return Long.compare(time1, time2);
+        return -Long.compare(time1, time2);
     };
     private RecyclerView mRecyclerView;
+    private int currentPage = 0;
+    private int mCount;
 
     public AllThingsFragment() {
         super(R.layout.fragment_all);
@@ -60,11 +63,24 @@ public class AllThingsFragment extends BaseFragment
 
     @Override
     protected void setupUI() {
+        mThingDao = ThingDao.getInstance(mHostActivity);
+        mCount = mThingDao.count();
         loadData();
         mRecyclerView = findViewById(R.id.rv_event);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
+        mRecyclerView.setLayoutManager(layoutManager);
         mThingAdapter = new ThingAdapter(mThings, this);
         mRecyclerView.setAdapter(mThingAdapter);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                int position = layoutManager.findLastVisibleItemPosition();
+                if (position == mThingAdapter.getItemCount() - 1 && mThingAdapter.getItemCount() < mCount) {
+                    loadData();
+                }
+            }
+        });
         findToolbar().setNavigationOnClickListener(this);
         findViewById(R.id.ib_delete_all).setOnClickListener(this);
         if (mThings.isEmpty()) {
@@ -73,16 +89,15 @@ public class AllThingsFragment extends BaseFragment
     }
 
     private void loadData() {
-        mThingDao = ThingDao.getInstance(mHostActivity);
-        mThings = mThingDao.list(1);
-        System.out.println(mThings);
+        currentPage++;
+        List<Thing> things = mThingDao.list(currentPage);
         Collections.sort(mThings, mComparator);
-        mDoneThings = new ArrayList<>();
         for (Thing thing : mThings) {
             if (thing.isDone()) {
                 mDoneThings.add(thing);
             }
         }
+        mThings.addAll(things);
     }
 
 
@@ -207,10 +222,10 @@ public class AllThingsFragment extends BaseFragment
         });
     }
 
-    private static class EventHandler extends Handler {
+    private static class ThingHandler extends Handler {
         private final WeakReference<AllThingsFragment> mFragment;
 
-        private EventHandler(AllThingsFragment fragment) {
+        private ThingHandler(AllThingsFragment fragment) {
             mFragment = new WeakReference<>(fragment);
         }
 

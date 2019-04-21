@@ -5,6 +5,7 @@ import java.io.Serializable;
 /**
  * Created by mxf on 2017/8/16.
  */
+@Deprecated
 public class Event implements Serializable {
 
     private int id;

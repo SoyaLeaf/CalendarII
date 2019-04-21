@@ -11,11 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,6 +28,11 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.EventDao;
 import top.soyask.calendarii.entity.Birthday;
@@ -44,8 +44,8 @@ import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
-import top.soyask.calendarii.ui.fragment.event.AllEventFragment;
-import top.soyask.calendarii.ui.fragment.event.EditEventFragment;
+import top.soyask.calendarii.ui.fragment.event.AllThingsFragment;
+import top.soyask.calendarii.ui.fragment.event.EditThingFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.EraUtils;
@@ -58,7 +58,7 @@ import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
-public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditEventFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
+public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 
     private static final int BIRTHDAY_INVISIBLE = 0x233;
     private static final int BIRTHDAY_VISIBLE = 0x234;
@@ -175,7 +175,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             mTvEvent.setText(events.get(0).getDetail());
         }
         mIBtnMore.setOnClickListener(v -> {
-            AllEventFragment allEventFragment = AllEventFragment.newInstance(title);
+            AllThingsFragment allEventFragment = AllThingsFragment.newInstance(title);
             addFragment(allEventFragment);
         });
         mAnimatorHandler.sendEmptyMessage(View.VISIBLE);
@@ -216,8 +216,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 skipToday();
                 break;
             case R.id.menu_all_event:
-                AllEventFragment allEventFragment = AllEventFragment.newInstance(null);
-                addFragment(allEventFragment);
+                AllThingsFragment allThingsFragment = AllThingsFragment.newInstance(null);
+                addFragment(allThingsFragment);
                 break;
             case R.id.menu_select:
                 showSelectDialog();
@@ -295,9 +295,9 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     public void onClick(View v) {
-        EditEventFragment editEventFragment = EditEventFragment.newInstance(mSelectedDay, null);
-        editEventFragment.setOnAddListener(this);
-        addFragment(editEventFragment);
+        EditThingFragment editThingFragment = EditThingFragment.newInstance(mSelectedDay, null);
+        editThingFragment.setOnAddListener(this);
+        addFragment(editThingFragment);
     }
 
     @Override

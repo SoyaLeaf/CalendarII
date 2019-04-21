@@ -3,6 +3,7 @@ package top.soyask.calendarii.entity;
 import java.util.List;
 
 public class Backup {
+
     private int version;
     private List<Birthday> birthdays;
     private List<Event> events;

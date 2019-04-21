@@ -45,7 +45,7 @@ public class BirthFragment extends BaseFragment implements View.OnClickListener,
         mBirthdayAdapter = new BirthdayAdapter(mBirthdays, this);
 
         RecyclerView rv = findViewById(R.id.rv_birth);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        rv.setLayoutManager(new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false));
         rv.setAdapter(mBirthdayAdapter);
     }
 

@@ -17,7 +17,7 @@ import top.soyask.calendarii.entity.Birthday;
 
 public class BirthdayDao {
 
-    public static final String BIRTHDAY = "BIRTHDAY";
+    public static final String TABLE = "TABLE";
 
     private DBUtils mDBUtils;
 
@@ -41,13 +41,13 @@ public class BirthdayDao {
         values.put("when_", birthday.getWhen());
         values.put("who", birthday.getWho());
         values.put("isLunar", birthday.isLunar());
-        database.insert(BIRTHDAY, null, values);
+        database.insert(TABLE, null, values);
         database.close();
     }
 
     public void delete(int id) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(BIRTHDAY, "id = ?", new String[]{id + ""});
+        database.delete(TABLE, "id = ?", new String[]{id + ""});
         database.close();
     }
 
@@ -57,14 +57,14 @@ public class BirthdayDao {
         values.put("when_", birthday.getWhen());
         values.put("who", birthday.getWho());
         values.put("isLunar", birthday.isLunar());
-        database.update(BIRTHDAY, values, "id = ?", new String[]{birthday.getId() + ""});
+        database.update(TABLE, values, "id = ?", new String[]{birthday.getId() + ""});
         database.close();
     }
 
     public List<Birthday> queryAll() {
-
+        if (true) return new ArrayList<>();
         SQLiteDatabase database = mDBUtils.getReadableDatabase();
-        Cursor cursor = database.query(BIRTHDAY, null, null, null, null, null, null);
+        Cursor cursor = database.query(TABLE, null, null, null, null, null, null);
         List<Birthday> birthdays = new ArrayList<>();
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
@@ -85,7 +85,7 @@ public class BirthdayDao {
 
     public void deleteAll() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(BIRTHDAY, null, null);
+        database.delete(TABLE, null, null);
         database.close();
     }
 }

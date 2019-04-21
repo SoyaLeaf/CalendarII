@@ -7,8 +7,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,28 +28,30 @@ import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
-import top.soyask.calendarii.entity.Event;
 import top.soyask.calendarii.entity.Symbol;
+import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 
 
-public class EditEventFragment extends BaseFragment
+public class EditThingFragment extends BaseFragment
         implements View.OnClickListener, Animator.AnimatorListener, DateSelectDialog.DateSelectCallback {
-
+    private static final SimpleDateFormat sDateFormat =
+            new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
     private static final String DATE = "DATE";
-    private static final String EVENT = "EVENT";
+    private static final String THING = "THING";
     private EditText mEditText;
     private InputMethodManager mManager;
     private Day mDay;
-    private Event mEvent;
+    private Thing mThing;
     private Button mBtnDate;
     private OnUpdateListener mOnUpdateListener;
     private OnAddListener mOnAddListener;
@@ -55,15 +59,15 @@ public class EditEventFragment extends BaseFragment
     private boolean isExiting;
     private Spinner mSpinnerEventType;
 
-    public EditEventFragment() {
+    public EditThingFragment() {
         super(R.layout.fragment_add_event);
     }
 
-    public static EditEventFragment newInstance(Day day, Event event) {
-        EditEventFragment fragment = new EditEventFragment();
+    public static EditThingFragment newInstance(Day day, Thing thing) {
+        EditThingFragment fragment = new EditThingFragment();
         Bundle args = new Bundle();
         args.putSerializable(DATE, day);
-        args.putSerializable(EVENT, event);
+        args.putSerializable(THING, thing);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,20 +79,20 @@ public class EditEventFragment extends BaseFragment
         mEditText = findViewById(R.id.et);
         mBtnDate = findViewById(R.id.btn_date);
         mBtnDate.setOnClickListener(this);
-        if (mEvent != null) {
-            String title = mEvent.getTitle();
-            mEditText.setText(mEvent.getDetail());
-            mBtnDate.setText(title.substring(2));
+        if (mThing != null) {
+            long targetTime = mThing.getTargetTime();
+            mEditText.setText(mThing.getDetail());
+            mBtnDate.setText(sDateFormat.format(new Date(targetTime)));
         } else {
             String date = String.format(Locale.CHINA, "%s年%d月%d日",
                     String.valueOf(mDay.getYear()), mDay.getMonth(), mDay.getDayOfMonth());
-            mBtnDate.setText(date.substring(2));
+            mBtnDate.setText(date);
         }
         mEditText.requestFocus();
 
         mSpinnerEventType = findViewById(R.id.spinner_event_type);
         mSpinnerEventType.setAdapter(mAdapter);
-        int position = mEvent != null ? mEvent.getType() : Setting.default_event_type;
+        int position = mThing != null ? mThing.getType() : Setting.default_event_type;
         mSpinnerEventType.setSelection(position);
     }
 
@@ -114,19 +118,16 @@ public class EditEventFragment extends BaseFragment
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mDay = (Day) getArguments().getSerializable(DATE);
-            mEvent = (Event) getArguments().getSerializable(EVENT);
+            mThing = (Thing) getArguments().getSerializable(THING);
         }
 
-        if (mDay == null && mEvent != null) {
-            String title = mEvent.getTitle();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
-            Date date = null;
-            try {
-                date = dateFormat.parse(title);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            mDay = new Day(date.getYear() + 1900, date.getMonth() + 1, date.getDate());
+        if (mDay == null && mThing != null) {
+            long createTime = mThing.getTargetTime();
+            Calendar calendar = Calendar.getInstance(Locale.CHINA);
+            calendar.setTimeInMillis(createTime);
+            mDay = new Day(calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH) + 1,
+                    calendar.get(Calendar.DAY_OF_MONTH));
         }
     }
 
@@ -159,14 +160,14 @@ public class EditEventFragment extends BaseFragment
                 break;
             default:
                 String detail = mEditText.getText().toString();
-                if (isAddNewEvent()) {
+                if (isAddNewThing()) {
                     if (!hasContent(detail)) {
                         removeSelf();
                     } else {
                         confirmExit();
                     }
                 } else {
-                    if (mEvent.getDetail().equals(detail)) {
+                    if (mThing.getDetail().equals(detail)) {
                         removeSelf();
                     } else {
                         if (hasContent(detail)) {
@@ -184,7 +185,7 @@ public class EditEventFragment extends BaseFragment
         new AlertDialog.Builder(mHostActivity)
                 .setMessage(R.string.confirm_delete)
                 .setPositiveButton(R.string.delete, (dialog, which) -> {
-                    EventDao.getInstance(mHostActivity).delete(mEvent);
+                    ThingDao.getInstance(mHostActivity).delete(mThing);
                     mOnDeleteListener.onDelete();
                     removeSelf();
                 })
@@ -203,45 +204,59 @@ public class EditEventFragment extends BaseFragment
 
     private void done() {
         String detail = mEditText.getText().toString();
-        EventDao eventDao = EventDao.getInstance(mHostActivity);
+        ThingDao thingDao = ThingDao.getInstance(mHostActivity);
         if (hasContent(detail)) {
-            String title = 20 + mBtnDate.getText().toString();
-            if (isAddNewEvent()) {
-                addNewEvent(detail, title, eventDao);
+            long targetTime = getTargetTime();
+            if (isAddNewThing()) {
+                addNewThing(detail, targetTime, thingDao);
             } else {
-                updateEvent(detail, title, eventDao);
+                updateEvent(detail, targetTime, thingDao);
             }
             removeWithAnimationAndHideSoftInput();
         } else {
-            if(!isAddNewEvent()){
+            if (!isAddNewThing()) {
                 confirmDeleteIfContentIsEmpty();
             }
         }
     }
 
-    private boolean isAddNewEvent() {
-        return mEvent == null;
+    private long getTargetTime() {
+        try {
+            String time = mBtnDate.getText().toString();
+            return sDateFormat.parse(time).getTime();
+        } catch (Exception e) {
+            return System.currentTimeMillis();
+        }
+    }
+
+    private boolean isAddNewThing() {
+        return mThing == null;
     }
 
     private boolean hasContent(String detail) {
         return detail != null && !detail.trim().isEmpty();
     }
 
-    private void addNewEvent(String detail, String title, EventDao eventDao) {
+    private void addNewThing(String detail, long targetTime, ThingDao thingDao) {
         int position = mSpinnerEventType.getSelectedItemPosition();
-        Event event = new Event(title, detail, position);
-        eventDao.add(event);
+        Thing thing = new Thing();
+        thing.setDetail(detail);
+        thing.setType(position);
+        thing.setTargetTime(targetTime);
+        thing.setUpdateTime(System.currentTimeMillis());
+        thingDao.insert(thing);
         if (mOnAddListener != null) {
             mOnAddListener.onAdd();
         }
     }
 
-    private void updateEvent(String detail, String title, EventDao eventDao) {
+    private void updateEvent(String detail, long targetTime, ThingDao thingDao) {
         int position = mSpinnerEventType.getSelectedItemPosition();
-        mEvent.setTitle(title);
-        mEvent.setDetail(detail);
-        mEvent.setType(position);
-        eventDao.update(mEvent);
+        mThing.setDetail(detail);
+        mThing.setType(position);
+        mThing.setTargetTime(targetTime);
+        mThing.setUpdateTime(System.currentTimeMillis());
+        thingDao.update(mThing);
         if (mOnUpdateListener != null) {
             mOnUpdateListener.onUpdate();
         }
@@ -268,7 +283,7 @@ public class EditEventFragment extends BaseFragment
             @Override
             public void onAnimationEnd(Animator animation) {
                 mContentView.setVisibility(View.GONE);
-                removeFragment(EditEventFragment.this);
+                removeFragment(EditThingFragment.this);
             }
         });
         anim.start();
@@ -298,7 +313,7 @@ public class EditEventFragment extends BaseFragment
         }
     }
 
-    private  BaseAdapter mAdapter = new BaseAdapter() {
+    private BaseAdapter mAdapter = new BaseAdapter() {
         Symbol[] symbols = Symbol.values();
         int[] resIds = {
                 R.drawable.ic_rect_black_24dp,
@@ -331,7 +346,7 @@ public class EditEventFragment extends BaseFragment
             }
             TextView textView = convertView.findViewById(R.id.tv);
             ImageView imageView = convertView.findViewById(R.id.iv);
-            String comment = Setting.symbol_comment.get(symbol.KEY);
+            String comment = Setting.symbol_comment.get(symbol.key);
             textView.setText(comment);
             imageView.setImageResource(resIds[position]);
             return convertView;
@@ -381,7 +396,7 @@ public class EditEventFragment extends BaseFragment
     @Override
     public void onValueChange(int year, int month, int day) {
         String date = String.format(Locale.CHINA, "%s年%d月%d日", String.valueOf(year), month, day);
-        mBtnDate.setText(date.substring(2));
+        mBtnDate.setText(date);
     }
 
     @Override
