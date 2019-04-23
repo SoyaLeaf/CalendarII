@@ -22,4 +22,50 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
         android:elevation="2dp" />
+
+    <!--<include android:visibility="gone" layout="@layout/include_state_normal"/>-->
+
+
+    <FrameLayout
+      android:layout_gravity="bottom"
+      android:layout_width="match_parent"
+      android:layout_height="160dp">
+
+        <FrameLayout
+          android:background="@drawable/bg_primary_left_right_top_r8"
+          android:layout_margin="8dp"
+          android:layout_gravity="bottom"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent" />
+        <View
+          android:layout_gravity="bottom"
+          android:elevation="2dp"
+          android:background="?android:colorBackground"
+          android:layout_width="match_parent"
+          android:layout_height="8dp"/>
+
+        <FrameLayout
+          android:visibility="gone"
+          android:background="@drawable/bg_accent_left_bottom_r160"
+          android:layout_width="140dp"
+          android:layout_marginEnd="8dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginStart="16dp"
+          android:layout_marginBottom="16dp"
+          android:layout_gravity="end"
+          android:layout_height="140dp">
+
+        </FrameLayout>
+
+        <ImageButton
+          android:layout_gravity="end"
+          android:background="@drawable/bg_accent_left_bottom_r60"
+          android:layout_width="56dp"
+          android:paddingStart="8dp"
+          android:paddingBottom="8dp"
+          android:layout_margin="8dp"
+          android:src="@drawable/ic_add_white_24dp"
+          android:layout_height="56dp"/>
+    </FrameLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
