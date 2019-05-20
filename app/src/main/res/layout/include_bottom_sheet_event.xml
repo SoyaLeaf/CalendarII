@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       xmlns:app="http://schemas.android.com/apk/res-auto">
+  <FrameLayout
+    android:id="@+id/bottom_sheet"
+    android:elevation="8dp"
+    app:behavior_peekHeight="140dp"
+    app:behavior_hideable="false"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <View
+      android:background="#fff"
+      android:id="@+id/bottom_background"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"/>
+    <androidx.appcompat.widget.Toolbar
+      android:background="@android:color/white"
+      android:id="@+id/toolbar_bottom_sheet"
+      app:contentInsetStartWithNavigation="0dp"
+      app:navigationIcon="@drawable/ic_close_black_24dp"
+      android:alpha="0"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/rv_event_list"
+      android:layout_marginBottom="?actionBarSize"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent" />
+  </FrameLayout>
+</merge>

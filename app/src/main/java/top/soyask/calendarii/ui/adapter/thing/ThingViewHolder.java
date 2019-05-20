@@ -42,10 +42,11 @@ public class ThingViewHolder extends RecyclerView.ViewHolder
         ib_share = itemView.findViewById(R.id.ib_share);
         tv_title = itemView.findViewById(R.id.tv_title);
         tv_event = itemView.findViewById(R.id.tv_event);
+        ib_delete = itemView.findViewById(R.id.ib_delete);
     }
 
     private void init() {
-        itemView.setOnTouchListener(this);
+//        itemView.setOnTouchListener(this);
         ib_down.setOnClickListener(this);
         ib_up.setOnClickListener(this);
     }

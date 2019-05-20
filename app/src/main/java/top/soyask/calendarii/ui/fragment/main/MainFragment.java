@@ -10,16 +10,22 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
+import top.soyask.calendarii.ui.adapter.thing.ThingAdapter;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
@@ -30,9 +36,12 @@ import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.MonthUtils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
-import static java.util.Calendar.*;
+import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.MONTH;
+import static java.util.Calendar.YEAR;
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
@@ -60,13 +69,21 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     protected void setupUI() {
+        mContentView.setOnTouchListener((v, event) -> false);
         initSelectDay();
-        setupViewPager();
         setupToolbar();
+        setupViewPager();
+        setupEventList();
     }
 
     private void initSelectDay() {
         mSelectedDay = MonthUtils.generateDay(mCalendar, ThingDao.getInstance(mHostActivity));
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        mActionBar = setToolbar(toolbar);
+        setToolbarDate(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1);
     }
 
     private void setupViewPager() {
@@ -78,10 +95,30 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         mViewPager.addOnPageChangeListener(this);
     }
 
-    private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        mActionBar = setToolbar(toolbar);
-        setToolbarDate(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1);
+    /**
+     * 包含事件、日程、纪念日
+     */
+    private void setupEventList() {
+        Toolbar toolbarBottomSheet = findViewById(R.id.toolbar_bottom_sheet);
+        View bottomBackground = findViewById(R.id.bottom_background);
+        RecyclerView recyclerView = findViewById(R.id.rv_event_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mHostActivity,RecyclerView.VERTICAL,false));
+        ArrayList<Thing> things = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            things.add(new Thing());
+        }
+        recyclerView.setAdapter(new ThingAdapter(things,null));
+        BottomSheetBehavior<RelativeLayout> bottomSheetBehavior
+          = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override public void onStateChanged(@NonNull View bottomSheet, int newState) { }
+
+            @Override public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                toolbarBottomSheet.setAlpha(slideOffset * 1f);
+                bottomBackground.setAlpha(slideOffset * 1f);
+                recyclerView.setTranslationY(slideOffset * toolbarBottomSheet.getHeight());
+            }
+        });
     }
 
     private int getCurrentMonth() {
