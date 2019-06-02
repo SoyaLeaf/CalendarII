@@ -45,6 +45,7 @@ import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
 import top.soyask.calendarii.ui.fragment.event.AllThingsFragment;
 import top.soyask.calendarii.ui.fragment.event.EditThingFragment;
+import top.soyask.calendarii.ui.fragment.memorial.MemorialFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.DayUtils;
@@ -128,10 +129,19 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         mFlBirth = findViewById(R.id.fl_birth);
         findViewById(R.id.fab_show_action).setOnClickListener(v -> {
             FloatActionFragment fragment = FloatActionFragment.newInstance(mSelectedDay);
-            fragment.setCallback(() -> {
-                EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
-                thingFragment.setOnAddListener(this);
-                addFragment(thingFragment);
+            fragment.setCallback(new FloatActionFragment.ActionClickCallback() {
+                @Override
+                public void onAddThingClick() {
+                    EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
+                    thingFragment.setOnAddListener(MainFragment.this);
+                    addFragment(thingFragment);
+                }
+
+                @Override
+                public void onAddMemorialClick() {
+                    MemorialFragment memorialFragment = MemorialFragment.newInstance(mSelectedDay);
+                    addFragment(memorialFragment);
+                }
             });
             getFragmentManager()
                     .beginTransaction()
@@ -309,7 +319,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
 
     @Override
-    public synchronized void onSelected(Day day) {
+    public void onSelected(Day day) {
         this.mSelectedDay = day;
         setBirthday(day);
         setThing(day.getYear(), day.getMonth(), day.getDayOfMonth());

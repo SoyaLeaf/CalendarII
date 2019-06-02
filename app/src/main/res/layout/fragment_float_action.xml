@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#bc060606"
+    android:background="#bceeeeee"
     android:orientation="vertical">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -13,7 +13,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/normal_margin"
         android:src="@drawable/ic_add_white_24dp"
-        app:fabSize="normal" />
+        app:backgroundTint="?colorAccent"
+        app:fabSize="normal"
+        app:tint="@android:color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_thing"
@@ -21,29 +23,34 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add_white_24dp"
         android:translationY="-32dp"
+        app:backgroundTint="?colorAccent"
         app:fabSize="mini"
         app:layout_anchor="@id/fab_close"
-        app:layout_anchorGravity="top|center_horizontal" />
+        app:layout_anchorGravity="top|center_horizontal"
+        app:tint="@android:color/white" />
 
     <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--android:id="@+id/fab_memorial"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/ic_add_white_24dp"-->
-        <!--android:translationX="-20dp"-->
-        <!--android:translationY="-20dp"-->
-        <!--app:fabSize="mini"-->
-        <!--app:layout_anchor="@id/fab_close"-->
-        <!--app:layout_anchorGravity="top" />-->
+    <!--android:id="@+id/fab_schedule"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:src="@drawable/ic_add_white_24dp"-->
+    <!--android:translationX="-20dp"-->
+    <!--android:translationY="-20dp"-->
+    <!--app:fabSize="mini"-->
+    <!--app:layout_anchor="@id/fab_close"-->
+    <!--app:layout_anchorGravity="top" />-->
 
-    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--android:id="@+id/fab_schedule"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/ic_add_white_24dp"-->
-        <!--android:translationX="-32dp"-->
-        <!--app:fabSize="mini"-->
-        <!--app:layout_anchor="@id/fab_close"-->
-        <!--app:layout_anchorGravity="left|center_vertical" />-->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_memorial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add_white_24dp"
+        android:tint="@android:color/white"
+        android:translationX="-32dp"
+        app:tint="@android:color/white"
+        app:backgroundTint="?colorAccent"
+        app:fabSize="mini"
+        app:layout_anchor="@id/fab_close"
+        app:layout_anchorGravity="left|center_vertical" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

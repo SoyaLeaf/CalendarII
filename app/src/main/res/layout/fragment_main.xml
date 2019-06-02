@@ -28,9 +28,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="88dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="88dp"
         android:minHeight="128dp"
         app:cardBackgroundColor="?eventBackground"
         app:cardElevation="2dp"
@@ -79,8 +79,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/tv_event"
-                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_toEndOf="@id/tv_title"
                 android:textColor="@color/text_color_primary_light"
                 android:textSize="@dimen/subtitle_font_size" />
@@ -92,19 +92,21 @@
         android:id="@+id/fab_show_action"
         android:layout_width="@dimen/floating_button_normal_size"
         android:layout_height="@dimen/floating_button_normal_size"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/normal_margin"
-        android:src="@drawable/ic_add_white_24dp" />
+        android:src="@drawable/ic_add_white_24dp"
+        app:tint="@android:color/white"
+        app:backgroundTint="?colorAccent" />
 
     <FrameLayout
         android:id="@+id/fl_birth"
         android:layout_width="120dp"
-        android:visibility="invisible"
         android:layout_height="120dp"
-        android:layout_gravity="right|bottom"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="72dp"
         android:layout_marginBottom="80dp"
-        android:layout_marginRight="72dp"
-        android:background="@drawable/bg_primary_r60">
+        android:background="@drawable/bg_primary_r60"
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/tv_birth"

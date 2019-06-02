@@ -39,6 +39,11 @@ public class FloatActionFragment extends BaseFragment {
             removeFragment(FloatActionFragment.this);
             mCallback.onAddThingClick();
         });
+
+        findViewById(R.id.fab_memorial).setOnClickListener(v -> {
+            removeFragment(FloatActionFragment.this);
+            mCallback.onAddMemorialClick();
+        });
         ObjectAnimator
                 .ofFloat(view, "rotation", 0, 45)
                 .setDuration(100)
@@ -80,5 +85,6 @@ public class FloatActionFragment extends BaseFragment {
 
     public interface ActionClickCallback {
         void onAddThingClick();
+        void onAddMemorialClick();
     }
 }

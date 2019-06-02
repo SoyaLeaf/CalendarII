@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import top.soyask.calendarii.entity.Symbol;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.ui.fragment.dialog.EditBottomDialogFragment;
 
 public class SymbolFragment extends BaseFragment {
 
@@ -79,9 +81,10 @@ public class SymbolFragment extends BaseFragment {
             });
 
             holder.itemView.setOnLongClickListener(v -> {
-                SymbolDialogFragment fragment = SymbolDialogFragment.newInstance(position);
+                EditBottomDialogFragment fragment = EditBottomDialogFragment
+                        .newInstance("默认".equals(comment) ? "" : comment, "自定义符号备注");
                 fragment.setOnDismissListener(SymbolFragment.this::dialogDismiss);
-                fragment.setOnDoneListener(SymbolFragment.this::update);
+                fragment.setOnDoneListener(result -> update(symbol, result));
                 fragment.show(getFragmentManager(), null);
                 return true;
             });
@@ -93,9 +96,20 @@ public class SymbolFragment extends BaseFragment {
         }
     };
 
+    private void update(Symbol symbol, String result) {
+        if (result.isEmpty()) {
+            result = "默认";
+            Setting.remove(getContext(), symbol.key);
+        } else {
+            Setting.setting(getContext(), symbol.key, result);
+        }
+        Setting.symbol_comment.put(symbol.key, result);
+        mAdapter.notifyDataSetChanged();
+    }
+
     private void dialogDismiss() {
         mContentView.requestFocus();
-        mContentView.postDelayed(this::hideSoftInput, 200);
+        mContentView.post(this::hideSoftInput);
     }
 
     private void hideSoftInput() {
@@ -107,11 +121,6 @@ public class SymbolFragment extends BaseFragment {
             e.printStackTrace();
         }
     }
-
-    private void update() {
-        mAdapter.notifyDataSetChanged();
-    }
-
 
     static class SymbolViewHolder extends RecyclerView.ViewHolder {
 

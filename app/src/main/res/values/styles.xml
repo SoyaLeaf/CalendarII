@@ -58,56 +58,56 @@
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="eventBackground">@color/colorEvent</item>
     </style>
 
-    <style name="AppTheme.Pink" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Pink">
         <item name="colorPrimary">@color/colorPrimary.Pink</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Pink</item>
         <item name="colorAccent">@color/colorAccent.Pink</item>
         <item name="eventBackground">@color/colorEvent.Pink</item>
     </style>
 
-    <style name="AppTheme.Green" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Green">
         <item name="colorPrimary">@color/colorPrimary.Green</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Green</item>
         <item name="colorAccent">@color/colorAccent.Green</item>
         <item name="eventBackground">@color/colorEvent.Green</item>
     </style>
 
-    <style name="AppTheme.Teal" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Teal">
         <item name="colorPrimary">@color/colorPrimary.Teal</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Teal</item>
         <item name="colorAccent">@color/colorAccent.Teal</item>
         <item name="eventBackground">@color/colorEvent.Teal</item>
     </style>
 
-    <style name="AppTheme.Blue" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Blue">
         <item name="colorPrimary">@color/colorPrimary.Blue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Blue</item>
         <item name="colorAccent">@color/colorAccent.Blue</item>
         <item name="eventBackground">@color/colorEvent.Blue</item>
     </style>
 
-    <style name="AppTheme.Black" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Black">
         <item name="colorPrimary">@color/colorPrimary.Black</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Black</item>
         <item name="colorAccent">@color/colorAccent.Black</item>
         <item name="eventBackground">@color/colorEvent.Black</item>
     </style>
 
-    <style name="AppTheme.Red" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Red">
         <item name="colorPrimary">@color/colorPrimary.Red</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Red</item>
         <item name="colorAccent">@color/colorAccent.Red</item>
         <item name="eventBackground">@color/colorEvent.Red</item>
     </style>
 
-    <style name="AppTheme.Purple" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Purple">
         <item name="colorPrimary">@color/colorPrimary.Purple</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark.Purple</item>
         <item name="colorAccent">@color/colorAccent.Purple</item>
@@ -119,7 +119,7 @@
         <item name="android:textSize">12dp</item>
     </style>
     
-    <style name="AppTheme.Translucent" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Translucent">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>

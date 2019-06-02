@@ -1,39 +1,38 @@
-package top.soyask.calendarii.ui.fragment.setting.symbol;
+package top.soyask.calendarii.ui.fragment.dialog;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.entity.Symbol;
-import top.soyask.calendarii.global.Setting;
 
-public class SymbolDialogFragment extends BottomSheetDialogFragment {
+public class EditBottomDialogFragment extends BottomSheetDialogFragment {
 
-    public static final String POSITION = "position";
+    private static final String DEFAULT_TEXT = "default_text";
+    private static final String HINT = "hint";
     private EditText mEditText;
-    private Symbol mSymbol;
     private OnDoneListener mOnDoneListener;
     private OnDismissListener mOnDismissListener;
 
-    public static SymbolDialogFragment newInstance(int position) {
+    public static EditBottomDialogFragment newInstance(String defaultText, String hint) {
 
         Bundle args = new Bundle();
 
-        SymbolDialogFragment fragment = new SymbolDialogFragment();
-        args.putInt(POSITION, position);
+        EditBottomDialogFragment fragment = new EditBottomDialogFragment();
+        args.putString(DEFAULT_TEXT, defaultText);
+        args.putString(HINT, hint);
         fragment.setArguments(args);
         return fragment;
     }
@@ -50,12 +49,12 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
         mEditText = view.findViewById(R.id.et);
         Bundle arguments = getArguments();
         if (arguments != null) {
-            int position = arguments.getInt(POSITION);
-            mSymbol = Symbol.values()[position];
-            String comment = Setting.symbol_comment.get(mSymbol.key);
-            if (!"默认".equals(comment)) {
-                mEditText.setText(comment);
-                mEditText.setSelection(comment.length());
+            String hint = arguments.getString(HINT);
+            String defaultText = arguments.getString(DEFAULT_TEXT);
+            mEditText.setHint(hint);
+            if (!defaultText.isEmpty()) {
+                mEditText.setText(defaultText);
+                mEditText.setSelection(defaultText.length());
             }
         }
         mEditText.requestFocus();
@@ -81,15 +80,8 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
 
     private void done(View view) {
         String comment = mEditText.getText().toString();
-        if (comment.isEmpty()) {
-            comment = "默认";
-            Setting.remove(getContext(), mSymbol.key);
-        } else {
-            Setting.setting(getContext(), mSymbol.key, comment);
-        }
-        Setting.symbol_comment.put(mSymbol.key, comment);
         if (mOnDoneListener != null) {
-            mOnDoneListener.onDone();
+            mOnDoneListener.onDone(comment);
         }
         dismiss();
     }
@@ -103,6 +95,14 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
     }
 
     @Override
+    public void onCancel(@NonNull DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (mOnDismissListener != null) {
+            mOnDismissListener.onDismiss();
+        }
+    }
+
+    @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         if (mOnDismissListener != null) {
@@ -111,7 +111,7 @@ public class SymbolDialogFragment extends BottomSheetDialogFragment {
     }
 
     public interface OnDoneListener {
-        void onDone();
+        void onDone(String result);
     }
 
     public interface OnDismissListener {

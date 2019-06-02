@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,7 @@ public final class Setting {
     public static float day_holiday_text_size;
     public static Map<String, String> symbol_comment = new HashMap<>();
     public static int default_event_type;
+    public static Set<String> memorial_custom_people;
 
     private static boolean isLoaded = false;
 
@@ -48,7 +50,7 @@ public final class Setting {
         Setting.day_holiday_text_size = setting.getInt(Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, -1);
         Setting.replenish = setting.getBoolean(Global.SETTING_REPLENISH, true);
         Setting.select_anim = setting.getBoolean(Global.SETTING_SELECT_ANIM, true);
-
+        Setting.memorial_custom_people = setting.getStringSet(Global.MEMORIAL_CUSTOM_PEOPLE, new HashSet<>());
         Setting.default_event_type = setting.getInt(Global.DEFAULT_EVENT_TYPE, 0);
         putEventType(setting, Symbol.STAR.key, "默认");
         putEventType(setting, Symbol.RECT.key, "默认");

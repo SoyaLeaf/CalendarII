@@ -41,4 +41,5 @@ public class Global {
     public static final int VIEW_TODAY = 4;
     public static final int VIEW_EVENT = 5;
     public static final String DEFAULT_EVENT_TYPE = "default_event_type";
+    public static final String MEMORIAL_CUSTOM_PEOPLE = "memorial_custom_people";
 }

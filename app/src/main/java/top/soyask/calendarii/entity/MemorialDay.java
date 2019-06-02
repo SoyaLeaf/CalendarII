@@ -11,7 +11,8 @@ public class MemorialDay implements Serializable {
     private int year;
     private int month;
     private int day;
-    private boolean lunar;
+    private String lunar;
+    private boolean isLunar;
 
     public int getId() {
         return id;
@@ -70,10 +71,33 @@ public class MemorialDay implements Serializable {
     }
 
     public boolean isLunar() {
+        return isLunar;
+    }
+
+    public void setLunar(boolean isLunar) {
+        this.isLunar = isLunar;
+    }
+
+    public String getLunar() {
         return lunar;
     }
 
-    public void setLunar(boolean lunar) {
+    public void setLunar(String lunar) {
         this.lunar = lunar;
+    }
+
+    @Override
+    public String toString() {
+        return "MemorialDay{" +
+                "id=" + id +
+                ", who='" + who + '\'' +
+                ", name='" + name + '\'' +
+                ", details='" + details + '\'' +
+                ", year=" + year +
+                ", month=" + month +
+                ", day=" + day +
+                ", lunar='" + lunar + '\'' +
+                ", isLunar=" + isLunar +
+                '}';
     }
 }
