@@ -80,7 +80,7 @@ public class LunarUtils {
         lunarDay.setYear(lunarYear);
         lunarDay.setDayOfMonth(getLunarDay(day));
         lunarDay.setMonth(getLunarMonth(leap,lunarMonth));
-        
+
         return lunarDay;
     }
 
