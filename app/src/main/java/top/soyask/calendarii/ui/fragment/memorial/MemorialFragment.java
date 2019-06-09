@@ -27,11 +27,13 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.entity.MemorialDay;
@@ -45,8 +47,9 @@ import top.soyask.calendarii.utils.LunarUtils;
 
 public class MemorialFragment extends BaseFragment {
 
-    public static final String DAY = "Day";
-    public static final String MEMORIAL_DAY = "memorial_day";
+    private static final String DAY = "Day";
+    private static final String MEMORIAL_DAY = "memorial_day";
+    private static final String FLAG = "#X#";
     private List<String> mSelecteds = new ArrayList<>();
     private TextView mTvDate;
     private ExpandableLayout mElWho;
@@ -93,6 +96,7 @@ public class MemorialFragment extends BaseFragment {
         mMemorialDay = (MemorialDay) arguments.getSerializable(MEMORIAL_DAY);
         if (mMemorialDay == null) {
             mMemorialDay = new MemorialDay();
+//            mMemorialDay.setWho("ada" + FLAG);
             Day day = (Day) arguments.getSerializable(DAY);
             mCalendar = Calendar.getInstance();
             if (day != null) {
@@ -103,42 +107,7 @@ public class MemorialFragment extends BaseFragment {
         }
 
         findToolbar().setNavigationOnClickListener(v -> removeFragment(this));
-        mElWho = findViewById(R.id.el_who);
-
-        mChipGroupDefaultPeople = findViewById(R.id.chip_group_default_people);
-        String[] names = mHostActivity.getResources().getStringArray(R.array.who);
-        mChipGroupWho = findViewById(R.id.chip_group_who);
-        mHsvGroupWho = findViewById(R.id.hsv_group_who);
-        for (String name : names) {
-            Chip chip = new Chip(mHostActivity);
-            chip.setCheckable(false);
-            chip.setText(name);
-            chip.setOnClickListener(v -> selectPeople(chip));
-            mChipGroupDefaultPeople.addView(chip);
-        }
-
-
-        Set<String> customPeople = Setting.memorial_custom_people;
-        for (String cp : customPeople) {
-            Chip chip = new Chip(mHostActivity);
-            chip.setCheckable(false);
-            chip.setCloseIconVisible(true);
-            chip.setOnCloseIconClickListener(v -> deleteCustomPeople(chip));
-            chip.setText(cp);
-            chip.setOnClickListener(v -> selectPeople(chip));
-            mChipGroupDefaultPeople.addView(chip);
-        }
-
-        Chip add = new Chip(mHostActivity);
-        add.setBackgroundColor(Color.BLACK);
-        add.setTextColor(Color.WHITE);
-        add.setText("新增");
-        add.setChipIconVisible(true);
-        add.setChipIconResource(R.drawable.ic_add_white_24dp);
-        add.setOnClickListener(this::addNewPeople);
-        mChipGroupDefaultPeople.addView(add);
-        mTvWhoHint = findViewById(R.id.tv_who_hint);
-        mTvWhoHint.setOnClickListener(v -> toggleElWho());
+        setupTvWho();
 
         mElDate = findViewById(R.id.el_date);
         mTvDate = findViewById(R.id.tv_date);
@@ -158,12 +127,88 @@ public class MemorialFragment extends BaseFragment {
         mCbLunar = findViewById(R.id.cb_lunar);
         mCbBirthday = findViewById(R.id.cb_birthday);
         mCbBirthday.setOnCheckedChangeListener(this::onBirthdayChange);
-        mCbLunar.setOnCheckedChangeListener(this::onLunarChange);
+            mCbLunar.setOnCheckedChangeListener(this::onLunarChange);
         setupNumberPicker();
 
         findViewById(R.id.ib_done).setOnClickListener(this::done);
         mHsvGroupWho.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
                 -> mHsvGroupWho.smoothScrollTo(mChipGroupWho.getWidth(), 0));
+    }
+
+    private void setupTvWho() {
+        mElWho = findViewById(R.id.el_who);
+        mChipGroupDefaultPeople = findViewById(R.id.chip_group_default_people);
+        mChipGroupWho = findViewById(R.id.chip_group_who);
+        mHsvGroupWho = findViewById(R.id.hsv_group_who);
+        mTvWhoHint = findViewById(R.id.tv_who_hint);
+        mTvWhoHint.setOnClickListener(v -> toggleElWho());
+
+        String[] defaultNames = mHostActivity.getResources().getStringArray(R.array.who);
+        Set<String> customPeople = Setting.memorial_custom_people;
+        String who = mMemorialDay.getWho();
+        if (who != null) {
+            String[] whos = who.split(FLAG);
+            for (String name : whos) {
+                Chip chip = new Chip(mHostActivity);
+                chip.setCheckable(false);
+                chip.setText(name);
+                mChipGroupDefaultPeople.addView(chip);
+                selectPeople(chip);
+                if (!isDefaultName(name, defaultNames) && !Setting.memorial_custom_people.contains(name)) {
+                    Setting.memorial_custom_people.add(name);
+                    Setting.setting(mHostActivity, Global.MEMORIAL_CUSTOM_PEOPLE, Setting.memorial_custom_people);
+                }
+            }
+        }
+        for (String name : defaultNames) {
+            if (!mSelecteds.contains(name)) {
+                Chip chip = generateDefaultChip(name);
+                mChipGroupDefaultPeople.addView(chip);
+            }
+
+        }
+        for (String cp : customPeople) {
+            if (!mSelecteds.contains(cp)) {
+                Chip chip = generateCustomChip(cp);
+                mChipGroupDefaultPeople.addView(chip);
+            }
+        }
+
+        Chip add = new Chip(mHostActivity);
+        add.setBackgroundColor(Color.BLACK);
+        add.setTextColor(Color.WHITE);
+        add.setText("新增");
+        add.setChipIconVisible(true);
+        add.setChipIconResource(R.drawable.ic_add_white_24dp);
+        add.setOnClickListener(this::addNewPeople);
+        mChipGroupDefaultPeople.addView(add);
+    }
+
+    private boolean isDefaultName(String name, String[] names) {
+        for (String s : names) {
+            if (s.equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Chip generateDefaultChip(String name) {
+        Chip chip = new Chip(mHostActivity);
+        chip.setCheckable(false);
+        chip.setText(name);
+        chip.setOnClickListener(v -> selectPeople(chip));
+        return chip;
+    }
+
+    private Chip generateCustomChip(String name) {
+        Chip chip = new Chip(mHostActivity);
+        chip.setCheckable(false);
+        chip.setCloseIconVisible(true);
+        chip.setOnCloseIconClickListener(v -> deleteCustomPeople(chip));
+        chip.setText(name);
+        chip.setOnClickListener(v -> selectPeople(chip));
+        return chip;
     }
 
     private void done(View view) {
@@ -172,7 +217,7 @@ public class MemorialFragment extends BaseFragment {
         mMemorialDay.setYear(mCalendar.get(Calendar.YEAR));
         StringBuilder who = new StringBuilder();
         for (String name : mSelecteds) {
-            who.append(name).append("|x|");
+            who.append(name).append(FLAG);
         }
         if (mCbLunar.isChecked()) {
             mMemorialDay.setLunar(true);
@@ -182,6 +227,13 @@ public class MemorialFragment extends BaseFragment {
         mMemorialDay.setWho(who.toString());
         mMemorialDay.setName(mCbBirthday.isChecked() ? "生日" : mOriginName);
         mMemorialDay.setDetails(mEtDetail.getText().toString());
+        if(mMemorialDay.getId() > 0){
+            MemorialDayDao.getInstance(mHostActivity).update(mMemorialDay);
+        }else {
+            MemorialDayDao.getInstance(mHostActivity).insert(mMemorialDay);
+        }
+        showSnackbar("添加成功");
+        removeFragment(this);
         //todo
     }
 
@@ -196,7 +248,7 @@ public class MemorialFragment extends BaseFragment {
         mElDate.collapse();
         hideSoftInput();
         if (isChecked) {
-            mOriginName = mEtDetail.getText().toString();
+            mOriginName = mEtName.getText().toString();
             SpannableString text = createDetailText();
             mEtName.setText(text);
             mEtName.setEnabled(false);
@@ -210,7 +262,6 @@ public class MemorialFragment extends BaseFragment {
         SpannableString text;
         if (mOriginName.isEmpty()) {
             text = new SpannableString("生日");
-            StrikethroughSpan span = new StrikethroughSpan();
             text.setSpan(new ForegroundColorSpan(0xdd000000),
                     0, "生日".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mEtName.setText(text);
@@ -238,11 +289,7 @@ public class MemorialFragment extends BaseFragment {
                 EditBottomDialogFragment.newInstance("", "要添加谁呢？");
         dialogFragment.setOnDoneListener(result -> {
             if (!result.isEmpty()) {
-                Chip chip = new Chip(mHostActivity);
-                chip.setText(result);
-                chip.setCheckable(false);
-                chip.setCloseIconVisible(true);
-                chip.setOnCloseIconClickListener(v -> deleteCustomPeople(chip));
+                Chip chip = generateCustomChip(result);
                 Setting.memorial_custom_people.add(result);
                 Setting.setting(mHostActivity, Global.MEMORIAL_CUSTOM_PEOPLE, Setting.memorial_custom_people);
                 selectPeople(chip);
