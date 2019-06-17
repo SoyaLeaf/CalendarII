@@ -1,16 +1,24 @@
 package top.soyask.calendarii.ui.fragment.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +28,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.circularreveal.CircularRevealCompat;
+import com.google.android.material.circularreveal.CircularRevealFrameLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
@@ -46,7 +57,8 @@ import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
-public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
+public class MainFragment extends BaseFragment
+    implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 
 
     private Calendar mCalendar = Calendar.getInstance();
@@ -55,6 +67,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private ActionBar mActionBar;
     private MainReceiver mMainReceiver;
     private MenuItem mItemToday;
+    private BottomSheetBehavior<FrameLayout> mBottomSheetBehavior;
+    private CircularRevealFrameLayout mCollapseView;
+    private View mRlLeftBottom;
+    private FloatingActionButton mFabActions;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -74,6 +90,10 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         setupToolbar();
         setupViewPager();
         setupEventList();
+
+        mCollapseView = findViewById(R.id.collapse_view);
+        mRlLeftBottom = findViewById(R.id.rl_leftbottom);
+        mFabActions = findViewById(R.id.fab_actions);
     }
 
     private void initSelectDay() {
@@ -108,9 +128,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             things.add(new Thing());
         }
         recyclerView.setAdapter(new ThingAdapter(things,null));
-        BottomSheetBehavior<RelativeLayout> bottomSheetBehavior
-          = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+        mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override public void onStateChanged(@NonNull View bottomSheet, int newState) { }
 
             @Override public void onSlide(@NonNull View bottomSheet, float slideOffset) {
@@ -119,6 +138,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 recyclerView.setTranslationY(slideOffset * toolbarBottomSheet.getHeight());
             }
         });
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     private int getCurrentMonth() {
@@ -230,9 +250,14 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     @Override
-    public synchronized void onSelected(Day day) {
+    public void onSelected(Day day) {
         this.mSelectedDay = day;
         calculateDelta_T();
+        if (day.getDayOfMonth() % 2 == 0) {
+            showCollapseViewWithAnim();
+        }else {
+            hideCollapseViewWithAnim();
+        }
     }
 
     @Override
@@ -344,6 +369,103 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     @Override
     public void onAdd() {
         showSnackbar("成功添加了新事件");
+    }
+
+
+    private void showCollapseView(){
+        mCollapseView.setVisibility(View.VISIBLE);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mRlLeftBottom.setVisibility(View.GONE);
+        mFabActions.setVisibility(View.GONE);
+        new Handler().post(()-> mBottomSheetBehavior.setHideable(false));
+    }
+
+    private void showLeftBottomView(){
+        mCollapseView.setVisibility(View.INVISIBLE);
+        mBottomSheetBehavior.setHideable(true);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        mRlLeftBottom.setVisibility(View.VISIBLE);
+        mFabActions.setVisibility(View.VISIBLE);
+    }
+
+    private void showCollapseViewWithAnim(){
+        Animator circularReveal = CircularRevealCompat.createCircularReveal(
+            mCollapseView, 0, mCollapseView.getHeight(), mCollapseView.getHeight(),mCollapseView.getWidth());
+        int translationX = -30;
+        ObjectAnimator translation =
+            ObjectAnimator.ofFloat(mCollapseView, "translationX", translationX, 0f);
+        AnimatorSet set = new AnimatorSet()
+            .setDuration(500);
+        set.setTarget(mCollapseView);
+        set.playTogether(circularReveal,translation);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                hideLeftBottomViewWithAnim();
+                mCollapseView.setVisibility(View.VISIBLE);
+            }
+        });
+        set.start();
+    }
+
+    private void hideCollapseViewWithAnim(){
+        Animator circularReveal = CircularRevealCompat.createCircularReveal(
+            mCollapseView, 0, mCollapseView.getHeight(),mCollapseView.getWidth(), mCollapseView.getHeight());
+        int translationX = -30;
+        ObjectAnimator translation =
+            ObjectAnimator.ofFloat(mCollapseView, "translationX", 0f, translationX);
+        AnimatorSet set = new AnimatorSet()
+            .setDuration(500);
+        set.setTarget(mCollapseView);
+        set.playTogether(circularReveal,translation);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+            }
+
+            @Override public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                showLeftBottomViewWithAnim();
+                mCollapseView.setVisibility(View.INVISIBLE);
+            }
+        });
+        set.start();
+    }
+
+    private void showLeftBottomViewWithAnim(){
+        Animation animation = AnimationUtils.loadAnimation(mHostActivity, R.anim.fade_in);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                mRlLeftBottom.setVisibility(View.VISIBLE);
+            }
+
+            @Override public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        mRlLeftBottom.startAnimation(animation);
+    }
+
+    private void hideLeftBottomViewWithAnim(){
+        Animation animation = AnimationUtils.loadAnimation(mHostActivity, R.anim.out_slide);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+            }
+
+            @Override public void onAnimationEnd(Animation animation) {
+                mRlLeftBottom.setVisibility(View.GONE);
+            }
+
+            @Override public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+        mRlLeftBottom.startAnimation(animation);
     }
 
     public class MainReceiver extends BroadcastReceiver {

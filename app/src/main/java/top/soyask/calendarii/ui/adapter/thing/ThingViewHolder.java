@@ -35,10 +35,9 @@ public class ThingViewHolder extends RecyclerView.ViewHolder
 
     private void findView(View itemView) {
         el = itemView.findViewById(R.id.el);
-        ib_down = itemView.findViewById(R.id.ib_down);
         ib_up = itemView.findViewById(R.id.ib_up);
-        ib_delete = itemView.findViewById(R.id.ib_delete);
         ib_edit = itemView.findViewById(R.id.ib_edit);
+        ib_down = itemView.findViewById(R.id.ib_down);
         ib_share = itemView.findViewById(R.id.ib_share);
         tv_title = itemView.findViewById(R.id.tv_title);
         tv_event = itemView.findViewById(R.id.tv_event);

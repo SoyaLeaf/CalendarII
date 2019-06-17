@@ -3,14 +3,15 @@
        xmlns:app="http://schemas.android.com/apk/res-auto">
   <FrameLayout
     android:id="@+id/bottom_sheet"
-    android:elevation="8dp"
+    android:elevation="4dp"
     app:behavior_peekHeight="140dp"
-    app:behavior_hideable="false"
+    app:behavior_hideable="true"
     app:layout_behavior="@string/bottom_sheet_behavior"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <View
       android:background="#fff"
+      android:alpha="0"
       android:id="@+id/bottom_background"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>

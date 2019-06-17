@@ -23,8 +23,8 @@
         android:layout_marginTop="56dp"
         android:elevation="2dp" />
 
-    <include layout="@layout/include_state_normal"/>
     <include layout="@layout/include_state_collapse"/>
+    <include layout="@layout/include_state_normal"/>
     <include layout="@layout/include_bottom_sheet_event"/>
 
 
