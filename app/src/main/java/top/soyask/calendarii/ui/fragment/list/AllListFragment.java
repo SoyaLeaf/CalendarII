@@ -43,10 +43,10 @@ public class AllListFragment extends BaseFragment {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position) {
                 case 0:
-                    tab.setIcon(R.drawable.ic_add_thing);
+                    tab.setIcon(R.drawable.ic_thing);
                     break;
                 case 1:
-                    tab.setIcon(R.drawable.ic_add_memorial_day);
+                    tab.setIcon(R.drawable.ic_memorial_day);
                     break;
             }
         }).attach();
