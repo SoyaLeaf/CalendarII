@@ -33,9 +33,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="545454" />
-                            <entry key="outputName" value="ic_rect_black_24dp" />
-                            <entry key="sourceFile" value="C:\Users\mxf" />
+                            <entry key="outputName" value="ic_add_memorial_day" />
+                            <entry key="sourceFile" value="E:\AndroidApp\calendar\3\添加纪念日.svg" />
                           </map>
                         </option>
                       </PersistentState>

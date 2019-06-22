@@ -27,14 +27,13 @@ public class ThingDao {
         DBUtils.Query query = new DBUtils.Query()
                 .setSelection("TARGET_TIME = ?", date)
                 .setOrderBy("UPDATE_TIME desc");
-        System.out.println(query);
         return mDbUtils.query(TABLE, Thing.class, query);
     }
 
     public List<Thing> list(int page) {
-        int limit = (page - 1) * 10;
+        int limit = (page - 1) * 25;
         DBUtils.Query query = new DBUtils.Query()
-                .setLimit(String.format(Locale.CHINA, "%d,25", limit))
+                .setLimit(String.format(Locale.getDefault(), "%d,25", limit))
                 .setOrderBy("TARGET_TIME desc");
         return mDbUtils.query(TABLE, Thing.class, query);
     }

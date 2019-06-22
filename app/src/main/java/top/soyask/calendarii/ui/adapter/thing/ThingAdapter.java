@@ -29,7 +29,7 @@ public class ThingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_event, parent, false);
+        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_thing, parent, false);
         return new ThingViewHolder(inflate);
     }
 
@@ -80,6 +80,7 @@ public class ThingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
+        System.out.println(mThings);
         return mThings.size();
     }
 

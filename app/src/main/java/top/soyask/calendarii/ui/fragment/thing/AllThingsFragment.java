@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.fragment.event;
+package top.soyask.calendarii.ui.fragment.thing;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -13,25 +13,21 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.adapter.thing.ThingAdapter;
-import top.soyask.calendarii.ui.fragment.base.BaseFragment;
+import top.soyask.calendarii.ui.fragment.base.BaseListFragment;
 
 
-public class AllThingsFragment extends BaseFragment
+public class AllThingsFragment extends BaseListFragment
         implements ThingAdapter.ThingActionCallback, View.OnClickListener, DeleteFragment.OnDeleteConfirmListener {
 
     private static final int WAIT = 0x0;
     private static final int CANCEL = 0x1;
     private static final int DELETE_ALL = 0x2;
     private static final int DELETE_COMP = 0x3;
-    private static final String TITLE = "TITLE";
-    private ThingAdapter mThingAdapter;
     private ThingDao mThingDao;
     private List<Thing> mThings = new ArrayList<>();
     private List<Thing> mDoneThings = new ArrayList<>();
@@ -39,56 +35,34 @@ public class AllThingsFragment extends BaseFragment
 
     private Handler mHandler = new ThingHandler(this);
 
-
     private Comparator<Thing> mComparator = (o1, o2) -> {
         long time1 = o1.getTargetTime();
         long time2 = o2.getTargetTime();
         return -Long.compare(time1, time2);
     };
-    private RecyclerView mRecyclerView;
     private int currentPage = 0;
     private int mCount;
 
-    public AllThingsFragment() {
-        super(R.layout.fragment_all);
-    }
-
-    public static AllThingsFragment newInstance(String title) {
+    public static AllThingsFragment newInstance() {
         AllThingsFragment fragment = new AllThingsFragment();
         Bundle args = new Bundle();
-        args.putString(TITLE, title);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    protected void setupUI() {
+    protected void init() {
         mThingDao = ThingDao.getInstance(mHostActivity);
         mCount = mThingDao.count();
-        loadData();
-        mRecyclerView = findViewById(R.id.rv_event);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.VERTICAL, false);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mThingAdapter = new ThingAdapter(mThings, this);
-        mRecyclerView.setAdapter(mThingAdapter);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                int position = layoutManager.findLastVisibleItemPosition();
-                if (position == mThingAdapter.getItemCount() - 1 && mThingAdapter.getItemCount() < mCount) {
-                    loadData();
-                }
-            }
-        });
-        findToolbar().setNavigationOnClickListener(this);
-        findViewById(R.id.ib_delete_all).setOnClickListener(this);
-        if (mThings.isEmpty()) {
-            findViewById(R.id.ib_delete_all).setVisibility(View.GONE);
-        }
     }
 
-    private void loadData() {
+    @Override
+    protected boolean canLoadMore() {
+        return mAdapter.getItemCount() < mCount;
+    }
+
+    @Override
+    protected void loadData() {
         currentPage++;
         List<Thing> things = mThingDao.list(currentPage);
         Collections.sort(mThings, mComparator);
@@ -100,14 +74,20 @@ public class AllThingsFragment extends BaseFragment
         mThings.addAll(things);
     }
 
+    @Override
+    protected RecyclerView.Adapter getAdapter() {
+        loadData();
+        return new ThingAdapter(mThings, this);
+    }
+
 
     @Override
     public void onEditClick(final int position, Thing thing) {
         EditThingFragment editThingFragment = EditThingFragment.newInstance(null, thing);
-        editThingFragment.setOnUpdateListener(() -> mThingAdapter.notifyItemChanged(position));
+//        editThingFragment.setOnUpdateListener(() -> mThingAdapter.notifyItemChanged(position));
         editThingFragment.setOnDeleteListener(() -> {
             mThings.remove(position);
-            mThingAdapter.notifyItemRemoved(position);
+//            mThingAdapter.notifyItemRemoved(position);
         });
         addFragment(editThingFragment);
     }
@@ -116,25 +96,25 @@ public class AllThingsFragment extends BaseFragment
     public void onDeleteClick(final int position, final Thing thing) {
         mThingDao.delete(thing);
         mThings.remove(thing);
-        mThingAdapter.notifyItemRemoved(position);
-        mThingAdapter.notifyItemRangeChanged(position, mThings.size());
-        showSnackbar("删除成功^_~", "撤销", v -> {
-            mThingDao.insert(thing);
-            mThings.add(thing);  // FIXME: 2017/8/26 这里不能 thing id变化了
-            Collections.sort(mThings, mComparator);
-            mThingAdapter.notifyItemInserted(position);
-            mThingAdapter.notifyItemRangeChanged(position, mThings.size());
-            if (position == 0) {
-                mRecyclerView.scrollToPosition(0);
-            }
-        });
+//        mThingAdapter.notifyItemRemoved(position);
+//        mThingAdapter.notifyItemRangeChanged(position, mThings.size());
+//        showSnackbar("删除成功^_~", "撤销", v -> {
+//            mThingDao.insert(thing);
+//            mThings.add(thing);  // FIXME: 2017/8/26 这里不能 thing id变化了
+//            Collections.sort(mThings, mComparator);
+//            mThingAdapter.notifyItemInserted(position);
+//            mThingAdapter.notifyItemRangeChanged(position, mThings.size());
+//            if (position == 0) {
+//                scrollToTop();
+//            }
+//        });
     }
 
     @Override
     public void onDone(int position, Thing thing) {
         thing.setDone(true);
         mThingDao.update(thing);
-        mThingAdapter.notifyItemChanged(position);
+//        mThingAdapter.notifyItemChanged(position);
         mDoneThings.add(thing);
     }
 
@@ -142,7 +122,7 @@ public class AllThingsFragment extends BaseFragment
     public void onDoneCancel(int position, Thing thing) {
         thing.setDone(false);
         mThingDao.update(thing);
-        mThingAdapter.notifyItemChanged(position);
+//        mThingAdapter.notifyItemChanged(position);
         if (mDoneThings.contains(thing)) {
             mDoneThings.remove(thing);
         }
@@ -189,7 +169,7 @@ public class AllThingsFragment extends BaseFragment
     private void deleteComplete() {
         final List<Thing> temp = new ArrayList<>(mDoneThings);
         mThings.removeAll(mDoneThings);
-        mThingAdapter.notifyDataSetChanged();
+//        mThingAdapter.notifyDataSetChanged();
         mThingDao.deleteDone();
         mDoneThings.clear();
         showSnackbar("删除了划掉的事件。", "我要恢复", v -> {
@@ -200,7 +180,7 @@ public class AllThingsFragment extends BaseFragment
             mThings.addAll(temp);
             mDoneThings.addAll(temp);
             Collections.sort(mThings, mComparator);
-            mThingAdapter.notifyDataSetChanged();
+//            mThingAdapter.notifyDataSetChanged();
             mHandler.sendEmptyMessage(CANCEL);
         });
     }
@@ -208,7 +188,7 @@ public class AllThingsFragment extends BaseFragment
     private void deleteAll() {
         final List<Thing> temp = new ArrayList<>(mThings);
         mThings.clear();
-        mThingAdapter.notifyDataSetChanged();
+//        mThingAdapter.notifyDataSetChanged();
         mThingDao.deleteAll();
         showSnackbar("删除了全部的事件。", "我要恢复", v -> {
             mHandler.sendEmptyMessage(WAIT);
@@ -217,7 +197,7 @@ public class AllThingsFragment extends BaseFragment
             }
             mThings.addAll(temp);
             Collections.sort(mThings, mComparator);
-            mThingAdapter.notifyDataSetChanged();
+//            mThingAdapter.notifyDataSetChanged();
             mHandler.sendEmptyMessage(CANCEL);
         });
     }

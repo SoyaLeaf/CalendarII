@@ -49,7 +49,6 @@ public class MemorialFragment extends BaseFragment {
 
     private static final String DAY = "Day";
     private static final String MEMORIAL_DAY = "memorial_day";
-    private static final String FLAG = "#X#";
     private List<String> mSelecteds = new ArrayList<>();
     private TextView mTvDate;
     private ExpandableLayout mElWho;
@@ -89,30 +88,32 @@ public class MemorialFragment extends BaseFragment {
         return fragment;
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void setupUI() {
-        Bundle arguments = getArguments();
-        mMemorialDay = (MemorialDay) arguments.getSerializable(MEMORIAL_DAY);
-        if (mMemorialDay == null) {
-            mMemorialDay = new MemorialDay();
-//            mMemorialDay.setWho("ada" + FLAG);
-            Day day = (Day) arguments.getSerializable(DAY);
-            mCalendar = Calendar.getInstance();
-            if (day != null) {
-                mCalendar.set(Calendar.YEAR, day.getYear());
-                mCalendar.set(Calendar.MONTH, day.getMonth() - 1);
-                mCalendar.set(Calendar.DAY_OF_MONTH, day.getDayOfMonth());
-            }
-        }
-
+        initData();
         findToolbar().setNavigationOnClickListener(v -> removeFragment(this));
         setupTvWho();
+        setupTvDate();
+        boolean isBirthday = "生日".equals(mMemorialDay.getName());
+        setupNameAndDetails(isBirthday);
+        setupCheckbox(isBirthday);
+        setupNumberPicker();
+        findViewById(R.id.ib_done).setOnClickListener(this::done);
+        mHsvGroupWho.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
+                -> mHsvGroupWho.smoothScrollTo(mChipGroupWho.getWidth(), 0));
+    }
 
-        mElDate = findViewById(R.id.el_date);
-        mTvDate = findViewById(R.id.tv_date);
-        mTvDate.setOnClickListener(v -> toggleElDate());
+    private void setupCheckbox(boolean isBirthday) {
+        mCbLunar = findViewById(R.id.cb_lunar);
+        mCbBirthday = findViewById(R.id.cb_birthday);
+        mCbBirthday.setOnCheckedChangeListener(this::onBirthdayChange);
+        mCbBirthday.setChecked(isBirthday);
+        mCbLunar.setChecked(mMemorialDay.isLunar());
+        mCbLunar.setOnCheckedChangeListener(this::onLunarChange);
+    }
 
+    @SuppressLint("ClickableViewAccessibility")
+    private void setupNameAndDetails(boolean isBirthday) {
         View.OnTouchListener listener = (v, event) -> {
             mElDate.collapse();
             mElWho.collapse();
@@ -121,18 +122,38 @@ public class MemorialFragment extends BaseFragment {
         };
         mEtName = findViewById(R.id.et_name);
         mEtName.setOnTouchListener(listener);
+        if (!isBirthday) {
+            mEtName.setText(mMemorialDay.getName());
+        }
         mEtDetail = findViewById(R.id.et_detail);
+        mEtDetail.setText(mMemorialDay.getDetails());
         mEtDetail.setOnTouchListener(listener);
+    }
 
-        mCbLunar = findViewById(R.id.cb_lunar);
-        mCbBirthday = findViewById(R.id.cb_birthday);
-        mCbBirthday.setOnCheckedChangeListener(this::onBirthdayChange);
-            mCbLunar.setOnCheckedChangeListener(this::onLunarChange);
-        setupNumberPicker();
+    private void setupTvDate() {
+        mElDate = findViewById(R.id.el_date);
+        mTvDate = findViewById(R.id.tv_date);
+        mTvDate.setOnClickListener(v -> toggleElDate());
+    }
 
-        findViewById(R.id.ib_done).setOnClickListener(this::done);
-        mHsvGroupWho.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom)
-                -> mHsvGroupWho.smoothScrollTo(mChipGroupWho.getWidth(), 0));
+    private void initData() {
+        Bundle arguments = getArguments();
+        mMemorialDay = (MemorialDay) arguments.getSerializable(MEMORIAL_DAY);
+        if (mMemorialDay == null) {
+            mMemorialDay = new MemorialDay();
+            Day day = (Day) arguments.getSerializable(DAY);
+            mCalendar = Calendar.getInstance();
+            if (day != null) {
+                mCalendar.set(Calendar.YEAR, day.getYear());
+                mCalendar.set(Calendar.MONTH, day.getMonth() - 1);
+                mCalendar.set(Calendar.DAY_OF_MONTH, day.getDayOfMonth());
+            }
+        } else {
+            mCalendar = Calendar.getInstance();
+            mCalendar.set(Calendar.YEAR, mMemorialDay.getYear());
+            mCalendar.set(Calendar.MONTH, mMemorialDay.getMonth() - 1);
+            mCalendar.set(Calendar.DAY_OF_MONTH, mMemorialDay.getDay());
+        }
     }
 
     private void setupTvWho() {
@@ -147,7 +168,7 @@ public class MemorialFragment extends BaseFragment {
         Set<String> customPeople = Setting.memorial_custom_people;
         String who = mMemorialDay.getWho();
         if (who != null) {
-            String[] whos = who.split(FLAG);
+            String[] whos = who.split(Global.FLAG);
             for (String name : whos) {
                 Chip chip = new Chip(mHostActivity);
                 chip.setCheckable(false);
@@ -217,7 +238,7 @@ public class MemorialFragment extends BaseFragment {
         mMemorialDay.setYear(mCalendar.get(Calendar.YEAR));
         StringBuilder who = new StringBuilder();
         for (String name : mSelecteds) {
-            who.append(name).append(FLAG);
+            who.append(name).append(Global.FLAG);
         }
         if (mCbLunar.isChecked()) {
             mMemorialDay.setLunar(true);
@@ -225,11 +246,11 @@ public class MemorialFragment extends BaseFragment {
             mMemorialDay.setLunar(lunar.getLunarDate());
         }
         mMemorialDay.setWho(who.toString());
-        mMemorialDay.setName(mCbBirthday.isChecked() ? "生日" : mOriginName);
+        mMemorialDay.setName(mCbBirthday.isChecked() ? "生日" : mEtName.getText().toString());
         mMemorialDay.setDetails(mEtDetail.getText().toString());
-        if(mMemorialDay.getId() > 0){
+        if (mMemorialDay.getId() > 0) {
             MemorialDayDao.getInstance(mHostActivity).update(mMemorialDay);
-        }else {
+        } else {
             MemorialDayDao.getInstance(mHostActivity).insert(mMemorialDay);
         }
         showSnackbar("添加成功");
@@ -241,6 +262,11 @@ public class MemorialFragment extends BaseFragment {
         mElWho.collapse();
         mElDate.collapse();
         hideSoftInput();
+    }
+
+    private void hideSoftInput() {
+        mEtDetail.requestFocus();
+        new Handler().post(this::hideSoftInputReal);
     }
 
     private void onBirthdayChange(CompoundButton button, boolean isChecked) {
@@ -336,12 +362,6 @@ public class MemorialFragment extends BaseFragment {
         if (mSelecteds.isEmpty()) {
             mTvWhoHint.setVisibility(View.VISIBLE);
         }
-    }
-
-
-    private void hideSoftInput() {
-        mEtDetail.requestFocus();
-        new Handler().post(this::hideSoftInputReal);
     }
 
     private void hideSoftInputReal() {

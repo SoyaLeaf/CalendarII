@@ -42,6 +42,12 @@
     <string name="confirm_delete">是否删除该事件？</string>
     <string name="long_press_edit">长按编辑</string>
     <string name="custom_symbol_comment">自定义符号备注</string>
+    <string name="thing">事件</string>
+    <string name="memorial_day">纪念日</string>
+    <string name="and">和</string>
+    <string name="name_separator">、</string>
+    <string name="of">的</string>
+    <string name="date_format">%d月%d日</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

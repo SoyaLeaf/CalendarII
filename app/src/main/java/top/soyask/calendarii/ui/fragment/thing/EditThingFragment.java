@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.fragment.event;
+package top.soyask.calendarii.ui.fragment.thing;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -26,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

@@ -116,6 +116,9 @@ public class SqlGenerator {
                 continue;
             }
             String key = convertWordWithUnderline(fieldName);
+            if (value.equals(Boolean.TRUE) || value.equals(Boolean.FALSE)) {
+                value = (Boolean)value ? 1:0;
+            }
             values.put(key, String.valueOf(value));
         }
         return values;

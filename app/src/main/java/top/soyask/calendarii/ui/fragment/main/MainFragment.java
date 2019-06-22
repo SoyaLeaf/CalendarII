@@ -43,8 +43,8 @@ import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
-import top.soyask.calendarii.ui.fragment.event.AllThingsFragment;
-import top.soyask.calendarii.ui.fragment.event.EditThingFragment;
+import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
+import top.soyask.calendarii.ui.fragment.list.AllListFragment;
 import top.soyask.calendarii.ui.fragment.memorial.MemorialFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
@@ -199,8 +199,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             mTvEvent.setText(things.get(0).getDetail());
         }
         mIBtnMore.setOnClickListener(v -> {
-            AllThingsFragment allEventFragment = AllThingsFragment.newInstance(title);
-            addFragment(allEventFragment);
+            AllListFragment allListFragment = AllListFragment.newInstance();
+            addFragment(allListFragment);
         });
         mAnimatorHandler.sendEmptyMessage(View.VISIBLE);
     }
@@ -240,8 +240,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 skipToday();
                 break;
             case R.id.menu_all_event:
-                AllThingsFragment allThingsFragment = AllThingsFragment.newInstance(null);
-                addFragment(allThingsFragment);
+                AllListFragment allListFragment = AllListFragment.newInstance();
+                addFragment(allListFragment);
                 break;
             case R.id.menu_select:
                 showSelectDialog();

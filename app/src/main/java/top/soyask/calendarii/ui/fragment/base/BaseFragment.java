@@ -86,7 +86,7 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 添加新的Fragment到页面最上层
      *
-     * @param fragment
+     * @param fragment 
      */
     protected void addFragment(Fragment fragment) {
         getFragmentManager()

@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.fragment.event;
+package top.soyask.calendarii.ui.fragment.thing;
 
 import android.animation.Animator;
 import android.annotation.TargetApi;

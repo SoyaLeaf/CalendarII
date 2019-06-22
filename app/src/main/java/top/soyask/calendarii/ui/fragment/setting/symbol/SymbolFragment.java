@@ -59,7 +59,7 @@ public class SymbolFragment extends BaseFragment {
         @NonNull
         @Override
         public SymbolViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(mHostActivity).inflate(R.layout.recycer_item_symbol, null);
+            View view = LayoutInflater.from(mHostActivity).inflate(R.layout.recycler_item_symbol, null);
             return new SymbolViewHolder(view);
         }
 
