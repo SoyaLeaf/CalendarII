@@ -38,29 +38,13 @@ public class MemorialDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MemorialDay memorialDay = mMemorialDays.get(position);
         String who = memorialDay.getWho();
-        String title = getTitle(memorialDay, who, holder.itemView.getResources());
+        Resources resources = holder.itemView.getResources();
+        String title = getTitle(memorialDay, who, resources);
         String details = memorialDay.getDetails();
-        String date = holder.itemView.getResources()
+        String date = resources
                 .getString(R.string.date_format, memorialDay.getMonth(), memorialDay.getDay());
         String lunar = memorialDay.getLunar();
-        if (memorialDay.isLunar()) {
-            date += " " + lunar;
-        } else {
-            Calendar calendar = Calendar.getInstance(Locale.getDefault());
-            int year = calendar.get(Calendar.YEAR);
-            calendar.setTimeInMillis(0);
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, memorialDay.getMonth() - 1);
-            calendar.set(Calendar.DAY_OF_MONTH, memorialDay.getDay());
-            long days = calendar.getTimeInMillis() / DateUtils.DAY_IN_MILLIS;
-            long currentDays = System.currentTimeMillis() / DateUtils.DAY_IN_MILLIS;
-            int delta = Long.valueOf(currentDays - days).intValue();
-            if (delta < 0) {
-                date += String.format(Locale.getDefault(), " 还有%d天", -delta);
-            } else if (delta > 0) {
-                date += String.format(Locale.getDefault(), " 已过了%d天", delta);
-            }
-        }
+        date = getDateText(memorialDay, resources, date, lunar);
         MemorialDayViewHolder viewHolder = (MemorialDayViewHolder) holder;
         viewHolder.tvTitle.setText(title);
         viewHolder.tvDate.setText(date);
@@ -75,6 +59,46 @@ public class MemorialDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 v -> mMemorialDayActionListener.onMemorialDayClick(position, memorialDay));
         viewHolder.itemView.setOnLongClickListener(
                 v -> mMemorialDayActionListener.onMemorialDayLongClick(position, memorialDay));
+    }
+
+    private String getDateText(MemorialDay memorialDay, Resources resources, String date, String lunar) {
+        if (memorialDay.isLunar()) {
+            Calendar calendar = Calendar.getInstance(Locale.getDefault());
+            calendar.set(Calendar.YEAR, memorialDay.getYear());
+            calendar.set(Calendar.MONTH, memorialDay.getMonth() - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, memorialDay.getDay());
+            long days = calendar.getTimeInMillis() / DateUtils.DAY_IN_MILLIS;
+            long currentDays = System.currentTimeMillis() / DateUtils.DAY_IN_MILLIS;
+            int delta = Long.valueOf(currentDays - days).intValue();
+            date += " " + lunar;
+            if (delta > 0) {
+                date += " " + resources.getString(R.string.it_has_been_xx_days, delta);
+            }
+        } else {
+            Calendar calendar = Calendar.getInstance(Locale.getDefault());
+            int year = calendar.get(Calendar.YEAR);
+            calendar.setTimeInMillis(0);
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, memorialDay.getMonth() - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, memorialDay.getDay());
+            long days = calendar.getTimeInMillis() / DateUtils.DAY_IN_MILLIS;
+            long currentDays = System.currentTimeMillis() / DateUtils.DAY_IN_MILLIS;
+            int delta = Long.valueOf(currentDays - days).intValue();
+            int deltaYear = year - memorialDay.getYear();
+            if (deltaYear > 0) {
+                if (delta == 0) {
+                    date += " " + resources.getString(R.string.xx_anniversary, deltaYear);
+                } else {
+                    date += " " + resources.getString(R.string.offset_of_year, deltaYear);
+                }
+            }
+            if (delta < 0) {
+                date += " " + resources.getString(R.string.xx_day_ago, -delta);
+            } else if (delta > 0) {
+                date += " " + resources.getString(R.string.has_been_xx_days, delta);
+            }
+        }
+        return date;
     }
 
     private String getTitle(MemorialDay memorialDay, String who, Resources resources) {

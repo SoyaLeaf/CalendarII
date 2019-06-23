@@ -75,7 +75,11 @@
     <string name="personalise">个性化</string>
     <string name="add_success">添加成功</string>
     <string name="delete_all">删除全部</string>
-    <string name="wait">请稍等...</string>
+    <string name="wait">请稍等…</string>
+    <string name="offset_of_year">距%d周年</string>
+    <string name="xx_day_ago">还有%d天</string>
+    <string name="has_been_xx_days">已过了%d天</string>
+    <string name="xx_anniversary">%d周年</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>
