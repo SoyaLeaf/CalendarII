@@ -13,7 +13,7 @@
         app:title="备份"
         app:titleTextColor="@android:color/white" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_backup"
         android:layout_width="288dp"
         android:layout_height="72dp"
@@ -22,7 +22,7 @@
         android:text="备份"
         android:textColor="@color/text_color_primary_light" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_import"
         android:layout_width="288dp"
         android:layout_height="72dp"
@@ -31,7 +31,7 @@
         android:text="导入"
         android:textColor="@color/text_color_primary_light" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_clear"
         android:layout_width="288dp"
         android:layout_height="72dp"

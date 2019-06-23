@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("复制并上报", (DialogInterface dialog, int which) -> {
                         copyAndSend(file);
                     })
-                    .setNegativeButton("取消", null)
+                    .setNegativeButton(R.string.cancel, null)
                     .setOnDismissListener(dialog -> file.delete())
                     .show();
         }

@@ -67,7 +67,7 @@
                 android:layout_margin="8dp"
                 android:text="深色主题" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_font"
                 android:layout_width="56dp"
                 android:layout_height="56dp"

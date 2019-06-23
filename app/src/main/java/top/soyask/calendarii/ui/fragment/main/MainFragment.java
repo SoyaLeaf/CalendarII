@@ -127,7 +127,11 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         mIvYear = findViewById(R.id.iv_year);
         mIvBirth = findViewById(R.id.tv_birth);
         mFlBirth = findViewById(R.id.fl_birth);
-        findViewById(R.id.fab_show_action).setOnClickListener(v -> {
+        findViewById(R.id.fab_show_action).setOnClickListener(getFabOnClickListener());
+    }
+
+    private View.OnClickListener getFabOnClickListener() {
+        return v -> {
             FloatActionFragment fragment = FloatActionFragment.newInstance(mSelectedDay);
             fragment.setCallback(new FloatActionFragment.ActionClickCallback() {
                 @Override
@@ -148,7 +152,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                     .add(R.id.main, fragment)
                     .addToBackStack(fragment.getClass().getSimpleName())
                     .commit();
-        });
+        };
     }
 
     private void setupCard() {

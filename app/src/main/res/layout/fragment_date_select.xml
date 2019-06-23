@@ -5,11 +5,11 @@
     android:padding="8dp"
     >
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_confirm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:minHeight="0dp"
         android:minWidth="0dp"
@@ -18,7 +18,7 @@
         android:text="@string/confirm"
         android:textColor="@color/text_color_sub_dark" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:descendantFocusability="blocksDescendants"
-            android:theme="@style/NumberPicker"></NumberPicker>
+            android:theme="@style/NumberPicker" />
 
         <NumberPicker
             android:id="@+id/np_month"
@@ -55,7 +55,7 @@
             android:clickable="false"
             android:descendantFocusability="blocksDescendants"
             android:focusable="false"
-            android:theme="@style/NumberPicker"></NumberPicker>
+            android:theme="@style/NumberPicker" />
 
         <NumberPicker
             android:id="@+id/np_day"
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:descendantFocusability="blocksDescendants"
-            android:theme="@style/NumberPicker"></NumberPicker>
+            android:theme="@style/NumberPicker" />
     </LinearLayout>
 
 

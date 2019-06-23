@@ -72,7 +72,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_reset_dpi"
                     style="@style/reset_btn"
                     android:onClick="reset"
@@ -96,7 +96,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_reset_day_size"
                     style="@style/reset_btn"
                     android:onClick="reset"
@@ -119,7 +119,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_reset_number"
                     style="@style/reset_btn"
                     android:onClick="reset"
@@ -142,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_reset_lunar"
                     style="@style/reset_btn"
                     android:onClick="reset"
@@ -164,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_reset_week"
                     style="@style/reset_btn"
                     android:onClick="reset"
@@ -187,7 +187,7 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp" />
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_reset_holiday"
                     style="@style/reset_btn"
                     android:onClick="reset"

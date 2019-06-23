@@ -51,7 +51,7 @@
             android:layout_marginBottom="16dp"
             android:text="Copyright© 2017 米小饭" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_os"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:text="开源相关" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_donate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

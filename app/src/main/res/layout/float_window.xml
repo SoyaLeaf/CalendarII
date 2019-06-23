@@ -27,7 +27,7 @@
                 android:text="小部件调节"
                 android:textSize="@dimen/appbar_font_size" />
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_reset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
