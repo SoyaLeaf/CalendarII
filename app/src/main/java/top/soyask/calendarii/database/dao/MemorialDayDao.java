@@ -7,6 +7,8 @@ import java.util.List;
 
 import top.soyask.calendarii.database.DBUtils;
 import top.soyask.calendarii.entity.MemorialDay;
+import top.soyask.calendarii.ui.eventbus.Messages;
+import top.soyask.calendarii.utils.EventBusDefault;
 import top.soyask.calendarii.utils.SqlGenerator;
 
 public class MemorialDayDao {
@@ -31,22 +33,23 @@ public class MemorialDayDao {
     public void insert(MemorialDay memorialDay) {
         ContentValues values = SqlGenerator.getContentValues(memorialDay);
         mDbUtils.insert(TABLE, null, values);
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public void update(MemorialDay memorialDay) {
         ContentValues values = SqlGenerator.getContentValues(memorialDay);
         mDbUtils.update(TABLE, values, "id = ?", memorialDay.getId());
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public void delete(int id) {
         mDbUtils.delete(TABLE, "id = ?", id);
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public void delete(MemorialDay memorialDay) {
         mDbUtils.delete(TABLE, "id = ?", memorialDay.getId());
-    }
-    public void deleteAll() {
-        mDbUtils.delete(TABLE, null);
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public int count() {

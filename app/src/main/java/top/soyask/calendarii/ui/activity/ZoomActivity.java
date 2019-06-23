@@ -16,8 +16,10 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.task.LoadDataTask;
+import top.soyask.calendarii.ui.eventbus.Messages;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.view.CalendarView;
+import top.soyask.calendarii.utils.EventBusDefault;
 
 import static android.content.res.Configuration.DENSITY_DPI_UNDEFINED;
 import static top.soyask.calendarii.MainActivity.THEMES;
@@ -193,7 +195,7 @@ public class ZoomActivity extends AppCompatActivity
                     Setting.setting(this, Global.SETTING_DAY_HOLIDAY_TEXT_SIZE, progress);
                     break;
             }
-            sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+            EventBusDefault.post(Messages.createUpdateUIMessage());
             updateCalendarSetting();
         }
     }
@@ -260,7 +262,7 @@ public class ZoomActivity extends AppCompatActivity
                 break;
         }
         setupSeekBar();
-        sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+        EventBusDefault.post(Messages.createUpdateUIMessage());
         updateCalendarSetting();
     }
 

@@ -8,6 +8,8 @@ import java.util.Locale;
 
 import top.soyask.calendarii.database.DBUtils;
 import top.soyask.calendarii.entity.Thing;
+import top.soyask.calendarii.ui.eventbus.Messages;
+import top.soyask.calendarii.utils.EventBusDefault;
 import top.soyask.calendarii.utils.SqlGenerator;
 
 public class ThingDao {
@@ -41,27 +43,23 @@ public class ThingDao {
     public void insert(Thing thing) {
         ContentValues values = SqlGenerator.getContentValues(thing);
         mDbUtils.insert(TABLE, null, values);
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public void update(Thing thing) {
         ContentValues values = SqlGenerator.getContentValues(thing);
         mDbUtils.update(TABLE, values, "id = ?", thing.getId());
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public void delete(int id) {
         mDbUtils.delete(TABLE, "id = ?", id);
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public void delete(Thing thing) {
         mDbUtils.delete(TABLE, "id = ?", thing.getId());
-    }
-
-    public void deleteDone() {
-        mDbUtils.delete(TABLE, "done = 1");
-    }
-
-    public void deleteAll() {
-        mDbUtils.delete(TABLE, null);
+        EventBusDefault.post(Messages.createUpdateDataMessage());
     }
 
     public int count() {

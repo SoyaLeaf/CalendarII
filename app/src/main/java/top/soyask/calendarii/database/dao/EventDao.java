@@ -2,21 +2,17 @@ package top.soyask.calendarii.database.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.annotation.NonNull;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import top.soyask.calendarii.database.DBUtils;
 import top.soyask.calendarii.entity.Event;
-import top.soyask.calendarii.ui.fragment.month.MonthFragment;
-import top.soyask.calendarii.ui.widget.WidgetManager;
 
 /**
  * Created by mxf on 2017/8/16.
@@ -25,18 +21,16 @@ public class EventDao {
     public static final String TABLE = "EVENT";
 
     private DBUtils mDBUtils;
-    private WeakReference<Context> mContext;
     private static EventDao mEventDao;
 
-    private EventDao(DBUtils dBUtils, Context context) {
+    private EventDao(DBUtils dBUtils) {
         this.mDBUtils = dBUtils;
-        this.mContext = new WeakReference<>(context);
     }
 
     public static EventDao getInstance(Context context) {
         if (mEventDao == null) {
             DBUtils dbUtils = DBUtils.getInstance(context);
-            mEventDao = new EventDao(dbUtils, context);
+            mEventDao = new EventDao(dbUtils);
         }
         return mEventDao;
     }
@@ -51,17 +45,6 @@ public class EventDao {
         values.put("type", event.getType());
         database.insert(TABLE, null, values);
         database.close();
-        sendBroadcast(MonthFragment.ADD_EVENT);
-    }
-
-    private void sendBroadcast(String action) {
-        Context context = mContext.get();
-        if (context != null) {
-            Intent intent = new Intent();
-            intent.setAction(action);
-            context.sendBroadcast(intent);
-            WidgetManager.updateAllWidget(context);
-        }
     }
 
     public void update(Event event) {
@@ -74,42 +57,24 @@ public class EventDao {
         values.put("type", event.getType());
         database.update(TABLE, values, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
-        sendBroadcast(MonthFragment.UPDATE_EVENT);
     }
 
     public void delete(Event event) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(TABLE, "id = ?", new String[]{String.valueOf(event.getId())});
         database.close();
-        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void delete(String title) {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(TABLE, "title = ?", new String[]{title});
         database.close();
-        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
     public void deleteAll() {
         SQLiteDatabase database = mDBUtils.getWritableDatabase();
         database.delete(TABLE, null, null);
         database.close();
-        sendBroadcast(MonthFragment.DELETE_EVENT);
-    }
-
-    public void deleteComplete() {
-        SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(TABLE, "isComplete = ?", new String[]{String.valueOf(1)});
-        database.close();
-        sendBroadcast(MonthFragment.DELETE_EVENT);
-    }
-
-    public void deleteComplete(String title) {
-        SQLiteDatabase database = mDBUtils.getWritableDatabase();
-        database.delete(TABLE, "isComplete = ? and title = ?", new String[]{String.valueOf(1), title});
-        database.close();
-        sendBroadcast(MonthFragment.DELETE_EVENT);
     }
 
 
@@ -142,20 +107,6 @@ public class EventDao {
 
     public List<Event> query(String title) {
         return Collections.emptyList();
-    }
-
-    @NonNull
-    private List<Event> queryByTitle(String title) {
-        SQLiteDatabase database = mDBUtils.getReadableDatabase();
-        Cursor cursor = database.query(TABLE, null, "title = ?", new String[]{title}, null, null, "title");
-        List<Event> events = new ArrayList<>();
-        while (cursor.moveToNext()) {
-            Event event = map2Event(cursor);
-            events.add(event);
-        }
-        cursor.close();
-        database.close();
-        return events;
     }
 
     /**

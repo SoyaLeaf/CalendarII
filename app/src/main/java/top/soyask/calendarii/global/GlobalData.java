@@ -53,7 +53,6 @@ public class GlobalData {
                 BIRTHDAY.put(when, birthdayList);
             }
         }
-        context.sendBroadcast(new Intent(MonthFragment.UPDATE_EVENT));
     }
 
     public synchronized static void loadHoliday(Context context) {

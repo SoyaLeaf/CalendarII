@@ -1,21 +1,21 @@
 package top.soyask.calendarii.ui.fragment.month;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import androidx.annotation.DimenRes;
 import androidx.annotation.Nullable;
-import android.view.View;
-
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.task.LoadDataTask;
 import top.soyask.calendarii.task.PendingAction;
+import top.soyask.calendarii.ui.eventbus.Messages;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.view.CalendarView;
+import top.soyask.calendarii.utils.EventBusDefault;
 
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
@@ -24,19 +24,11 @@ public class MonthFragment extends BaseFragment {
 
     private static final String TAG = "MonthFragment";
 
-    public static final String ADD_EVENT = "add_event";
-    public static final String DELETE_EVENT = "delete_event";
-    public static final String UPDATE_EVENT = "update_event";
-    public static final String UPDATE_UI = "update_ui";
-    public static final String WEEK_SETTING = "week_setting";
-    public static final String SKIP = "skip";
-    public static final String SELECTED = "selected";
     private static final String POSITION = "position";
 
     private int mYear;
     private int mMonth;
     private OnDaySelectListener mOnDaySelectListener;
-    private MonthReceiver mMonthReceiver;
     private PendingAction mPendingAction;
     private CalendarView mCalendarView;
     private LoadDataTask mLoadDataTask;
@@ -60,6 +52,7 @@ public class MonthFragment extends BaseFragment {
         if (getArguments() != null) {
             initArguments();
         }
+        EventBusDefault.register(this);
     }
 
     private void initArguments() {
@@ -69,40 +62,15 @@ public class MonthFragment extends BaseFragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupReceiver();
-    }
-
-    private void setupReceiver() {
-        mMonthReceiver = new MonthReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ADD_EVENT);
-        filter.addAction(UPDATE_EVENT);
-        filter.addAction(DELETE_EVENT);
-        filter.addAction(UPDATE_UI);
-        filter.addAction(SKIP);
-        filter.addAction(SELECTED);
-        filter.addAction(WEEK_SETTING);
-        mHostActivity.registerReceiver(mMonthReceiver, filter);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mHostActivity.unregisterReceiver(mMonthReceiver);
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        mMonthReceiver = null;
         if (mLoadDataTask != null) {
             mLoadDataTask.cancel(true);
             mLoadDataTask = null;
         }
         mOnDaySelectListener = null;
         System.gc();
+        EventBusDefault.unregister(this);
     }
 
     protected void setupUI() {
@@ -124,10 +92,8 @@ public class MonthFragment extends BaseFragment {
                     if (day instanceof Day) {
                         Day d = (Day) day;
                         mOnDaySelectListener.onSelected(d);
-                        Intent intent = new Intent(SELECTED);
-                        intent.putExtra("year", d.getYear());
-                        intent.putExtra("month", d.getMonth());
-                        mHostActivity.sendBroadcast(intent);
+                        EventBusDefault.post(Messages
+                                .createSelectedMessage(d.getYear(), d.getMonth(),d.getDayOfMonth()));
                     }
                 }
             }
@@ -159,55 +125,45 @@ public class MonthFragment extends BaseFragment {
         this.mOnDaySelectListener = onDaySelectListener;
     }
 
-    private class MonthReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (mCalendarView != null && action != null) {
-                switch (action) {
-                    case SKIP: {
-                        int year = intent.getIntExtra("year", 0);
-                        int month = intent.getIntExtra("month", 0);
-                        int day = intent.getIntExtra("day", 0);
-                        boolean isCurrent = (year == mYear && month == mMonth);
-                        if (isCurrent) {
-                            mCalendarView.selectCurrentMonth(day);
-                        }
-                    }
-                    break;
-                    case SELECTED: {
-                        int year = intent.getIntExtra("year", 0);
-                        int month = intent.getIntExtra("month", 0);
-                        boolean isCurrent = (year == mYear && month == mMonth);
-                        if (!isCurrent) {
-                            mCalendarView.select(-1);
-                        }
-                    }
-                    break;
-                    case WEEK_SETTING:
-                        mCalendarView.setFirstDayOffset(Setting.date_offset)
-                                .postInvalidate();
-                    case UPDATE_EVENT:
-                    case ADD_EVENT:
-                    case DELETE_EVENT:
-                        LoadDataTask task = new LoadDataTask(mHostActivity, mCalendarView, mPendingAction);
-                        task.execute(mYear, mMonth);
-                        break;
-                    case UPDATE_UI:
-                        mCalendarView.setFirstDayOffset(Setting.date_offset)
-                                .setDateCircleSize(Setting.day_size == -1 ? getDimension(R.dimen.item_day_size) : Setting.day_size)
-                                .setDateTextSize(Setting.day_number_text_size == -1 ? getDimension(R.dimen.date_text_size) : Setting.day_number_text_size)
-                                .setDateBottomTextSize(Setting.day_lunar_text_size == -1 ? getDimension(R.dimen.bottom_text_size) : Setting.day_lunar_text_size)
-                                .setHolidayTextSize(Setting.day_holiday_text_size == -1 ? getDimension(R.dimen.holiday_text_size) : Setting.day_holiday_text_size)
-                                .setWeekTextSize(Setting.day_week_text_size == -1 ? getDimension(R.dimen.week_text_size) : Setting.day_week_text_size)
-                                .setReplenish(Setting.replenish)
-                                .setUseAnimation(Setting.select_anim)
-                                .postInvalidate();
-                        break;
-                }
-            }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Messages.SkipMessage message) {
+        boolean isCurrent = (message.year == mYear && message.month == mMonth);
+        if (isCurrent) {
+            mCalendarView.selectCurrentMonth(message.day);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Messages.SelectedMessage message) {
+        boolean isCurrent = message.year == mYear && message.month == mMonth;
+        if (!isCurrent) {
+            mCalendarView.select(-1);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Messages.WeekSettingMessage message) {
+        mCalendarView.setFirstDayOffset(Setting.date_offset)
+                .postInvalidate();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Messages.UpdateDataMessage message) {
+        LoadDataTask task = new LoadDataTask(mHostActivity, mCalendarView, mPendingAction);
+        task.execute(mYear, mMonth);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Messages.UpdateUIMessage message) {
+        mCalendarView.setFirstDayOffset(Setting.date_offset)
+                .setDateCircleSize(Setting.day_size == -1 ? getDimension(R.dimen.item_day_size) : Setting.day_size)
+                .setDateTextSize(Setting.day_number_text_size == -1 ? getDimension(R.dimen.date_text_size) : Setting.day_number_text_size)
+                .setDateBottomTextSize(Setting.day_lunar_text_size == -1 ? getDimension(R.dimen.bottom_text_size) : Setting.day_lunar_text_size)
+                .setHolidayTextSize(Setting.day_holiday_text_size == -1 ? getDimension(R.dimen.holiday_text_size) : Setting.day_holiday_text_size)
+                .setWeekTextSize(Setting.day_week_text_size == -1 ? getDimension(R.dimen.week_text_size) : Setting.day_week_text_size)
+                .setReplenish(Setting.replenish)
+                .setUseAnimation(Setting.select_anim)
+                .postInvalidate();
     }
 
     public interface OnDaySelectListener {

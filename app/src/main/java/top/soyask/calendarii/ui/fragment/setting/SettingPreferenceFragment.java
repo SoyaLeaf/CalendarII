@@ -25,7 +25,6 @@ import androidx.annotation.AnimatorRes;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreference;
 import top.soyask.calendarii.R;
@@ -33,12 +32,13 @@ import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.GlobalData;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.activity.ZoomActivity;
-import top.soyask.calendarii.ui.fragment.month.MonthFragment;
+import top.soyask.calendarii.ui.eventbus.Messages;
 import top.soyask.calendarii.ui.fragment.setting.symbol.SymbolFragment;
 import top.soyask.calendarii.ui.fragment.setting.theme.ThemeFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.PicSetFragment;
 import top.soyask.calendarii.ui.fragment.setting.widget.TransparentWidgetFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
+import top.soyask.calendarii.utils.EventBusDefault;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -131,7 +131,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
             if (isChecked != Setting.replenish) {
                 Setting.replenish = isChecked;
                 Setting.setting(getActivity(), Global.SETTING_REPLENISH, isChecked);
-                getActivity().sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+                EventBusDefault.post(Messages.createUpdateUIMessage());
             }
             preference.setChecked(isChecked);
             return false;
@@ -147,7 +147,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
             if (isChecked != Setting.select_anim) {
                 Setting.select_anim = isChecked;
                 Setting.setting(getActivity(), Global.SETTING_SELECT_ANIM, isChecked);
-                getActivity().sendBroadcast(new Intent(MonthFragment.UPDATE_UI));
+                EventBusDefault.post(Messages.createUpdateUIMessage());
             }
             preference.setChecked(isChecked);
             return false;
@@ -205,7 +205,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
     @Override
     public void onSuccess() {
         Snackbar.make(getView(), R.string.sync_success, Snackbar.LENGTH_SHORT).show();
-        getActivity().sendBroadcast(new Intent(MonthFragment.UPDATE_EVENT));
+        EventBusDefault.post(Messages.createUpdateDataMessage());
         Setting.setting(getActivity(), Global.SETTING_HOLIDAY, new HashSet<>(GlobalData.HOLIDAY));
         Setting.setting(getActivity(), Global.SETTING_WORKDAY, new HashSet<>(GlobalData.WORKDAY));
         mHandler.sendEmptyMessage(CANCEL);
@@ -241,10 +241,10 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
             try {
                 switch (msg.what) {
                     case UPDATE:
-                        fragment.getActivity().sendBroadcast(new Intent(MonthFragment.WEEK_SETTING));
+                        EventBusDefault.post(Messages.createWeekSettingMessage());
                         break;
                     case WAIT:
-                        mProgressDialog = ProgressDialog.show(fragment.getContext(), null, "请稍等...");
+                        mProgressDialog = ProgressDialog.show(fragment.getContext(), null, fragment.getString(R.string.wait));
                         break;
                     case CANCEL:
                         if (mProgressDialog != null) {

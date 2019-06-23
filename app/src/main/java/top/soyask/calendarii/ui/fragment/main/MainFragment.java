@@ -23,6 +23,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.List;
@@ -39,6 +42,7 @@ import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
+import top.soyask.calendarii.ui.eventbus.Messages;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
@@ -50,6 +54,7 @@ import top.soyask.calendarii.ui.fragment.setting.SettingPreferenceFragment;
 import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.EraUtils;
+import top.soyask.calendarii.utils.EventBusDefault;
 import top.soyask.calendarii.utils.MonthUtils;
 
 import static java.util.Calendar.DAY_OF_MONTH;
@@ -78,7 +83,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     private View mPoint;
     private ImageView mIvYear;
     private View mIBtnMore;
-    private MainReceiver mMainReceiver;
     private MenuItem mItemToday;
     private Animator mEventViewAnimator;
     private View mLeftBottom;
@@ -403,22 +407,18 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setupReceiver();
+        EventBusDefault.register(this);
     }
 
 
-    private void setupReceiver() {
-        mMainReceiver = new MainReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(MonthFragment.ADD_EVENT);
-        filter.addAction(MonthFragment.UPDATE_EVENT);
-        filter.addAction(MonthFragment.DELETE_EVENT);
-        mHostActivity.registerReceiver(mMainReceiver, filter);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Messages.UpdateDataMessage message) {
+        onSelected(mSelectedDay);
     }
 
     @Override
     public void onDestroy() {
-        mHostActivity.unregisterReceiver(mMainReceiver);
+        EventBusDefault.unregister(this);
         super.onDestroy();
     }
 
@@ -444,11 +444,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         int year = position / MONTH_COUNT + YEAR_START_REAL;
         int month = position % MONTH_COUNT + 1;
         mViewPager.setCurrentItem(position);
-        Intent intent = new Intent(MonthFragment.SKIP);
-        intent.putExtra("year", year);
-        intent.putExtra("month", month);
-        intent.putExtra("day", dayOfMonth);
-        mHostActivity.sendBroadcast(intent);
+        EventBusDefault.post(Messages.createSkipMessage(year, month, dayOfMonth));
     }
 
     private void skipToOneDay(int year, int month, int day) {
@@ -464,7 +460,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     public class MainReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            onSelected(mSelectedDay);
+
         }
     }
 
