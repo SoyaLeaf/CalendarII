@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,10 +35,11 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.database.dao.ThingDao;
-import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.LunarDay;
+import top.soyask.calendarii.entity.MemorialDay;
 import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
 import top.soyask.calendarii.ui.eventbus.Messages;
@@ -52,6 +52,7 @@ import top.soyask.calendarii.ui.fragment.memorial.MemorialFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingPreferenceFragment;
 import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
+import top.soyask.calendarii.ui.widget.WidgetManager;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.EraUtils;
 import top.soyask.calendarii.utils.EventBusDefault;
@@ -117,7 +118,8 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void initSelectDay() {
-        mSelectedDay = MonthUtils.generateDay(mCalendar, ThingDao.getInstance(mHostActivity));
+        mSelectedDay = MonthUtils.generateDay(
+                mCalendar, ThingDao.getInstance(mHostActivity), MemorialDayDao.getInstance(mHostActivity));
         mAnimatorHandler.post(this::skipToday);
     }
 
@@ -200,7 +202,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setupThingView(final String title, List<Thing> things) {
-        if (mSelectedDay.hasBirthday()) {
+        if (mSelectedDay.hasMemorialDay()) {
             String birthdayStr = getBirthdayStr();
             mTvEvent.setText(birthdayStr);
         } else {
@@ -215,10 +217,11 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @NonNull
     private String getBirthdayStr() {
-        List<Birthday> birthdays = mSelectedDay.getBirthdays();
+        if (true) return "";
+        List<MemorialDay> memorialDays = mSelectedDay.getMemorialDays();
         StringBuilder sb = new StringBuilder();
-        for (Birthday birthday : birthdays) {
-            sb.append(birthday.getWho()).append(',');
+        for (MemorialDay memorialDay : memorialDays) {
+            sb.append(memorialDay.getWho()).append(',');
         }
         sb.deleteCharAt(sb.lastIndexOf(",")).append("的生日");
         return sb.toString();
@@ -346,7 +349,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void setBirthday(Day day) {
-        if (day.hasBirthday()) {
+        if (day.hasMemorialDay()) {
             String birthdayStr = getBirthdayStr();
             mIvBirth.setText(birthdayStr);
             mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
@@ -413,6 +416,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Messages.UpdateDataMessage message) {
+        WidgetManager.updateAllWidget(mHostActivity);
         onSelected(mSelectedDay);
     }
 
@@ -653,7 +657,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    if (fragment.mSelectedDay.hasBirthday()) {
+                    if (fragment.mSelectedDay.hasMemorialDay()) {
                         fragment.mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
                     } else {
                         animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point_2);

@@ -55,4 +55,15 @@ public class MemorialDayDao {
     public int count() {
         return mDbUtils.count(TABLE);
     }
+
+    public List<MemorialDay> findMemorialDays(String lunar) {
+        DBUtils.Query query = new DBUtils.Query().setSelection("IS_LUNAR == 1 AND LUNAR = ?", lunar);
+        return mDbUtils.query(TABLE, MemorialDay.class, query);
+    }
+
+    public List<MemorialDay> findMemorialDays(int month, int day) {
+        DBUtils.Query query = new DBUtils.Query()
+                .setSelection("IS_LUNAR == 0 AND MONTH = ? AND DAY = ? ", month, day);
+        return mDbUtils.query(TABLE, MemorialDay.class, query);
+    }
 }

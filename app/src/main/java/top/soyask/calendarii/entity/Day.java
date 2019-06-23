@@ -1,7 +1,6 @@
 package top.soyask.calendarii.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import top.soyask.calendarii.ui.view.CalendarView;
@@ -20,7 +19,7 @@ public class Day implements CalendarView.IDay, Serializable {
     private int month;
     private boolean isHoliday;
     private boolean isWorkday; //是否被调休
-    private List<Birthday> birthdays;
+    private List<MemorialDay> memorialDays;
     private List<Thing> things;
 
     public Day(int year, int month, LunarDay lunar, boolean isToday, int dayOfMonth, int dayOfWeek) {
@@ -36,27 +35,6 @@ public class Day implements CalendarView.IDay, Serializable {
     public Day() {
     }
 
-    public void addBirthday(Birthday birthday) {
-        if (birthday != null) {
-            if (birthdays == null) {
-                birthdays = new ArrayList<>();
-            }
-            birthdays.add(birthday);
-        }
-    }
-
-    public void addBirthday(List<Birthday> birthday) {
-        if (birthday != null) {
-            if (birthdays == null) {
-                birthdays = new ArrayList<>();
-            }
-            birthdays.addAll(birthday);
-        }
-    }
-
-    public List<Birthday> getBirthdays() {
-        return birthdays;
-    }
 
     public Day(int year, int month, int dayOfMonth) {
         this.year = year;
@@ -78,7 +56,15 @@ public class Day implements CalendarView.IDay, Serializable {
 
     @Override
     public String getBottomText() {
-        return hasBirthday() ? BIRTHDAY : getLunar().getSimpleLunar();
+        return hasMemorialDay() ? memorialDays.get(0).getName() : lunar.getSimpleLunar();
+    }
+
+    public void setMemorialDays(List<MemorialDay> memorialDays) {
+        this.memorialDays = memorialDays;
+    }
+
+    public List<MemorialDay> getMemorialDays() {
+        return memorialDays;
     }
 
     public void setDayOfMonth(int dayOfMonth) {
@@ -146,13 +132,13 @@ public class Day implements CalendarView.IDay, Serializable {
         isHoliday = holiday;
     }
 
-    public boolean hasBirthday() {
-        return birthdays != null && !birthdays.isEmpty();
+    public boolean hasMemorialDay() {
+        return memorialDays != null && !memorialDays.isEmpty();
     }
 
     @Override
     public Symbol getSymbol() {
-        if(hasEvent()){
+        if (hasEvent()) {
             Thing thing = things.get(0);
             int type = thing.getType();
             Symbol[] values = Symbol.values();

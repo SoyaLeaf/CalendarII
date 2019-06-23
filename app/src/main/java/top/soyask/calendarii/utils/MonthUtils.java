@@ -1,14 +1,20 @@
 package top.soyask.calendarii.utils;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
+import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.LunarDay;
+import top.soyask.calendarii.entity.MemorialDay;
 import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.global.GlobalData;
 
@@ -95,7 +101,7 @@ public class MonthUtils {
     }
 
     @NonNull
-    public static Day generateDay(Calendar calendar, ThingDao thingDao) {
+    public static Day generateDay(Calendar calendar, ThingDao thingDao, MemorialDayDao memorialDayDao) {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH) + 1;
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
@@ -105,10 +111,18 @@ public class MonthUtils {
 
         LunarDay lunarDay = MonthUtils.getLunar(calendar);
         Day day = new Day(year, month, lunarDay, isToday, dayOfMonth, dayOfWeek);
-        setBirthday(month, dayOfMonth, lunarDay, day);
+        setMemorialDay(memorialDayDao, month, dayOfMonth, lunarDay, day);
         setHoliday(year, month, dayOfMonth, day);
         setThing(thingDao, day);
         return day;
+    }
+
+    private static void setMemorialDay(MemorialDayDao memorialDayDao, int month, int dayOfMonth, LunarDay lunarDay, Day day) {
+        List<MemorialDay> memorialDays = new ArrayList<MemorialDay>() {{
+            addAll(memorialDayDao.findMemorialDays(lunarDay.getLunarDate()));
+            addAll(memorialDayDao.findMemorialDays(month, dayOfMonth));
+        }};
+        day.setMemorialDays(memorialDays);
     }
 
     private static void setHoliday(int year, int month, int dayOfMonth, Day day) {
@@ -121,13 +135,6 @@ public class MonthUtils {
                 .toString();
         day.setHoliday(GlobalData.HOLIDAY.contains(str));
         day.setWorkday(GlobalData.WORKDAY.contains(str));
-    }
-
-    private static void setBirthday(int month, int dayOfMonth, LunarDay lunarDay, Day day) {
-        List<Birthday> birthday0 = GlobalData.BIRTHDAY.get(lunarDay.getLunarDate());
-        List<Birthday> birthday1 = GlobalData.BIRTHDAY.get(month + "月" + dayOfMonth + "日");
-        day.addBirthday(birthday0);
-        day.addBirthday(birthday1);
     }
 
     private static void setThing(ThingDao thingDao, Day day) {

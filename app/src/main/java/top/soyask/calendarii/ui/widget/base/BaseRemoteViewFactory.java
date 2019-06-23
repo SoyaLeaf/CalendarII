@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.global.Setting;
@@ -32,12 +33,14 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
     protected int mEndPosition;
     protected Context mContext;
     protected ThingDao mThingDao;
+    protected MemorialDayDao mMemorialDayDao;
 
     public BaseRemoteViewFactory(Context context) {
         Setting.loadSetting(context);
         this.mContext = context;
         this.mDays = new ArrayList<>();
         this.mThingDao = ThingDao.getInstance(context);
+        this.mMemorialDayDao = MemorialDayDao.getInstance(context);
         setupData();
         updateCount();
     }
@@ -73,7 +76,7 @@ public abstract class BaseRemoteViewFactory implements RemoteViewsService.Remote
         mDays.clear();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-            Day day = MonthUtils.generateDay(calendar, mThingDao);
+            Day day = MonthUtils.generateDay(calendar, mThingDao, mMemorialDayDao);
             mDays.add(day);
         }
     }

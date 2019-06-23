@@ -10,7 +10,11 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.Nullable;
+
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -612,8 +616,8 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
             if (day.isWorkday()) {
                 drawWorkday(canvas);
             }
-            if (day.hasBirthday()) {
-                drawBirthday(canvas);
+            if (day.hasMemorialDay()) {
+                drawMemorialDay(canvas);
             }
         }
 
@@ -624,9 +628,12 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
         }
 
         private void drawBottomText(Canvas canvas) {
-            paint.setTextSize(mDateBottomTextSize);
+            TextPaint textPaint = new TextPaint(paint);
+            textPaint.setTextSize(mDateBottomTextSize);
             float bottomTextY = rect.centerY() + rect.height() / 4 + mDateBottomTextSize / 2; //将底部文居中在在3/4处
-            canvas.drawText(day.getBottomText(), rect.centerX(), bottomTextY, paint);
+            String bottomText = day.getBottomText();
+            CharSequence text = TextUtils.ellipsize(bottomText, textPaint, rect.width() / 2, TextUtils.TruncateAt.END);
+            canvas.drawText(text.toString(), rect.centerX(), bottomTextY, textPaint);
         }
 
         private void drawEventSymbol(Canvas canvas) {
@@ -740,7 +747,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
             canvas.drawText("班", textX, textY, paint);
         }
 
-        private void drawBirthday(Canvas canvas) {
+        private void drawMemorialDay(Canvas canvas) {
             Drawable drawable = getResources().getDrawable(R.drawable.circle);
             int centerX = (int) rect.centerX();
             int centerY = (int) rect.centerY();
@@ -767,7 +774,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
 
         boolean hasEvent();
 
-        boolean hasBirthday();
+        boolean hasMemorialDay();
 
         Symbol getSymbol();
 
@@ -817,7 +824,7 @@ public class CalendarView extends View implements ValueAnimator.AnimatorUpdateLi
         }
 
         @Override
-        public boolean hasBirthday() {
+        public boolean hasMemorialDay() {
             return false;
         }
 

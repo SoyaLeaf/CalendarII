@@ -26,7 +26,7 @@ public class HolidayUtils {
         }
     }
 
-    public static final String getHolidayOfMonth(Calendar calendar) {
+    public static String getHolidayOfMonth(Calendar calendar) {
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         switch (dayOfMonth) {
@@ -80,6 +80,10 @@ public class HolidayUtils {
                         break;
 
                     case Calendar.MAY:
+                        String holiday = calculateHolidayForWeek(calendar);
+                        if(holiday != null){
+                            return holiday;
+                        }
                         switch (dayOfMonth) {
                             case 4:
                                 return "青年节";

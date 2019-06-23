@@ -32,9 +32,11 @@ import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
 import top.soyask.calendarii.R;
+import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
 import top.soyask.calendarii.entity.LunarDay;
+import top.soyask.calendarii.entity.MemorialDay;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
 import top.soyask.calendarii.ui.adapter.month.MonthDayAdapter;
@@ -158,11 +160,12 @@ public class TransparentWidgetFragment extends BaseFragment implements SeekBar.O
         ((TextView) findViewById(R.id.tv_date)).setText(String.format(Locale.CHINA, "%02d月", month));
         int year = calendar.get(Calendar.YEAR);
         int dayCount = DayUtils.getMonthDayCount(month, year);
-        ThingDao dao = ThingDao.getInstance(mHostActivity);
+        ThingDao thingDao = ThingDao.getInstance(mHostActivity);
+        MemorialDayDao memorialDayDao = MemorialDayDao.getInstance(mHostActivity);
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < dayCount; i++) {
             calendar.set(Calendar.DAY_OF_MONTH, i + 1);
-            Day day = MonthUtils.generateDay(calendar, dao);
+            Day day = MonthUtils.generateDay(calendar, thingDao, memorialDayDao);
             days.add(day);
         }
         mAdapter = new MonthDayAdapter(days);

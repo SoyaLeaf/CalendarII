@@ -67,10 +67,10 @@ public class MonthDayAdapter extends BaseAdapter {
         }
         if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
             Day day = mDays.get(position - mDateStartPos);
-            boolean hasBirthday = day.hasBirthday();
-            ((TextView) convertView.findViewById(R.id.tv_lunar)).setText(hasBirthday ? "生日" : day.getLunar().getSimpleLunar());
+            boolean hasMemorialDay = day.hasMemorialDay();
+            ((TextView) convertView.findViewById(R.id.tv_lunar)).setText(day.getBottomText());
             ((TextView) convertView.findViewById(R.id.tv_greg)).setText(String.valueOf(day.getDayOfMonth()));
-            convertView.findViewById(R.id.iv_birth).setVisibility(hasBirthday ? View.VISIBLE : View.INVISIBLE);
+            convertView.findViewById(R.id.iv_birth).setVisibility(hasMemorialDay ? View.VISIBLE : View.INVISIBLE);
             convertView.findViewById(R.id.fl_event).setVisibility(day.hasEvent() ? View.VISIBLE : View.INVISIBLE);
         }
         return convertView;

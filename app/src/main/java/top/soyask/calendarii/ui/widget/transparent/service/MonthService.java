@@ -87,8 +87,8 @@ public class MonthService extends RemoteViewsService {
             if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
                 Day day = mDays.get(position - mDateStartPos);
                 remoteViews.setTextViewText(R.id.tv_greg, String.format(Locale.CHINA, "%d", day.getDayOfMonth()));
-                if (day.hasBirthday()) {
-                    remoteViews.setTextViewText(R.id.tv_lunar, "生日");
+                if (day.hasMemorialDay()) {
+                    remoteViews.setTextViewText(R.id.tv_lunar, day.getBottomText());
                     remoteViews.setViewVisibility(R.id.iv_birth, View.VISIBLE);
                 } else {
                     remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar().getSimpleLunar());

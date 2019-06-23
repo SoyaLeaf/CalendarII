@@ -11,7 +11,7 @@
         android:layout_width="8dp"
         android:layout_height="8dp"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_svg_black_birthday"
+        android:src="@drawable/ic_memorial_day_drak"
         android:visibility="invisible" />
 
     <TextView
@@ -29,6 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_greg"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal|top"
         android:textColor="@color/text_color_sub_dark"

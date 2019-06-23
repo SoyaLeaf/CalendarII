@@ -9,7 +9,7 @@
     <attr name="transparentWidgetCircleSolid" format="color|reference" />
     <attr name="transparentEventColor" format="color|reference" />
     <attr name="transparentLaunchIcon" format="reference" />
-    <attr name="transparentBirthIcon" format="color|reference" />
+    <attr name="transparentMemorialIcon" format="color|reference" />
     <!-- Base application theme. -->
 
     <style name="NumberPicker">
@@ -138,7 +138,7 @@
         <item name="transparentWidgetTextColor">@color/text_color_primary_dark</item>
         <item name="transparentEventColor">@color/text_color_primary_dark</item>
         <item name="transparentLaunchIcon">@drawable/ic_open_in_new_black_24dp</item>
-        <item name="transparentBirthIcon">@drawable/ic_svg_black_birthday</item>
+        <item name="transparentMemorialIcon">@drawable/ic_memorial_day_drak</item>
         <item name="transparentWidgetCircleSolid">#33ffffff</item>
     </style>
 
@@ -146,7 +146,7 @@
         <item name="transparentWidgetTextColor">@color/text_color_primary_light</item>
         <item name="transparentEventColor">@color/text_color_primary_light</item>
         <item name="transparentLaunchIcon">@drawable/ic_open_in_new_white_24dp</item>
-        <item name="transparentBirthIcon">@drawable/ic_svg_birthday</item>
+        <item name="transparentMemorialIcon">@drawable/ic_memorial_day</item>
         <item name="transparentWidgetCircleSolid">#33333333</item>
     </style>
 </resources>

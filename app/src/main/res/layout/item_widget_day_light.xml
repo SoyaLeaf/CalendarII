@@ -14,7 +14,7 @@
             android:id="@+id/iv_birth"
             android:visibility="invisible"
             android:layout_alignParentEnd="true"
-            android:src="?transparentBirthIcon"
+            android:src="?transparentMemorialIcon"
             android:layout_width="10dp"
             android:layout_height="10dp" />
         <TextView
@@ -31,6 +31,8 @@
             android:id="@+id/tv_lunar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:layout_below="@id/tv_greg"
             android:layout_centerHorizontal="true"
             android:gravity="center_horizontal|top"

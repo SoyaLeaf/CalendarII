@@ -51,8 +51,9 @@ public class WhiteWidgetService extends RemoteViewsService {
             if (position >= mDateStartPos && position < mEndPosition && position - mDateStartPos < mDays.size()) {
                 Day day = mDays.get(position - mDateStartPos);
                 remoteViews.setTextViewText(R.id.tv_greg, String.valueOf(day.getDayOfMonth()));
-                if (day.hasBirthday()) {
-                    remoteViews.setTextViewText(R.id.tv_lunar, "生日");
+                if (day.hasMemorialDay()) {
+                    String bottomText = day.getBottomText();
+                    remoteViews.setTextViewText(R.id.tv_lunar, bottomText);
                     remoteViews.setInt(R.id.iv_birth, "setVisibility", View.VISIBLE);
                 } else {
                     remoteViews.setTextViewText(R.id.tv_lunar, day.getLunar().getSimpleLunar());
