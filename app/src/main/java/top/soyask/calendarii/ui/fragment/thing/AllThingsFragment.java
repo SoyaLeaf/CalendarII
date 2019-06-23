@@ -11,7 +11,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import androidx.recyclerview.widget.RecyclerView;
 import top.soyask.calendarii.R;
@@ -32,6 +34,7 @@ public class AllThingsFragment extends BaseListFragment
     private List<Thing> mThings = new ArrayList<>();
     private List<Thing> mDoneThings = new ArrayList<>();
     private ProgressDialog mProgressDialog;
+    private Set<Thing> mDeletedThings = new HashSet<>();
 
     private Handler mHandler = new ThingHandler(this);
 
@@ -84,37 +87,37 @@ public class AllThingsFragment extends BaseListFragment
     @Override
     public void onEditClick(final int position, Thing thing) {
         EditThingFragment editThingFragment = EditThingFragment.newInstance(null, thing);
-//        editThingFragment.setOnUpdateListener(() -> mThingAdapter.notifyItemChanged(position));
+        editThingFragment.setOnUpdateListener(() -> mAdapter.notifyItemChanged(position));
         editThingFragment.setOnDeleteListener(() -> {
             mThings.remove(position);
-//            mThingAdapter.notifyItemRemoved(position);
+            mAdapter.notifyItemRemoved(position);
         });
         addFragment(editThingFragment);
     }
 
     @Override
     public void onDeleteClick(final int position, final Thing thing) {
-        mThingDao.delete(thing);
+        mDeletedThings.add(thing);
         mThings.remove(thing);
-//        mThingAdapter.notifyItemRemoved(position);
-//        mThingAdapter.notifyItemRangeChanged(position, mThings.size());
-//        showSnackbar("删除成功^_~", "撤销", v -> {
-//            mThingDao.insert(thing);
-//            mThings.add(thing);  // FIXME: 2017/8/26 这里不能 thing id变化了
-//            Collections.sort(mThings, mComparator);
-//            mThingAdapter.notifyItemInserted(position);
-//            mThingAdapter.notifyItemRangeChanged(position, mThings.size());
-//            if (position == 0) {
-//                scrollToTop();
-//            }
-//        });
+        mAdapter.notifyItemRemoved(position);
+        mAdapter.notifyItemRangeChanged(position, mThings.size());
+        showSnackbar("删除成功^_~", "撤销", v -> {
+            mDeletedThings.remove(thing);
+            mThings.add(thing);
+            Collections.sort(mThings, mComparator);
+            mAdapter.notifyItemInserted(position);
+            mAdapter.notifyItemRangeChanged(position, mThings.size());
+            if (position == 0) {
+                scrollToTop();
+            }
+        });
     }
 
     @Override
     public void onDone(int position, Thing thing) {
         thing.setDone(true);
         mThingDao.update(thing);
-//        mThingAdapter.notifyItemChanged(position);
+        mAdapter.notifyItemChanged(position);
         mDoneThings.add(thing);
     }
 
@@ -122,7 +125,7 @@ public class AllThingsFragment extends BaseListFragment
     public void onDoneCancel(int position, Thing thing) {
         thing.setDone(false);
         mThingDao.update(thing);
-//        mThingAdapter.notifyItemChanged(position);
+        mAdapter.notifyItemChanged(position);
         if (mDoneThings.contains(thing)) {
             mDoneThings.remove(thing);
         }
@@ -157,6 +160,16 @@ public class AllThingsFragment extends BaseListFragment
         }
     }
 
+    public void showDeleteAllDialog(){
+        DeleteFragment deleteFragment = DeleteFragment.newInstance();
+        deleteFragment.setOnDeleteConfirmListener(this);
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.main, deleteFragment)
+                .addToBackStack(deleteFragment.getClass().getSimpleName())
+                .commit();
+    }
+
     @Override
     public void onConfirm(int type) {
         if (type == DeleteFragment.ALL) {
@@ -168,38 +181,41 @@ public class AllThingsFragment extends BaseListFragment
 
     private void deleteComplete() {
         final List<Thing> temp = new ArrayList<>(mDoneThings);
+        mDeletedThings.addAll(temp);
         mThings.removeAll(mDoneThings);
-//        mThingAdapter.notifyDataSetChanged();
-        mThingDao.deleteDone();
+        mAdapter.notifyDataSetChanged();
+
         mDoneThings.clear();
         showSnackbar("删除了划掉的事件。", "我要恢复", v -> {
             mHandler.sendEmptyMessage(WAIT);
-            for (Thing thing : temp) {
-                mThingDao.insert(thing);
-            }
+            mDeletedThings.removeAll(temp);
             mThings.addAll(temp);
             mDoneThings.addAll(temp);
             Collections.sort(mThings, mComparator);
-//            mThingAdapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
             mHandler.sendEmptyMessage(CANCEL);
         });
     }
 
     private void deleteAll() {
         final List<Thing> temp = new ArrayList<>(mThings);
+        mDeletedThings.addAll(temp);
         mThings.clear();
-//        mThingAdapter.notifyDataSetChanged();
-        mThingDao.deleteAll();
+        mAdapter.notifyDataSetChanged();
         showSnackbar("删除了全部的事件。", "我要恢复", v -> {
             mHandler.sendEmptyMessage(WAIT);
-            for (Thing thing : temp) {
-                mThingDao.insert(thing);
-            }
             mThings.addAll(temp);
+            mDeletedThings.removeAll(temp);
             Collections.sort(mThings, mComparator);
-//            mThingAdapter.notifyDataSetChanged();
+            mAdapter.notifyDataSetChanged();
             mHandler.sendEmptyMessage(CANCEL);
         });
+    }
+
+    public void doDelete(){
+        for (Thing thing : mDeletedThings) {
+            mThingDao.delete(thing);
+        }
     }
 
     private static class ThingHandler extends Handler {

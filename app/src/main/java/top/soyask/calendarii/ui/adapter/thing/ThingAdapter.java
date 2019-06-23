@@ -80,7 +80,6 @@ public class ThingAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        System.out.println(mThings);
         return mThings.size();
     }
 
