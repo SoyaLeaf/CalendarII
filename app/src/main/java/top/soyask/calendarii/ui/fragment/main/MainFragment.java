@@ -43,11 +43,11 @@ import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.ui.fragment.dialog.DateSelectDialog;
-import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
 import top.soyask.calendarii.ui.fragment.list.AllListFragment;
 import top.soyask.calendarii.ui.fragment.memorial.MemorialFragment;
 import top.soyask.calendarii.ui.fragment.month.MonthFragment;
-import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
+import top.soyask.calendarii.ui.fragment.setting.SettingPreferenceFragment;
+import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.EraUtils;
 import top.soyask.calendarii.utils.MonthUtils;
@@ -258,7 +258,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
                 addFragment(aboutFragment);
                 break;
             case R.id.menu_setting:
-                SettingFragment settingFragment = SettingFragment.newInstance();
+                SettingPreferenceFragment settingFragment = SettingPreferenceFragment.newInstance();
                 addFragment(settingFragment);
                 break;
             case R.id.menu_backup:

@@ -48,6 +48,31 @@
     <string name="name_separator">、</string>
     <string name="of">的</string>
     <string name="date_format">%d月%d日</string>
+    <string name="monday_start">周一开始</string>
+    <string name="monday_start_summary">每周从周一开始</string>
+    <string name="fill_date">日期填充</string>
+    <string name="fill_date_summary">将会在空白处填充临近月份的日期</string>
+    <string name="enable_select_anim">启用“选择”动画</string>
+    <string name="enable_select_anim_summary">点击选择日期时将启用动画（若导致不流畅可将此选项关闭）</string>
+    <string name="theme">主题风格</string>
+    <string name="theme_summary">选择一个你喜欢的颜色</string>
+    <string name="set_symbol">符号设置</string>
+    <string name="set_symbol_summary">假装可以自定义符号</string>
+    <string name="custom_ui">显示调节</string>
+    <string name="custom_ui_summary">可以调节界面，以使界面看起来更和谐</string>
+    <string name="holiday_sync">节假日同步</string>
+    <string name="holiday_sync_summary">点击即可同步节假日</string>
+    <string name="normal">常规</string>
+    <string name="widget">小部件</string>
+    <string name="trans_widget">透明小部件</string>
+    <string name="trans_widget_summary">点击编辑透明小部件</string>
+    <string name="pic_for_white_widget">白色小部件图片</string>
+    <string name="pic_for_white_widget_summary">可以更换白色小部件右下角图片</string>
+    <string name="sync_fail_and_contact_developer">同步失败了，请联系开发者！</string>
+    <string name="sync_success">同步成功！</string>
+    <string name="copy_error_message">复制错误信息</string>
+    <string name="message_is_copied">信息已复制</string>
+    <string name="personalise">个性化</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

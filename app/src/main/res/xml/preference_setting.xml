@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.preference.PreferenceCategory
+        android:key="pref_category_normal"
+        android:title="@string/normal">
+        <androidx.preference.SwitchPreference
+            android:key="pref_monday_start"
+            android:summary="@string/monday_start_summary"
+            android:title="@string/monday_start" />
+        <androidx.preference.SwitchPreference
+            android:key="pref_fill_date"
+            android:summary="@string/fill_date_summary"
+            android:title="@string/fill_date" />
+        <androidx.preference.SwitchPreference
+            android:key="pref_select_anim"
+            android:summary="@string/enable_select_anim_summary"
+            android:title="@string/enable_select_anim" />
+        <androidx.preference.Preference
+            android:key="pref_theme"
+            android:summary="@string/theme_summary"
+            android:title="@string/theme" />
+        <androidx.preference.Preference
+            android:key="pref_symbol"
+            android:summary="@string/set_symbol_summary"
+            android:title="@string/set_symbol" />
+        <androidx.preference.Preference
+            android:key="pref_custom_ui"
+            android:summary="@string/custom_ui_summary"
+            android:title="@string/custom_ui" />
+        <androidx.preference.Preference
+            android:key="pref_holiday"
+            android:summary="@string/holiday_sync_summary"
+            android:title="@string/holiday_sync" />
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory
+        android:key="pref_category_widget"
+        android:title="@string/widget">
+        <androidx.preference.Preference
+            android:key="pref_trans_widget"
+            android:summary="@string/trans_widget_summary"
+            android:title="@string/trans_widget" />
+        <androidx.preference.Preference
+            android:key="pref_widget_pic"
+            android:summary="@string/pic_for_white_widget_summary"
+            android:title="@string/pic_for_white_widget" />
+    </androidx.preference.PreferenceCategory>
+</androidx.preference.PreferenceScreen>
