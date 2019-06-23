@@ -257,7 +257,7 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
             case R.id.menu_select:
                 showSelectDialog();
                 break;
-            case R.id.menu_score:
+            case R.id.menu_follow:
                 score();
                 break;
             case R.id.menu_about:
@@ -288,16 +288,12 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     }
 
     private void score() {
-        Uri uri = Uri.parse("market://details?id=" + mHostActivity.getPackageName());
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
-
+        Intent intent = new Intent();
+        intent.setData(Uri.parse("http://www.coolapk.com/u/986608"));
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (intent.resolveActivity(mHostActivity.getPackageManager()) != null) { //可以接收
+        try {
             startActivity(intent);
-        } else {
-            Toast.makeText(mHostActivity, R.string.no_market, Toast.LENGTH_SHORT).show();
-        }
+        }catch (Exception ignore){}
     }
 
     @Override

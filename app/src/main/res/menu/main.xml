@@ -26,8 +26,8 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/menu_score"
-        android:title="评分"
+        android:id="@+id/menu_follow"
+        android:title="关注开发者"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_about"

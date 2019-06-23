@@ -49,7 +49,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
-            android:text="Copyright© 2017 米小饭" />
+            android:text="Copyright© 米小饭" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_os"
@@ -61,17 +61,5 @@
             android:background="?selectableItemBackgroundBorderless"
             android:text="开源相关" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_donate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/btn_os"
-            android:layout_centerHorizontal="true"
-            android:background="?selectableItemBackgroundBorderless"
-            android:drawableLeft="@drawable/ic_favorite_border"
-            android:drawablePadding="8dp"
-            android:gravity="left|center_vertical"
-            android:minWidth="0dp"
-            android:text="@string/donate" />
     </RelativeLayout>
 </LinearLayout>
