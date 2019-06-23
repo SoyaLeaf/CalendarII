@@ -42,12 +42,13 @@ public class AllMemorialFragment extends BaseListFragment implements MemorialDay
 
     @Override
     protected RecyclerView.Adapter getAdapter() {
-        return new MemorialDayAdapter(mMemorialDays,this);
+        return new MemorialDayAdapter(mMemorialDays, this);
     }
 
     @Override
     public void onMemorialDayClick(int position, MemorialDay day) {
         MemorialFragment memorialFragment = MemorialFragment.newInstance(day);
+        memorialFragment.setOnMemorialDayUpdateListener(() -> mAdapter.notifyItemChanged(position));
         addFragment(memorialFragment);
     }
 

@@ -73,6 +73,7 @@
     <string name="copy_error_message">复制错误信息</string>
     <string name="message_is_copied">信息已复制</string>
     <string name="personalise">个性化</string>
+    <string name="add_success">添加成功</string>
     <array name="who">
         <item>我</item>
         <item>爸爸</item>

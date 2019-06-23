@@ -27,7 +27,6 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class MemorialFragment extends BaseFragment {
     private ExpandableLayout mElDate;
     private ChipGroup mChipGroupWho;
     private ChipGroup mChipGroupDefaultPeople;
-    private View mTvWhoHint;
+    private TextView mTvWhoHint;
     private EditText mEtDetail;
     private EditText mEtName;
     private MemorialDay mMemorialDay;
@@ -67,6 +66,7 @@ public class MemorialFragment extends BaseFragment {
     private CheckBox mCbBirthday;
     private String mOriginName;
     private HorizontalScrollView mHsvGroupWho;
+    private OnMemorialDayUpdateListener mOnMemorialDayUpdateListener;
 
     public MemorialFragment() {
         super(R.layout.fragment_memorial);
@@ -86,6 +86,10 @@ public class MemorialFragment extends BaseFragment {
         MemorialFragment fragment = new MemorialFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void setOnMemorialDayUpdateListener(OnMemorialDayUpdateListener listener) {
+        this.mOnMemorialDayUpdateListener = listener;
     }
 
     @Override
@@ -233,6 +237,10 @@ public class MemorialFragment extends BaseFragment {
     }
 
     private void done(View view) {
+        hideSoftInputReal();
+        if (isInvalidInput()) {
+            return;
+        }
         mMemorialDay.setDay(mCalendar.get(Calendar.DAY_OF_MONTH));
         mMemorialDay.setMonth(mCalendar.get(Calendar.MONTH) + 1);
         mMemorialDay.setYear(mCalendar.get(Calendar.YEAR));
@@ -253,9 +261,23 @@ public class MemorialFragment extends BaseFragment {
         } else {
             MemorialDayDao.getInstance(mHostActivity).insert(mMemorialDay);
         }
-        showSnackbar("添加成功");
+        showSnackbar(getString(R.string.add_success));
+        if(mOnMemorialDayUpdateListener != null){
+            mOnMemorialDayUpdateListener.onUpdate();
+        }
         removeFragment(this);
-        //todo
+    }
+
+    private boolean isInvalidInput() {
+        if (mSelecteds.isEmpty()) {
+            mTvWhoHint.setHintTextColor(Color.RED);
+            return true;
+        }
+        if(mEtName.getText().toString().isEmpty()){
+            mEtName.setHintTextColor(Color.RED);
+            return true;
+        }
+        return false;
     }
 
     private void onLunarChange(CompoundButton button, boolean isChecked) {
@@ -436,6 +458,10 @@ public class MemorialFragment extends BaseFragment {
         String date = String.format(Locale.CHINA, "%d年%02d月%02d日 (%s%s年%s)",
                 year, month, day, stems, branches, lunar.getLunarDate());
         mTvDate.setText(date);
+    }
+
+    public interface OnMemorialDayUpdateListener {
+        void onUpdate();
     }
 
 }
