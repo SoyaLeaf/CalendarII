@@ -2,24 +2,22 @@ package top.soyask.calendarii.ui.fragment.main;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +31,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.circularreveal.CircularRevealCompat;
+import com.google.android.material.circularreveal.CircularRevealFrameLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.database.dao.ThingDao;
@@ -42,6 +46,7 @@ import top.soyask.calendarii.entity.LunarDay;
 import top.soyask.calendarii.entity.MemorialDay;
 import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
+import top.soyask.calendarii.ui.adapter.thing.ThingAdapter;
 import top.soyask.calendarii.ui.eventbus.Messages;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
@@ -56,7 +61,11 @@ import top.soyask.calendarii.ui.widget.WidgetManager;
 import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.EraUtils;
 import top.soyask.calendarii.utils.EventBusDefault;
+import top.soyask.calendarii.ui.fragment.setting.SettingFragment;
 import top.soyask.calendarii.utils.MonthUtils;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.MONTH;
@@ -65,37 +74,21 @@ import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
 
+public class MainFragment extends BaseFragment
+    implements ViewPager.OnPageChangeListener, View.OnClickListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 public class MainFragment extends BaseFragment implements ViewPager.OnPageChangeListener, MonthFragment.OnDaySelectListener, EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
 
-    private static final int BIRTHDAY_INVISIBLE = 0x233;
-    private static final int BIRTHDAY_VISIBLE = 0x234;
 
     private Calendar mCalendar = Calendar.getInstance();
     private ViewPager mViewPager;
     private Day mSelectedDay;
     private ActionBar mActionBar;
-    private TextView mTvTitle;
-    private TextView mTvEvent;
-    private TextView mTvDayCount;
-    private TextView mTvDayCountM;
-    private TextView mTvLunar;
-    private TextView mTvLunarYear;
-    private View mEventView;
-    private View mPoint;
-    private ImageView mIvYear;
-    private View mIBtnMore;
+    private MainReceiver mMainReceiver;
     private MenuItem mItemToday;
-    private Animator mEventViewAnimator;
-    private View mLeftBottom;
-    private TextView mIvBirth;
-    private View mFlBirth;
-
-    private boolean isEventViewVisible = true;
-    private boolean isBirthday = false;
-    private int mEventViewWidth;
-    private int mEventViewHeight;
-
-    private Handler mAnimatorHandler = new MainHandler(this);
+    private BottomSheetBehavior<FrameLayout> mBottomSheetBehavior;
+    private CircularRevealFrameLayout mCollapseView;
+    private View mRlLeftBottom;
+    private FloatingActionButton mFabActions;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -110,62 +103,25 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
 
     @Override
     protected void setupUI() {
-        setupCard();
+        mContentView.setOnTouchListener((v, event) -> false);
+        initSelectDay();
         setupToolbar();
         setupViewPager();
-        setupOtherView();
-        initSelectDay();
+        setupEventList();
+
+        mCollapseView = findViewById(R.id.collapse_view);
+        mRlLeftBottom = findViewById(R.id.rl_leftbottom);
+        mFabActions = findViewById(R.id.fab_actions);
     }
 
     private void initSelectDay() {
-        mSelectedDay = MonthUtils.generateDay(
-                mCalendar, ThingDao.getInstance(mHostActivity), MemorialDayDao.getInstance(mHostActivity));
-        mAnimatorHandler.post(this::skipToday);
+        mSelectedDay = MonthUtils.generateDay(mCalendar, ThingDao.getInstance(mHostActivity));
     }
 
-    private void setupOtherView() {
-        mPoint = findViewById(R.id.point);
-        mTvDayCount = findViewById(R.id.tv_day_count);
-        mTvDayCountM = findViewById(R.id.tv_day_count_m);
-        mLeftBottom = findViewById(R.id.rl_leftbottom);
-        mTvLunar = findViewById(R.id.tv_lunar);
-        mTvLunarYear = findViewById(R.id.tv_lunar_year);
-        mIvYear = findViewById(R.id.iv_year);
-        mIvBirth = findViewById(R.id.tv_birth);
-        mFlBirth = findViewById(R.id.fl_birth);
-        findViewById(R.id.fab_show_action).setOnClickListener(getFabOnClickListener());
-    }
-
-    private View.OnClickListener getFabOnClickListener() {
-        return v -> {
-            FloatActionFragment fragment = FloatActionFragment.newInstance(mSelectedDay);
-            fragment.setCallback(new FloatActionFragment.ActionClickCallback() {
-                @Override
-                public void onAddThingClick() {
-                    EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
-                    thingFragment.setOnAddListener(MainFragment.this);
-                    addFragment(thingFragment);
-                }
-
-                @Override
-                public void onAddMemorialClick() {
-                    MemorialFragment memorialFragment = MemorialFragment.newInstance(mSelectedDay);
-                    addFragment(memorialFragment);
-                }
-            });
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.main, fragment)
-                    .addToBackStack(fragment.getClass().getSimpleName())
-                    .commit();
-        };
-    }
-
-    private void setupCard() {
-        mTvTitle = findViewById(R.id.tv_title);
-        mTvEvent = findViewById(R.id.tv_event);
-        mEventView = findViewById(R.id.cv_event);
-        mIBtnMore = findViewById(R.id.ib_more);
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        mActionBar = setToolbar(toolbar);
+        setToolbarDate(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1);
     }
 
     private void setupViewPager() {
@@ -177,54 +133,30 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         mViewPager.addOnPageChangeListener(this);
     }
 
-    private void setupToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        mActionBar = setToolbar(toolbar);
-        setToolbarDate(mCalendar.get(YEAR), mCalendar.get(MONTH) + 1);
-    }
+    /**
+     * 包含事件、日程、纪念日
+     */
+    private void setupEventList() {
+        Toolbar toolbarBottomSheet = findViewById(R.id.toolbar_bottom_sheet);
+        View bottomBackground = findViewById(R.id.bottom_background);
+        RecyclerView recyclerView = findViewById(R.id.rv_event_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mHostActivity,RecyclerView.VERTICAL,false));
+        ArrayList<Thing> things = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            things.add(new Thing());
+        }
+        recyclerView.setAdapter(new ThingAdapter(things,null));
+        mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
+        mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override public void onStateChanged(@NonNull View bottomSheet, int newState) { }
 
-    private void setThing(int year, int month, int dayOfMonth) {
-        ThingDao thingDao = ThingDao.getInstance(mHostActivity);
-        long begin = DayUtils.getDateBegin(year, month, dayOfMonth);
-        List<Thing> things = thingDao.listByDate(begin);
-        String title = getString(R.string.xx_year_xx_month_xx, year, month, dayOfMonth);
-        mTvTitle.setText(title);
-        if (mEventViewWidth == 0) {
-            mEventViewWidth = mEventView.getWidth();
-            mEventViewHeight = mEventView.getHeight();
-        }
-        if (!things.isEmpty()) {
-            setupThingView(title, things);
-        } else {
-            mTvEvent.setText(R.string.nothing);
-            mAnimatorHandler.sendEmptyMessage(View.INVISIBLE);
-        }
-    }
-
-    private void setupThingView(final String title, List<Thing> things) {
-        if (mSelectedDay.hasMemorialDay()) {
-            String birthdayStr = getBirthdayStr();
-            mTvEvent.setText(birthdayStr);
-        } else {
-            mTvEvent.setText(things.get(0).getDetail());
-        }
-        mIBtnMore.setOnClickListener(v -> {
-            AllListFragment allListFragment = AllListFragment.newInstance();
-            addFragment(allListFragment);
+            @Override public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                toolbarBottomSheet.setAlpha(slideOffset * 1f);
+                bottomBackground.setAlpha(slideOffset * 1f);
+                recyclerView.setTranslationY(slideOffset * toolbarBottomSheet.getHeight());
+            }
         });
-        mAnimatorHandler.sendEmptyMessage(View.VISIBLE);
-    }
-
-    @NonNull
-    private String getBirthdayStr() {
-        if (true) return "";
-        List<MemorialDay> memorialDays = mSelectedDay.getMemorialDays();
-        StringBuilder sb = new StringBuilder();
-        for (MemorialDay memorialDay : memorialDays) {
-            sb.append(memorialDay.getWho()).append(',');
-        }
-        sb.deleteCharAt(sb.lastIndexOf(",")).append("的生日");
-        return sb.toString();
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     private int getCurrentMonth() {
@@ -328,10 +260,12 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
     @Override
     public void onSelected(Day day) {
         this.mSelectedDay = day;
-        setBirthday(day);
-        setThing(day.getYear(), day.getMonth(), day.getDayOfMonth());
-        setLunarInfo();
         calculateDelta_T();
+        if (day.getDayOfMonth() % 2 == 0) {
+            showCollapseViewWithAnim();
+        }else {
+            hideCollapseViewWithAnim();
+        }
     }
 
     @Override
@@ -344,25 +278,6 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         skipToOneDay(-1, dayOfMonth);
     }
 
-    private void setBirthday(Day day) {
-        if (day.hasMemorialDay()) {
-            String birthdayStr = getBirthdayStr();
-            mIvBirth.setText(birthdayStr);
-            mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
-        } else {
-            mAnimatorHandler.sendEmptyMessage(BIRTHDAY_INVISIBLE);
-        }
-    }
-
-    private void setLunarInfo() {
-        LunarDay lunar = mSelectedDay.getLunar();
-        String era = lunar.getEra();
-        int img = EraUtils.getYearForTwelveZodiacImage(lunar.getYear());
-        mTvLunar.setText(lunar.getLunarDate());
-        mTvLunarYear.setText(getString(R.string.xx_year, era));
-        mIvYear.setImageDrawable(getResources().getDrawable(img));
-    }
-
     // 计算所选的天数到今天的时间差
     private void calculateDelta_T() {
         Calendar selectDay = getSelectedCalendar();
@@ -372,16 +287,16 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         long time = selectDay.getTime().getTime() / 86400000;
         Long l = time - todayTime;
         int dayCount = l.intValue();
-        if (dayCount > 0) {
-            mTvDayCount.setText(getString(R.string.till_xx_days_ago, dayCount));
-            mTvDayCountM.setText(getString(R.string.xx_later, dayCount));
-        } else if (dayCount < 0) {
-            mTvDayCount.setText(getString(R.string.it_has_been_xx_days, -dayCount));
-            mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
-        } else {
-            mTvDayCount.setText(R.string.today_things);
-            mTvDayCountM.setText(null);
-        }
+//        if (dayCount > 0) {
+//            mTvDayCount.setText(getString(R.string.till_xx_days_ago, dayCount));
+//            mTvDayCountM.setText(getString(R.string.xx_later, dayCount));
+//        } else if (dayCount < 0) {
+//            mTvDayCount.setText(getString(R.string.it_has_been_xx_days, -dayCount));
+//            mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
+//        } else {
+//            mTvDayCount.setText(R.string.today_things);
+//            mTvDayCountM.setText(null);
+//        }
     }
 
     @NonNull
@@ -457,215 +372,107 @@ public class MainFragment extends BaseFragment implements ViewPager.OnPageChange
         showSnackbar("成功添加了新事件");
     }
 
+
+    private void showCollapseView(){
+        mCollapseView.setVisibility(View.VISIBLE);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        mRlLeftBottom.setVisibility(View.GONE);
+        mFabActions.setVisibility(View.GONE);
+        new Handler().post(()-> mBottomSheetBehavior.setHideable(false));
+    }
+
+    private void showLeftBottomView(){
+        mCollapseView.setVisibility(View.INVISIBLE);
+        mBottomSheetBehavior.setHideable(true);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        mRlLeftBottom.setVisibility(View.VISIBLE);
+        mFabActions.setVisibility(View.VISIBLE);
+    }
+
+    private void showCollapseViewWithAnim(){
+        Animator circularReveal = CircularRevealCompat.createCircularReveal(
+            mCollapseView, 0, mCollapseView.getHeight(), mCollapseView.getHeight(),mCollapseView.getWidth());
+        int translationX = -30;
+        ObjectAnimator translation =
+            ObjectAnimator.ofFloat(mCollapseView, "translationX", translationX, 0f);
+        AnimatorSet set = new AnimatorSet()
+            .setDuration(500);
+        set.setTarget(mCollapseView);
+        set.playTogether(circularReveal,translation);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                hideLeftBottomViewWithAnim();
+                mCollapseView.setVisibility(View.VISIBLE);
+            }
+        });
+        set.start();
+    }
+
+    private void hideCollapseViewWithAnim(){
+        Animator circularReveal = CircularRevealCompat.createCircularReveal(
+            mCollapseView, 0, mCollapseView.getHeight(),mCollapseView.getWidth(), mCollapseView.getHeight());
+        int translationX = -30;
+        ObjectAnimator translation =
+            ObjectAnimator.ofFloat(mCollapseView, "translationX", 0f, translationX);
+        AnimatorSet set = new AnimatorSet()
+            .setDuration(500);
+        set.setTarget(mCollapseView);
+        set.playTogether(circularReveal,translation);
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+            }
+
+            @Override public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                showLeftBottomViewWithAnim();
+                mCollapseView.setVisibility(View.INVISIBLE);
+            }
+        });
+        set.start();
+    }
+
+    private void showLeftBottomViewWithAnim(){
+        Animation animation = AnimationUtils.loadAnimation(mHostActivity, R.anim.fade_in);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+                mRlLeftBottom.setVisibility(View.VISIBLE);
+            }
+
+            @Override public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        mRlLeftBottom.startAnimation(animation);
+    }
+
+    private void hideLeftBottomViewWithAnim(){
+        Animation animation = AnimationUtils.loadAnimation(mHostActivity, R.anim.out_slide);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {
+            }
+
+            @Override public void onAnimationEnd(Animation animation) {
+                mRlLeftBottom.setVisibility(View.GONE);
+            }
+
+            @Override public void onAnimationRepeat(Animation animation) {
+            }
+        });
+
+        mRlLeftBottom.startAnimation(animation);
+    }
+
     public class MainReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-        }
-    }
-
-    private static class MainHandler extends Handler {
-        private final WeakReference<MainFragment> mFragment;
-
-        private MainHandler(MainFragment fragment) {
-            mFragment = new WeakReference<>(fragment);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            if (fragment.mEventViewAnimator != null) {
-                fragment.mEventViewAnimator.cancel();
-                fragment.mEventViewAnimator = null;
-            }
-            switch (msg.what) {
-                case View.INVISIBLE:
-                    if (fragment.isEventViewVisible) {
-                        fragment.isEventViewVisible = false;
-                        hideEventView();
-                        showLeftBottom();
-                        movePoint();
-                    }
-                    break;
-                case View.VISIBLE:
-                    if (!fragment.isEventViewVisible) {
-                        fragment.isEventViewVisible = true;
-                        showEventView();
-                        hideLeftBottom();
-                        sendEmptyMessage(BIRTHDAY_INVISIBLE);
-                    }
-                    break;
-                case BIRTHDAY_INVISIBLE:
-                    if (fragment.isBirthday) {
-                        hideFlBirth();
-                    }
-                    break;
-                case BIRTHDAY_VISIBLE:
-                    if (!fragment.isBirthday && !fragment.isEventViewVisible) {
-                        if (!fragment.mSelectedDay.hasEvent()) {
-                            showFlBirth();
-                        }
-                    }
-                    break;
-            }
-        }
-
-        private void hideLeftBottom() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            View leftBottom = fragment.mLeftBottom;
-            hideWithCircularReveal(leftBottom, 0, leftBottom.getHeight(), leftBottom.getHeight(), 0, new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    leftBottom.setVisibility(!fragment.isEventViewVisible ? View.VISIBLE : View.INVISIBLE);
-                }
-            });
-        }
-
-        private void hideEventView() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            View eventView = fragment.mEventView;
-            hideWithCircularReveal(eventView, fragment.mEventViewWidth / 2, fragment.mEventViewHeight / 2, fragment.mEventViewWidth, 0, new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    eventView.setVisibility(fragment.isEventViewVisible ? View.VISIBLE : View.INVISIBLE);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        eventView.setElevation(0);
-                    }
-                }
-            });
-        }
-
-        private void hideFlBirth() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            fragment.isBirthday = false;
-            int width = fragment.mFlBirth.getWidth();
-            int height = fragment.mFlBirth.getHeight();
-            hideWithCircularReveal(fragment.mFlBirth, width / 2, height / 2, width, 0, new AnimatorListenerAdapter() {
-
-                @Override
-                public void onAnimationEnd(Animator anim) {
-                    fragment.mFlBirth.setVisibility(fragment.isBirthday ? View.VISIBLE : View.INVISIBLE);
-                    Animation animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point_2);
-                    animation.setDuration(300);
-                    fragment.mPoint.startAnimation(animation);
-                }
-            });
-        }
-
-        private void hideWithCircularReveal(View view, int centerX, int centerY, float startRadius, float endRadius, Animator.AnimatorListener listener) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                animator.setDuration(400);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.addListener(listener);
-                animator.start();
-            } else {
-                view.setVisibility(View.INVISIBLE);
-            }
-        }
-
-        private void showEventView() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            fragment.mEventView.setVisibility(View.VISIBLE);
-            Animation animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.in_from_top);
-            animation.setDuration(800);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        float dimension = fragment.getResources().getDimension(R.dimen.card_normal_elevation);
-                        fragment.mEventView.setElevation(dimension);
-                    }
-                }
-
-            });
-            fragment.mEventView.startAnimation(animation);
-        }
-
-        private void showLeftBottom() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            showWithCircularReveal(fragment.mLeftBottom, 0, fragment.mLeftBottom.getHeight(), 0, fragment.mLeftBottom.getHeight(), new AnimatorListenerAdapter() {
-            });
-        }
-
-        private void showFlBirth() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            fragment.isBirthday = true;
-            int width = fragment.mFlBirth.getWidth();
-            int height = fragment.mFlBirth.getHeight();
-            showWithCircularReveal(fragment.mFlBirth, width / 2, height / 2, 0, width, new AnimatorListenerAdapter() {
-            });
-        }
-
-        private void showWithCircularReveal(View view, int centerX, int centerY, float startRadius, float endRadius, Animator.AnimatorListener listener) {
-            view.setVisibility(View.VISIBLE);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Animator animator = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-                animator.setDuration(400);
-                animator.addListener(listener);
-                animator.setInterpolator(new AccelerateDecelerateInterpolator());
-                animator.start();
-            }
-        }
-
-
-        private void movePoint() {
-            MainFragment fragment = mFragment.get();
-            if (fragment == null) {
-                return;
-            }
-            Animation animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point);
-            animation.setDuration(800);
-            fragment.mPoint.startAnimation(animation);
-            animation.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    if (fragment.mSelectedDay.hasMemorialDay()) {
-                        fragment.mAnimatorHandler.sendEmptyMessage(BIRTHDAY_VISIBLE);
-                    } else {
-                        animation = AnimationUtils.loadAnimation(fragment.getContext(), R.anim.point_2);
-                        animation.setDuration(300);
-                        fragment.mPoint.startAnimation(animation);
-                    }
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-            });
         }
     }
 

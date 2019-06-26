@@ -61,6 +61,8 @@
 #-keep public class * extends android.support.v7.**
 
 -keep class android.support.** {*;}
+-keep class androidx.** {*;}
+-keep public class * extends androidx.**
 -keepattributes *Annotation*
 
 #表示不混淆下面的两个类，这两个类我们基本也用不上，是接入Google原生的一些服务时使用的。
