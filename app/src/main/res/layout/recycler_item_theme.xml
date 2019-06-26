@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RadioButton
+        android:id="@+id/rb_color"
+        style="@style/RadioButton"
+        android:textColor="@color/colorPrimary"
+        tools:text="原色" />
+
+    <View
+        android:id="@+id/view_color"
+        style="@style/ColorSquare"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@color/colorPrimary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_toStartOf="@id/view_color"
+        android:background="@color/divider_dark" />
+</RelativeLayout>

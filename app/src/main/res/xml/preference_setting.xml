@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.preference.PreferenceCategory
-        android:key="pref_category_normal"
-        android:title="@string/normal">
+    <androidx.preference.PreferenceCategory android:key="pref_category_normal">
         <androidx.preference.SwitchPreference
             android:key="pref_monday_start"
             android:summary="@string/monday_start_summary"
@@ -32,9 +30,7 @@
             android:summary="@string/holiday_sync_summary"
             android:title="@string/holiday_sync" />
     </androidx.preference.PreferenceCategory>
-    <androidx.preference.PreferenceCategory
-        android:key="pref_category_widget"
-        android:title="@string/widget">
+    <androidx.preference.PreferenceCategory android:key="pref_category_widget">
         <androidx.preference.Preference
             android:key="pref_trans_widget"
             android:summary="@string/trans_widget_summary"

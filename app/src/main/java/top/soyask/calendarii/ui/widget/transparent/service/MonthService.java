@@ -102,7 +102,7 @@ public class MonthService extends RemoteViewsService {
                 }
                 remoteViews.setTextViewTextSize(R.id.tv_greg, COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_number_font_size);
                 remoteViews.setTextViewTextSize(R.id.tv_lunar, COMPLEX_UNIT_SP, Setting.TransparentWidget.trans_widget_lunar_font_size);
-                // FIXME 将道理，这个语句应该是合理的，但是加上它却导致小部件无法显示！！ wtf?
+                // FIXME 讲道理，这个语句应该是合理的，但是加上它却导致小部件无法显示！！ wtf?
                 // remoteViews.setFloat(R.id.rl,"setScaleX",0.6f);
             }
             return remoteViews;

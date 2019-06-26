@@ -11,9 +11,13 @@
         style="@style/Toolbar"
         app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
         app:title="主题风格"
-        app:titleTextColor="@android:color/white"></androidx.appcompat.widget.Toolbar>
-
+        app:titleTextColor="@android:color/white" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <RelativeLayout
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -21,7 +25,7 @@
             android:id="@+id/rl_color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:orientation="vertical">
 
             <View
@@ -66,7 +70,7 @@
             android:id="@+id/rg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/rl_color"
+            android:layout_toStartOf="@id/rl_color"
             android:orientation="vertical">
 
             <RadioButton

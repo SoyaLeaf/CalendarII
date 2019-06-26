@@ -58,6 +58,9 @@
         <item name="android:layout_marginBottom">8dp</item>
     </style>
 
+    <style name="Launch" parent="Theme.MaterialComponents.Light.NoActionBar">
+    </style>
+
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

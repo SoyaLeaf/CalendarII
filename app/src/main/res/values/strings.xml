@@ -74,7 +74,15 @@
     <string name="xx_day_ago">还有%d天</string>
     <string name="has_been_xx_days">已过了%d天</string>
     <string name="xx_anniversary">%d周年</string>
-    <array name="who">
+    <string name="color_default">原色</string>
+    <string name="color_green">酷安绿</string>
+    <string name="color_pink">哔哩粉</string>
+    <string name="color_teal">水鸭青</string>
+    <string name="color_blue">知乎蓝</string>
+    <string name="color_red">中国红</string>
+    <string name="color_purple">基佬紫</string>
+    <string name="color_black">高端黑</string>
+    <string-array name="who">
         <item>我</item>
         <item>爸爸</item>
         <item>妈妈</item>
@@ -84,5 +92,5 @@
         <item>老婆</item>
         <item>儿子</item>
         <item>女儿</item>
-    </array>
+    </string-array>
 </resources>

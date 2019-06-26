@@ -12,6 +12,7 @@ import java.util.Calendar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.global.Global;
 import top.soyask.calendarii.global.Setting;
@@ -226,7 +227,7 @@ public class ZoomActivity extends AppCompatActivity
 
     private void checkAndLaunch() {
         if (Setting.density_dpi != -1) {
-            Intent intent = new Intent(this, LaunchActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK |
                     Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

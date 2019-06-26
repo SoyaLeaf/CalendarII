@@ -83,9 +83,6 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
         setupSwitchStart();
         setupSwitchReplenish();
         setupSwitchAnim();
-        findPreference("pref_category_normal").setIcon(null);
-        findPreference("pref_category_normal").setIconSpaceReserved(false);
-        findPreference("pref_category_widget").setIconSpaceReserved(false);
         initPreference("pref_theme");
         initPreference("pref_symbol");
         initPreference("pref_custom_ui");
@@ -96,13 +93,13 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
 
     private void initPreference(String key) {
         Preference preference = findPreference(key);
-//        preference.setIconSpaceReserved(false);
+        preference.setIconSpaceReserved(false);
         preference.setOnPreferenceClickListener(this);
     }
 
     private void setupSwitchStart() {
         SwitchPreference preference = (SwitchPreference) findPreference("pref_monday_start");
-//        preference.setIconSpaceReserved(false);
+        preference.setIconSpaceReserved(false);
         preference.setChecked(Setting.date_offset == 1);
         preference.setOnPreferenceChangeListener((pref, newValue) -> {
             boolean isChecked = (boolean) newValue;
@@ -124,7 +121,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
 
     private void setupSwitchReplenish() {
         SwitchPreference preference = (SwitchPreference) findPreference("pref_fill_date");
-//        preference.setIconSpaceReserved(false);
+        preference.setIconSpaceReserved(false);
         preference.setChecked(Setting.replenish);
         preference.setOnPreferenceChangeListener((pref, newValue) -> {
             boolean isChecked = (boolean) newValue;
@@ -140,7 +137,7 @@ public class SettingPreferenceFragment extends PreferenceFragmentCompat
 
     private void setupSwitchAnim() {
         SwitchPreference preference = (SwitchPreference) findPreference("pref_select_anim");
-//        preference.setIconSpaceReserved(false);
+        preference.setIconSpaceReserved(false);
         preference.setChecked(Setting.select_anim);
         preference.setOnPreferenceChangeListener((pref, newValue) -> {
             boolean isChecked = (boolean) newValue;
