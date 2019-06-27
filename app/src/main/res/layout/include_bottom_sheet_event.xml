@@ -4,7 +4,7 @@
   <FrameLayout
     android:id="@+id/bottom_sheet"
     android:elevation="4dp"
-    app:behavior_peekHeight="140dp"
+    app:behavior_peekHeight="160dp"
     app:behavior_hideable="true"
     app:layout_behavior="@string/bottom_sheet_behavior"
     android:layout_width="match_parent"

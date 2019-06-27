@@ -27,5 +27,4 @@
     <include layout="@layout/include_state_normal"/>
     <include layout="@layout/include_bottom_sheet_event"/>
 
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
