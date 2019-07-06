@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.entity.MemorialDay;
-import top.soyask.calendarii.ui.adapter.memorail.MemorialDayAdapter;
+import top.soyask.calendarii.ui.adapter.memorial.MemorialDayAdapter;
 import top.soyask.calendarii.ui.fragment.base.BaseListFragment;
 
 public class AllMemorialFragment extends BaseListFragment implements MemorialDayAdapter.MemorialDayActionListener {

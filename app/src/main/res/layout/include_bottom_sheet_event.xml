@@ -10,16 +10,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <View
-      android:background="#fff"
+      android:background="?eventBackground"
       android:alpha="0"
       android:id="@+id/bottom_background"
       android:layout_width="match_parent"
       android:layout_height="match_parent"/>
     <androidx.appcompat.widget.Toolbar
-      android:background="@android:color/white"
+      android:background="?colorPrimary"
       android:id="@+id/toolbar_bottom_sheet"
       app:contentInsetStartWithNavigation="0dp"
-      app:navigationIcon="@drawable/ic_close_black_24dp"
+      app:navigationIcon="@drawable/ic_clear_white_24dp"
       android:alpha="0"
       android:layout_width="match_parent"
       android:layout_height="wrap_content" />

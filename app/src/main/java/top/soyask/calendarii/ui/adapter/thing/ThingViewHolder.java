@@ -27,7 +27,7 @@ public class ThingViewHolder extends RecyclerView.ViewHolder
     private float mStartX;
 
 
-    public ThingViewHolder(View itemView) {
+    ThingViewHolder(View itemView) {
         super(itemView);
         findView(itemView);
         init();

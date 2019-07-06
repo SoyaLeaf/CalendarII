@@ -3,6 +3,8 @@ package top.soyask.calendarii.utils;
 import java.util.Calendar;
 import java.util.Locale;
 
+import top.soyask.calendarii.entity.Day;
+
 /**
  * Created by mxf on 2017/8/10.
  */
@@ -62,6 +64,9 @@ public class DayUtils {
         return calendar.get(Calendar.WEEK_OF_MONTH);
     }
 
+    public static long getDateBegin(Day day) {
+        return getDateBegin(day.getYear(), day.getMonth(), day.getDayOfMonth());
+    }
 
     public static long getDateBegin(int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();

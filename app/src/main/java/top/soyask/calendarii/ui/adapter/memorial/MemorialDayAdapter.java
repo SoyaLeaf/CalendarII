@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.adapter.memorail;
+package top.soyask.calendarii.ui.adapter.memorial;
 
 import android.content.res.Resources;
 import android.text.format.DateUtils;
@@ -37,9 +37,8 @@ public class MemorialDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         MemorialDay memorialDay = mMemorialDays.get(position);
-        String who = memorialDay.getWho();
         Resources resources = holder.itemView.getResources();
-        String title = getTitle(memorialDay, who, resources);
+        String title = getTitle(memorialDay, resources);
         String details = memorialDay.getDetails();
         String date = resources
                 .getString(R.string.date_format, memorialDay.getMonth(), memorialDay.getDay());
@@ -101,7 +100,8 @@ public class MemorialDayAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return date;
     }
 
-    private String getTitle(MemorialDay memorialDay, String who, Resources resources) {
+    private String getTitle(MemorialDay memorialDay, Resources resources) {
+        String who = memorialDay.getWho();
         String[] whos = who.split(Global.FLAG);
         StringBuilder title = new StringBuilder();
         for (int i = 0; i < whos.length; i++) {

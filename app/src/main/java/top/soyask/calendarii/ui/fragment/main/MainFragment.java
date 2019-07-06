@@ -19,13 +19,15 @@ import android.widget.FrameLayout;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.circularreveal.CircularRevealCompat;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
+import com.google.android.material.circularreveal.CircularRevealHelper;
+import com.google.android.material.circularreveal.CircularRevealWidget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,9 +40,10 @@ import top.soyask.calendarii.R;
 import top.soyask.calendarii.database.dao.MemorialDayDao;
 import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Day;
+import top.soyask.calendarii.entity.MemorialDay;
 import top.soyask.calendarii.entity.Thing;
+import top.soyask.calendarii.ui.adapter.main.MainAdapter;
 import top.soyask.calendarii.ui.adapter.month.MonthFragmentAdapter;
-import top.soyask.calendarii.ui.adapter.thing.ThingAdapter;
 import top.soyask.calendarii.ui.eventbus.Messages;
 import top.soyask.calendarii.ui.fragment.about.AboutFragment;
 import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
@@ -52,6 +55,7 @@ import top.soyask.calendarii.ui.fragment.month.MonthFragment;
 import top.soyask.calendarii.ui.fragment.setting.SettingPreferenceFragment;
 import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
+import top.soyask.calendarii.utils.DayUtils;
 import top.soyask.calendarii.utils.EventBusDefault;
 import top.soyask.calendarii.utils.MonthUtils;
 
@@ -77,6 +81,7 @@ public class MainFragment extends BaseFragment
     private FloatingActionButton mFabActions;
     private CircularRevealFrameLayout mLayoutActions;
     private View mIbActions;
+    private MainAdapter mMainAdapter;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -177,11 +182,8 @@ public class MainFragment extends BaseFragment
         View bottomBackground = findViewById(R.id.bottom_background);
         RecyclerView recyclerView = findViewById(R.id.rv_event_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mHostActivity, RecyclerView.VERTICAL, false));
-        ArrayList<Thing> things = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            things.add(new Thing());
-        }
-        recyclerView.setAdapter(new ThingAdapter(things, null));
+        mMainAdapter = new MainAdapter();
+        recyclerView.setAdapter(mMainAdapter);
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -193,6 +195,12 @@ public class MainFragment extends BaseFragment
                 toolbarBottomSheet.setAlpha(slideOffset * 1f);
                 bottomBackground.setAlpha(slideOffset * 1f);
                 recyclerView.setTranslationY(slideOffset * toolbarBottomSheet.getHeight());
+                if (slideOffset >= 0) {
+                    findViewById(R.id.bottom_title_view).setTranslationY(-slideOffset * bottomSheet.getHeight());
+                    FrameLayout view = findViewById(R.id.bottom_actions_view);
+                    view.setTranslationX(slideOffset * bottomSheet.getHeight());
+                    view.setTranslationY(-slideOffset * bottomSheet.getHeight());
+                }
             }
         });
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -300,6 +308,11 @@ public class MainFragment extends BaseFragment
     @Override
     public void onSelected(Day day) {
         this.mSelectedDay = day;
+        List<Thing> things = ThingDao.getInstance(mHostActivity).listByDate(DayUtils.getDateBegin(day));
+        List<MemorialDay> memorialDays = day.getMemorialDays();
+        mMainAdapter.setMemorialDays(memorialDays);
+        mMainAdapter.setThings(things);
+        mMainAdapter.notifyDataSetChanged();
         calculateDelta_T();
         if (day.getDayOfMonth() % 2 == 0) {
             showCollapseViewWithAnim();
@@ -327,16 +340,16 @@ public class MainFragment extends BaseFragment
         long time = selectDay.getTime().getTime() / 86400000;
         Long l = time - todayTime;
         int dayCount = l.intValue();
-//        if (dayCount > 0) {
+        if (dayCount > 0) {
 //            mTvDayCount.setText(getString(R.string.till_xx_days_ago, dayCount));
 //            mTvDayCountM.setText(getString(R.string.xx_later, dayCount));
-//        } else if (dayCount < 0) {
+        } else if (dayCount < 0) {
 //            mTvDayCount.setText(getString(R.string.it_has_been_xx_days, -dayCount));
 //            mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
-//        } else {
+        } else {
 //            mTvDayCount.setText(R.string.today_things);
 //            mTvDayCountM.setText(null);
-//        }
+        }
     }
 
     @NonNull
@@ -415,18 +428,27 @@ public class MainFragment extends BaseFragment
 
     private void showCollapseView() {
         mCollapseView.setVisibility(View.VISIBLE);
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         mRlLeftBottom.setVisibility(View.GONE);
         mFabActions.setVisibility(View.GONE);
-        new Handler().post(() -> mBottomSheetBehavior.setHideable(false));
+        showBottomSheet();
     }
+
 
     private void showLeftBottomView() {
         mCollapseView.setVisibility(View.INVISIBLE);
-        mBottomSheetBehavior.setHideable(true);
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        hideBottomSheet();
         mRlLeftBottom.setVisibility(View.VISIBLE);
         mFabActions.setVisibility(View.VISIBLE);
+    }
+
+    private void hideBottomSheet() {
+        mBottomSheetBehavior.setHideable(true);
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    }
+
+    private void showBottomSheet() {
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        new Handler().post(() -> mBottomSheetBehavior.setHideable(false));
     }
 
     private void showCollapseViewWithAnim() {
@@ -450,6 +472,11 @@ public class MainFragment extends BaseFragment
                 hideLeftBottomViewWithAnim();
                 mCollapseView.setVisibility(View.VISIBLE);
             }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                showBottomSheet();
+            }
         });
         set.start();
     }
@@ -472,6 +499,7 @@ public class MainFragment extends BaseFragment
 
             @Override
             public void onAnimationStart(Animator animation) {
+                hideBottomSheet();
                 mIbActions.setRotation(0);
             }
 
@@ -538,6 +566,7 @@ public class MainFragment extends BaseFragment
             @Override
             public void onAnimationStart(Animator animation) {
                 mLayoutActions.setVisibility(View.VISIBLE);
+                hideBottomSheet();
             }
         });
         set.start();
@@ -554,6 +583,7 @@ public class MainFragment extends BaseFragment
             @Override
             public void onAnimationEnd(Animator animation) {
                 mLayoutActions.setVisibility(View.INVISIBLE);
+                showBottomSheet();
             }
         });
         set.start();

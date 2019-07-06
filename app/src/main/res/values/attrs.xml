@@ -16,6 +16,14 @@
         <attr name="cv_weekendTextColor" format="color|reference" />
         <attr name="cv_todayTextColor" format="color|reference" />
         <attr name="cv_replenish" format="boolean" />
+    </declare-styleable>
 
+    <declare-styleable name="PacManView">
+        <attr name="cv_textSize" format="dimension|reference" />
+        <attr name="cv_pacManSize" format="dimension|reference" />
+        <attr name="cv_pacManColor" format="color|reference" />
+        <attr name="cv_pacManEyeColor" format="color|reference" />
+        <attr name="cv_textColor" format="color|reference" />
+        <attr name="cv_text" format="string|reference" />
     </declare-styleable>
 </resources>

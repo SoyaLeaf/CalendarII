@@ -26,5 +26,11 @@
     <include layout="@layout/include_state_collapse"/>
     <include layout="@layout/include_state_normal"/>
     <include layout="@layout/include_bottom_sheet_event"/>
-
+    <View
+        android:id="@+id/view_shadow"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:layout_gravity="bottom"
+        android:background="#ccc"
+        android:elevation="8dp" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

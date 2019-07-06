@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="88dp">
+
+    <top.soyask.calendarii.ui.view.PacManView
+        android:id="@+id/pmv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cv_textColor="@color/text_color_primary_light"
+        app:cv_textSize="16dp"
+        app:cv_pacManSize="24dp"
+        app:cv_pacManColor="@color/text_color_primary_light"
+        app:cv_pacManEyeColor="?colorAccent"
+        app:cv_text="没有其他的事情咯"/>
+</FrameLayout>

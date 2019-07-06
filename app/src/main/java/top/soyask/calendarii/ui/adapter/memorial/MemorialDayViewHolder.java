@@ -1,4 +1,4 @@
-package top.soyask.calendarii.ui.adapter.memorail;
+package top.soyask.calendarii.ui.adapter.memorial;
 
 import android.view.View;
 import android.widget.TextView;
