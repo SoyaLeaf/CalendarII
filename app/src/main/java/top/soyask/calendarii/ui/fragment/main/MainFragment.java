@@ -201,8 +201,10 @@ public class MainFragment extends BaseFragment
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-                    mBottomSheetBehavior.setHideable(false);
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    if (mSelectedDay.hasEvent() || mSelectedDay.hasMemorialDay()) {
+                        showBottomSheet();
+                    }
                 }
             }
 
@@ -470,7 +472,6 @@ public class MainFragment extends BaseFragment
     }
 
     private void hideBottomSheet() {
-        mBottomSheetBehavior.setHideable(true);
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
