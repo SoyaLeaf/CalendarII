@@ -191,6 +191,7 @@ public class MainFragment extends BaseFragment
         mTvClLunar = findViewById(R.id.tv_cl_lunar);
         mTvClLunarYear = findViewById(R.id.tv_cl_lunar_year);
         mToolbarBottomSheet = findViewById(R.id.toolbar_bottom_sheet);
+        mToolbarBottomSheet.setNavigationOnClickListener(v -> mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED));
         View bottomBackground = findViewById(R.id.bottom_background);
         RecyclerView recyclerView = findViewById(R.id.rv_event_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mHostActivity, RecyclerView.VERTICAL, false));
@@ -505,7 +506,7 @@ public class MainFragment extends BaseFragment
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                if(!isCanceled){
+                if (!isCanceled) {
                     showBottomSheet();
                 }
             }
