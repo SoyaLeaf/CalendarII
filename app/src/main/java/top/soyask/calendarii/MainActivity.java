@@ -10,8 +10,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -201,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(mMainFragment.onBackPressed()){
+        if (mMainFragment == null || mMainFragment.onBackPressed()) {
             super.onBackPressed();
         }
     }

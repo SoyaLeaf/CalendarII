@@ -22,6 +22,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -152,12 +153,14 @@ public class MainFragment extends BaseFragment
     private void onAddMemorial() {
         MemorialFragment memorialFragment = MemorialFragment.newInstance(mSelectedDay);
         addFragment(memorialFragment);
+        hideLayoutActions();
     }
 
     private void onAddThing() {
         EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
         thingFragment.setOnAddListener(MainFragment.this);
         addFragment(thingFragment);
+        hideLayoutActions();
     }
 
     private void initSelectDay() {
@@ -202,7 +205,8 @@ public class MainFragment extends BaseFragment
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    if (mSelectedDay.hasEvent() || mSelectedDay.hasMemorialDay()) {
+                    boolean isActionsVisible = mLayoutActions.getVisibility() != View.INVISIBLE;
+                    if (!isActionsVisible && (mSelectedDay.hasEvent() || mSelectedDay.hasMemorialDay())) {
                         showBottomSheet();
                     }
                 }
@@ -411,6 +415,11 @@ public class MainFragment extends BaseFragment
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Messages.UpdateDataMessage message) {
         WidgetManager.updateAllWidget(mHostActivity);
+        MemorialDayDao dao = MemorialDayDao.getInstance(mHostActivity);
+        List<MemorialDay> memorialDays = new ArrayList<>();
+        memorialDays.addAll(dao.findMemorialDays(mSelectedDay.getMonth(), mSelectedDay.getDayOfMonth())) ;
+        memorialDays.addAll(dao.findMemorialDays(mSelectedDay.getLunar().getLunarDate())) ;
+        mSelectedDay.setMemorialDays(memorialDays);
         onSelected(mSelectedDay);
     }
 
