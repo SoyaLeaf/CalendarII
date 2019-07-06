@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
             R.style.AppTheme_Red
     };
     public static final String TAG = "MainActivity";
+    private MainFragment mMainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,10 +165,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        MainFragment mainFragment = MainFragment.newInstance();
+        mMainFragment = MainFragment.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment, mainFragment)
+                .replace(R.id.fragment, mMainFragment)
                 .commitAllowingStateLoss();
     }
 
@@ -198,4 +199,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(mMainFragment.onBackPressed()){
+            super.onBackPressed();
+        }
+    }
 }

@@ -7,13 +7,10 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -64,7 +61,6 @@ import static java.util.Calendar.YEAR;
 import static top.soyask.calendarii.global.Global.MONTH_COUNT;
 import static top.soyask.calendarii.global.Global.YEAR_START_REAL;
 
-
 public class MainFragment extends BaseFragment
         implements ViewPager.OnPageChangeListener, MonthFragment.OnDaySelectListener,
         EditThingFragment.OnAddListener, DateSelectDialog.DateSelectCallback {
@@ -89,6 +85,7 @@ public class MainFragment extends BaseFragment
     private TextView mTvLunarYear;
     private TextView mTvClLunarYear;
     private Toolbar mToolbarBottomSheet;
+    private Animator mCurrentAnimator;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -104,7 +101,6 @@ public class MainFragment extends BaseFragment
     @Override
     protected void setupUI() {
         mContentView.setOnTouchListener((v, event) -> false);
-        initSelectDay();
         setupToolbar();
         setupViewPager();
         setupEventList();
@@ -128,6 +124,7 @@ public class MainFragment extends BaseFragment
             }
         });
         mFabActions.setOnClickListener(getFabOnClickListener());
+        initSelectDay();
     }
 
     private View.OnClickListener getFabOnClickListener() {
@@ -164,9 +161,10 @@ public class MainFragment extends BaseFragment
     }
 
     private void initSelectDay() {
-        mSelectedDay = MonthUtils.generateDay(mCalendar,
+        Day today = MonthUtils.generateDay(mCalendar,
                 ThingDao.getInstance(mHostActivity),
                 MemorialDayDao.getInstance(mHostActivity));
+        onSelected(today);
     }
 
     private void setupToolbar() {
@@ -202,15 +200,18 @@ public class MainFragment extends BaseFragment
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    mBottomSheetBehavior.setHideable(false);
+                }
             }
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                mToolbarBottomSheet.setAlpha(slideOffset * 1f);
-                bottomBackground.setAlpha(slideOffset * 1f);
-                float offset = slideOffset / 0.2f;
-                recyclerView.setTranslationY((offset > 1 ? 1 : offset) * mToolbarBottomSheet.getHeight());
                 if (slideOffset >= 0) {
+                    mToolbarBottomSheet.setAlpha(slideOffset * 1f);
+                    bottomBackground.setAlpha(slideOffset * 1f);
+                    float offset = slideOffset / 0.2f;
+                    recyclerView.setTranslationY((offset > 1 ? 1 : offset) * mToolbarBottomSheet.getHeight());
                     findViewById(R.id.bottom_title_view).setTranslationY(-slideOffset * bottomSheet.getHeight());
                     FrameLayout view = findViewById(R.id.bottom_actions_view);
                     view.setTranslationX(slideOffset * bottomSheet.getHeight());
@@ -218,7 +219,7 @@ public class MainFragment extends BaseFragment
                 }
             }
         });
-        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        hideBottomSheet();
     }
 
     private int getCurrentMonth() {
@@ -474,7 +475,6 @@ public class MainFragment extends BaseFragment
 
     private void showBottomSheet() {
         mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        new Handler().post(() -> mBottomSheetBehavior.setHideable(false));
     }
 
     private void showCollapseViewWithAnim() {
@@ -491,23 +491,31 @@ public class MainFragment extends BaseFragment
         ObjectAnimator fabTransX = ObjectAnimator.ofFloat(mFabActions, "translationX", 0f, mCollapseView.getWidth());
         ObjectAnimator fabTransY = ObjectAnimator.ofFloat(mFabActions, "translationY", 0f, height);
         ObjectAnimator shadowTransY = ObjectAnimator.ofFloat(viewShadowMain, "translationY", height, 0);
-        AnimatorSet set = new AnimatorSet()
-                .setDuration(500);
+        AnimatorSet set = new AnimatorSet().setDuration(500);
         set.playTogether(circularReveal, translationX, translationY, fabTransX, fabTransY, shadowTransY);
         set.addListener(new AnimatorListenerAdapter() {
+            boolean isCanceled;
+
             @Override
             public void onAnimationStart(Animator animation) {
-                super.onAnimationStart(animation);
-                hideLeftBottomViewWithAnim();
+                isCanceled = false;
                 mCollapseView.setVisibility(View.VISIBLE);
+                mRlLeftBottom.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                showBottomSheet();
+                if(!isCanceled){
+                    showBottomSheet();
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                isCanceled = true;
             }
         });
-        set.start();
+        checkAndPlayAnimator(set);
     }
 
     private void hideCollapseViewWithAnim() {
@@ -524,8 +532,7 @@ public class MainFragment extends BaseFragment
         ObjectAnimator fabTransX = ObjectAnimator.ofFloat(mFabActions, "translationX", mCollapseView.getWidth(), 0f);
         ObjectAnimator fabTransY = ObjectAnimator.ofFloat(mFabActions, "translationY", height, 0);
         ObjectAnimator shadowTransY = ObjectAnimator.ofFloat(viewShadowMain, "translationY", 0, height);
-        AnimatorSet set = new AnimatorSet()
-                .setDuration(500);
+        AnimatorSet set = new AnimatorSet().setDuration(500);
         set.playTogether(circularReveal, translationX, translationY, fabTransX, fabTransY, shadowTransY);
         set.addListener(new AnimatorListenerAdapter() {
 
@@ -537,55 +544,13 @@ public class MainFragment extends BaseFragment
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                super.onAnimationEnd(animation);
                 mCollapseView.setVisibility(View.INVISIBLE);
                 mRlLeftBottom.setVisibility(View.VISIBLE);
                 mLayoutActions.setVisibility(View.INVISIBLE);
+                hideBottomSheet();
             }
         });
-        set.start();
-    }
-
-    private void showLeftBottomViewWithAnim() {
-        Animation animation = AnimationUtils.loadAnimation(mHostActivity, R.anim.fade_in);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                mRlLeftBottom.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        mRlLeftBottom.startAnimation(animation);
-    }
-
-    private void hideLeftBottomViewWithAnim() {
-        Animation animation = AnimationUtils.loadAnimation(mHostActivity, R.anim.out_slide);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mRlLeftBottom.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
-
-        mRlLeftBottom.startAnimation(animation);
+        checkAndPlayAnimator(set);
     }
 
     private void showLayoutActions() {
@@ -601,7 +566,7 @@ public class MainFragment extends BaseFragment
                 hideBottomSheet();
             }
         });
-        set.start();
+        checkAndPlayAnimator(set);
     }
 
     private void hideLayoutActions() {
@@ -617,7 +582,36 @@ public class MainFragment extends BaseFragment
                 mLayoutActions.setVisibility(View.INVISIBLE);
                 showBottomSheet();
             }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                mLayoutActions.setVisibility(View.INVISIBLE);
+                showBottomSheet();
+            }
         });
+        checkAndPlayAnimator(set);
+    }
+
+    private void checkAndPlayAnimator(Animator set) {
+        checkAnim();
+        mCurrentAnimator = set;
         set.start();
+    }
+
+    private void checkAnim() {
+        if (mCurrentAnimator != null) {
+            if (mCurrentAnimator.isRunning()) {
+                mCurrentAnimator.cancel();
+            }
+            mCurrentAnimator = null;
+        }
+    }
+
+    public boolean onBackPressed() {
+        if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return false;
+        }
+        return true;
     }
 }
