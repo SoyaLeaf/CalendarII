@@ -15,12 +15,11 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.circularreveal.CircularRevealCompat;
 import com.google.android.material.circularreveal.CircularRevealFrameLayout;
-import com.google.android.material.circularreveal.CircularRevealHelper;
-import com.google.android.material.circularreveal.CircularRevealWidget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -82,6 +81,14 @@ public class MainFragment extends BaseFragment
     private CircularRevealFrameLayout mLayoutActions;
     private View mIbActions;
     private MainAdapter mMainAdapter;
+    private boolean mIsShowCollapse;
+    private TextView mTvClDayCount;
+    private TextView mTvDayCount;
+    private TextView mTvLunar;
+    private TextView mTvClLunar;
+    private TextView mTvLunarYear;
+    private TextView mTvClLunarYear;
+    private Toolbar mToolbarBottomSheet;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -107,6 +114,10 @@ public class MainFragment extends BaseFragment
         mFabActions = findViewById(R.id.fab_actions);
         mLayoutActions = findViewById(R.id.layout_actions);
         mIbActions = findViewById(R.id.ib_actions);
+        mTvDayCount = findViewById(R.id.tv_day_count);
+        mTvLunar = findViewById(R.id.tv_lunar);
+        mTvLunarYear = findViewById(R.id.tv_lunar_year);
+
         findViewById(R.id.ib_add_thing).setOnClickListener(v -> onAddThing());
         findViewById(R.id.ib_add_memorial_day).setOnClickListener(v -> onAddMemorial());
         mIbActions.setOnClickListener(v -> {
@@ -178,7 +189,10 @@ public class MainFragment extends BaseFragment
      * 包含事件、日程、纪念日
      */
     private void setupEventList() {
-        Toolbar toolbarBottomSheet = findViewById(R.id.toolbar_bottom_sheet);
+        mTvClDayCount = findViewById(R.id.tv_cl_day_count);
+        mTvClLunar = findViewById(R.id.tv_cl_lunar);
+        mTvClLunarYear = findViewById(R.id.tv_cl_lunar_year);
+        mToolbarBottomSheet = findViewById(R.id.toolbar_bottom_sheet);
         View bottomBackground = findViewById(R.id.bottom_background);
         RecyclerView recyclerView = findViewById(R.id.rv_event_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mHostActivity, RecyclerView.VERTICAL, false));
@@ -192,9 +206,10 @@ public class MainFragment extends BaseFragment
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                toolbarBottomSheet.setAlpha(slideOffset * 1f);
+                mToolbarBottomSheet.setAlpha(slideOffset * 1f);
                 bottomBackground.setAlpha(slideOffset * 1f);
-                recyclerView.setTranslationY(slideOffset * toolbarBottomSheet.getHeight());
+                float offset = slideOffset / 0.2f;
+                recyclerView.setTranslationY((offset > 1 ? 1 : offset) * mToolbarBottomSheet.getHeight());
                 if (slideOffset >= 0) {
                     findViewById(R.id.bottom_title_view).setTranslationY(-slideOffset * bottomSheet.getHeight());
                     FrameLayout view = findViewById(R.id.bottom_actions_view);
@@ -313,11 +328,22 @@ public class MainFragment extends BaseFragment
         mMainAdapter.setMemorialDays(memorialDays);
         mMainAdapter.setThings(things);
         mMainAdapter.notifyDataSetChanged();
+        String title = getString(R.string.date_format, day.getMonth(), day.getDayOfMonth());
+        mToolbarBottomSheet.setTitle(title);
         calculateDelta_T();
-        if (day.getDayOfMonth() % 2 == 0) {
-            showCollapseViewWithAnim();
+        mTvLunar.setText(day.getLunar().getLunarDate());
+        mTvClLunar.setText(day.getLunar().getLunarDate());
+        String year = getString(R.string.xx_year, day.getLunar().getEra());
+        mTvLunarYear.setText(year);
+        mTvClLunarYear.setText(year);
+        if (memorialDays.isEmpty() && things.isEmpty()) {
+            if (mIsShowCollapse) {
+                hideCollapseViewWithAnim();
+            }
         } else {
-            hideCollapseViewWithAnim();
+            if (!mIsShowCollapse) {
+                showCollapseViewWithAnim();
+            }
         }
     }
 
@@ -341,14 +367,14 @@ public class MainFragment extends BaseFragment
         Long l = time - todayTime;
         int dayCount = l.intValue();
         if (dayCount > 0) {
-//            mTvDayCount.setText(getString(R.string.till_xx_days_ago, dayCount));
-//            mTvDayCountM.setText(getString(R.string.xx_later, dayCount));
+            mTvDayCount.setText(getString(R.string.till_xx_days_ago, dayCount));
+            mTvClDayCount.setText(getString(R.string.xx_later, dayCount));
         } else if (dayCount < 0) {
-//            mTvDayCount.setText(getString(R.string.it_has_been_xx_days, -dayCount));
-//            mTvDayCountM.setText(getString(R.string.xx_before, -dayCount));
+            mTvDayCount.setText(getString(R.string.it_has_been_xx_days, -dayCount));
+            mTvClDayCount.setText(getString(R.string.xx_before, -dayCount));
         } else {
-//            mTvDayCount.setText(R.string.today_things);
-//            mTvDayCountM.setText(null);
+            mTvDayCount.setText(R.string.today_things);
+            mTvClDayCount.setText(R.string.today_things);
         }
     }
 
@@ -452,7 +478,9 @@ public class MainFragment extends BaseFragment
     }
 
     private void showCollapseViewWithAnim() {
+        mIsShowCollapse = true;
         View shadow = findViewById(R.id.view_shadow);
+        View viewShadowMain = findViewById(R.id.view_shadow_main);
         int height = shadow.getHeight();
         Animator circularReveal = CircularRevealCompat.createCircularReveal(
                 mCollapseView, 0, mCollapseView.getHeight(), mRlLeftBottom.getWidth() + height, mCollapseView.getWidth());
@@ -462,9 +490,10 @@ public class MainFragment extends BaseFragment
                 ObjectAnimator.ofFloat(mCollapseView, "translationY", height, 0f);
         ObjectAnimator fabTransX = ObjectAnimator.ofFloat(mFabActions, "translationX", 0f, mCollapseView.getWidth());
         ObjectAnimator fabTransY = ObjectAnimator.ofFloat(mFabActions, "translationY", 0f, height);
+        ObjectAnimator shadowTransY = ObjectAnimator.ofFloat(viewShadowMain, "translationY", height, 0);
         AnimatorSet set = new AnimatorSet()
                 .setDuration(500);
-        set.playTogether(circularReveal, translationX, translationY, fabTransX, fabTransY);
+        set.playTogether(circularReveal, translationX, translationY, fabTransX, fabTransY, shadowTransY);
         set.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
@@ -482,7 +511,9 @@ public class MainFragment extends BaseFragment
     }
 
     private void hideCollapseViewWithAnim() {
+        mIsShowCollapse = false;
         View shadow = findViewById(R.id.view_shadow);
+        View viewShadowMain = findViewById(R.id.view_shadow_main);
         int height = shadow.getHeight();
         Animator circularReveal = CircularRevealCompat.createCircularReveal(
                 mCollapseView, 0, mCollapseView.getHeight(), mCollapseView.getWidth(), mRlLeftBottom.getWidth() + height);
@@ -492,9 +523,10 @@ public class MainFragment extends BaseFragment
                 ObjectAnimator.ofFloat(mCollapseView, "translationY", 0f, height);
         ObjectAnimator fabTransX = ObjectAnimator.ofFloat(mFabActions, "translationX", mCollapseView.getWidth(), 0f);
         ObjectAnimator fabTransY = ObjectAnimator.ofFloat(mFabActions, "translationY", height, 0);
+        ObjectAnimator shadowTransY = ObjectAnimator.ofFloat(viewShadowMain, "translationY", 0, height);
         AnimatorSet set = new AnimatorSet()
                 .setDuration(500);
-        set.playTogether(circularReveal, translationX, translationY, fabTransX, fabTransY);
+        set.playTogether(circularReveal, translationX, translationY, fabTransX, fabTransY, shadowTransY);
         set.addListener(new AnimatorListenerAdapter() {
 
             @Override

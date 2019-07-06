@@ -12,11 +12,13 @@ class MemorialDayViewHolder extends RecyclerView.ViewHolder {
     TextView tv_name;
     TextView tv_content;
     TextView tv_year_count;
+    View divider;
 
     MemorialDayViewHolder(@NonNull View itemView) {
         super(itemView);
         tv_name = itemView.findViewById(R.id.tv_name);
         tv_content = itemView.findViewById(R.id.tv_content);
         tv_year_count = itemView.findViewById(R.id.tv_year_count);
+        divider = itemView.findViewById(R.id.divider);
     }
 }

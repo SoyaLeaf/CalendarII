@@ -81,6 +81,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void onBindMemorialDay(MemorialDayViewHolder holder, Resources resources, int position) {
+        holder.divider.setVisibility(position == 0 ? View.INVISIBLE : View.VISIBLE);
         MemorialDay memorialDay = mMemorialDays.get(position);
         String title = getTitle(memorialDay, resources);
         holder.tv_name.setText(title);
@@ -102,6 +103,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     private void onBindThing(ThingViewHolder holder, int position) {
+        holder.divider.setVisibility(mMemorialDays.isEmpty() && position == 0 ? View.INVISIBLE : View.VISIBLE);
         Thing thing = mThings.get(position);
         holder.tv.setText(thing.getDetail());
     }

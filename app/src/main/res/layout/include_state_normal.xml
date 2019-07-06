@@ -38,7 +38,6 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_above="@id/tv_day_count"
-            android:contentDescription="@string/zodiac"
             android:src="@drawable/ji" />
 
         <TextView

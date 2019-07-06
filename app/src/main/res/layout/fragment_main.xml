@@ -27,7 +27,7 @@
     <include layout="@layout/include_state_normal"/>
     <include layout="@layout/include_bottom_sheet_event"/>
     <View
-        android:id="@+id/view_shadow"
+        android:id="@+id/view_shadow_main"
         android:layout_width="match_parent"
         android:layout_height="8dp"
         android:layout_gravity="bottom"

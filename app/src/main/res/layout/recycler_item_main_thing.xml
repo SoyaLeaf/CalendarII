@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?actionBarSize"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
 
-    <ImageView
-        android:id="@+id/iv"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_centerVertical="true"
-        android:layout_margin="16dp"
-        android:tint="@color/text_color_primary_light"
-        android:src="@drawable/ic_thing" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
-    <TextView
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_color_primary_light"
-        android:textSize="17dp"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@id/iv" />
-</RelativeLayout>
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="64dp"
+            android:background="@color/divider_light" />
+
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_thing"
+            android:tint="@color/text_color_primary_light" />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/iv"
+            android:textColor="@color/text_color_primary_light"
+            android:textSize="17dp" />
+    </RelativeLayout>
+</FrameLayout>
