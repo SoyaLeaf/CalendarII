@@ -2,19 +2,24 @@ package top.soyask.calendarii.ui.fragment.base;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.IdRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.FragmentTransaction;
 import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
 
@@ -32,13 +37,14 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected <T extends View> T findViewById(@IdRes int id) {
-        return  mContentView.findViewById(id);
+        return mContentView.findViewById(id);
     }
-    protected Toolbar findToolbar(@IdRes int id){
+
+    protected Toolbar findToolbar(@IdRes int id) {
         return findViewById(id);
     }
 
-    protected Toolbar findToolbar(){
+    protected Toolbar findToolbar() {
         return findToolbar(R.id.toolbar);
     }
 
@@ -86,13 +92,14 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 添加新的Fragment到页面最上层
      *
-     * @param fragment 
+     * @param fragment
      */
     protected void addFragment(Fragment fragment) {
-        getFragmentManager()
+        mHostActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.in_from_bottom, R.anim.out_to_bottom, R.anim.in_from_bottom, R.anim.out_to_bottom)
-                .add(R.id.main, fragment)
+                .setCustomAnimations(R.anim.fade_in, R.anim.out_slide, 0, R.anim.out_slide)
+                .replace(R.id.cover, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();
     }
@@ -111,7 +118,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void showSnackbar(final String tip, final String action, final View.OnClickListener listener) {
-        mHostActivity.runOnUiThread(() -> Snackbar.make(mContentView, tip, Snackbar.LENGTH_SHORT).setAction(action,listener).show());
+        mHostActivity.runOnUiThread(() -> Snackbar.make(mContentView, tip, Snackbar.LENGTH_SHORT).setAction(action, listener).show());
     }
 
     /**

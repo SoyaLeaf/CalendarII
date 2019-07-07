@@ -512,13 +512,15 @@ public class MainFragment extends BaseFragment
         View shadow = findViewById(R.id.view_shadow);
         View viewShadowMain = findViewById(R.id.view_shadow_main);
         int height = shadow.getHeight();
+        int collapseViewWidth = mCollapseView.getWidth();
         Animator circularReveal = CircularRevealCompat.createCircularReveal(
-                mCollapseView, 0, mCollapseView.getHeight(), mRlLeftBottom.getWidth() + height, mCollapseView.getWidth());
+                mCollapseView, 0, mCollapseView.getHeight(), mRlLeftBottom.getWidth() + height, collapseViewWidth);
         ObjectAnimator translationX =
                 ObjectAnimator.ofFloat(mCollapseView, "translationX", -2 * height, 0f);
         ObjectAnimator translationY =
                 ObjectAnimator.ofFloat(mCollapseView, "translationY", height, 0f);
-        ObjectAnimator fabTransX = ObjectAnimator.ofFloat(mFabActions, "translationX", 0f, mCollapseView.getWidth());
+        ObjectAnimator fabTransX = ObjectAnimator.ofFloat(
+                mFabActions, "translationX", 0f, collapseViewWidth == 0 ? Integer.MAX_VALUE : collapseViewWidth);
         ObjectAnimator fabTransY = ObjectAnimator.ofFloat(mFabActions, "translationY", 0f, height);
         ObjectAnimator shadowTransY = ObjectAnimator.ofFloat(viewShadowMain, "translationY", height, 0);
         AnimatorSet set = new AnimatorSet().setDuration(500);
