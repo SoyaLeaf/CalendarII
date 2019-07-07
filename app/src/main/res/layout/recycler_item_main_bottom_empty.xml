@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:background="?selectableItemBackground"
         app:cv_pacManColor="@color/text_color_primary_light"
         app:cv_pacManEyeColor="?colorAccent"
         app:cv_pacManSize="24dp"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_BOTTOM_EMPTY = -1;
     private List<Thing> mThings = Collections.emptyList();
     private List<MemorialDay> mMemorialDays = Collections.emptyList();
+    @NonNull
+    private MainListCallback mCallback;
+    private WeakReference<PacManView> mPacManView;
+
+    public MainAdapter(@NonNull MainListCallback callback) {
+        mCallback = callback;
+    }
 
     @NonNull
     @Override
@@ -69,13 +77,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 onBindThing((ThingViewHolder) holder, position - mMemorialDays.size());
                 break;
             case VIEW_BOTTOM_EMPTY:
+                PacManView pacManView = holder.itemView.findViewById(R.id.pmv);
                 holder.itemView.setOnClickListener(v -> {
-                    PacManView pacManView = holder.itemView.findViewById(R.id.pmv);
-                    pacManView.setCallback(() -> {
-
-                    });
+                    pacManView.setCallback(() -> mCallback.onAnimationEnd());
+                    mPacManView = new WeakReference<>(pacManView);
                     pacManView.start();
                 });
+                pacManView.stop();
                 break;
         }
     }
@@ -100,12 +108,24 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             holder.tv_year_count.setVisibility(View.VISIBLE);
             holder.tv_year_count.setText(resources.getString(R.string.xx_anniversary, yearCount));
         }
+        holder.itemView.setOnClickListener(v -> mCallback.onMemorialClick(memorialDay));
     }
 
     private void onBindThing(ThingViewHolder holder, int position) {
         holder.divider.setVisibility(mMemorialDays.isEmpty() && position == 0 ? View.INVISIBLE : View.VISIBLE);
         Thing thing = mThings.get(position);
         holder.tv.setText(thing.getDetail());
+        holder.itemView.setOnClickListener(v -> mCallback.onThingClick(thing));
+    }
+
+    public void stopPacMan() {
+        if (mPacManView != null) {
+            PacManView pacManView = mPacManView.get();
+            if (pacManView != null) {
+                pacManView.stop();
+                mPacManView = null;
+            }
+        }
     }
 
     public void setMemorialDays(List<MemorialDay> memorialDays) {
@@ -136,5 +156,13 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
         String name = memorialDay.getName();
         return title.append(resources.getString(R.string.of)).append(name).toString();
+    }
+
+    public interface MainListCallback {
+        void onAnimationEnd();
+
+        void onThingClick(Thing thing);
+
+        void onMemorialClick(MemorialDay day);
     }
 }

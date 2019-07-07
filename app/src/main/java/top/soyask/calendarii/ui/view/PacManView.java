@@ -97,6 +97,9 @@ public class PacManView extends View {
                     return;
                 }
                 if (!mIsAnimationStart) {
+                    mAngle = 0;
+                    mOffsetX = 0;
+                    postInvalidate();
                     return;
                 }
                 if (mOffsetX > mTextWidth + mPacManSize) {
@@ -109,7 +112,7 @@ public class PacManView extends View {
             mAngle = 0;
             mOffsetX = 0;
             postInvalidate();
-            mCallback.onEnd();
+            post(mCallback::onEnd);
         }
     }
 

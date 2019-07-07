@@ -198,7 +198,24 @@ public class MainFragment extends BaseFragment
         View bottomBackground = findViewById(R.id.bottom_background);
         RecyclerView recyclerView = findViewById(R.id.rv_event_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(mHostActivity, RecyclerView.VERTICAL, false));
-        mMainAdapter = new MainAdapter();
+        mMainAdapter = new MainAdapter(new MainAdapter.MainListCallback() {
+            @Override
+            public void onAnimationEnd() {
+                showLayoutActions();
+            }
+
+            @Override
+            public void onThingClick(Thing thing) {
+                EditThingFragment editThingFragment = EditThingFragment.newInstance(null, thing);
+                addFragment(editThingFragment);
+            }
+
+            @Override
+            public void onMemorialClick(MemorialDay day) {
+                MemorialFragment memorialFragment = MemorialFragment.newInstance(day);
+                addFragment(memorialFragment);
+            }
+        });
         recyclerView.setAdapter(mMainAdapter);
         mBottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottom_sheet));
         mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -214,6 +231,7 @@ public class MainFragment extends BaseFragment
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                mMainAdapter.stopPacMan();
                 if (slideOffset >= 0) {
                     mToolbarBottomSheet.setAlpha(slideOffset * 1f);
                     bottomBackground.setAlpha(slideOffset * 1f);
@@ -335,6 +353,7 @@ public class MainFragment extends BaseFragment
         List<MemorialDay> memorialDays = day.getMemorialDays();
         mMainAdapter.setMemorialDays(memorialDays);
         mMainAdapter.setThings(things);
+        mMainAdapter.stopPacMan();
         mMainAdapter.notifyDataSetChanged();
         String title = getString(R.string.date_format, day.getMonth(), day.getDayOfMonth());
         mToolbarBottomSheet.setTitle(title);
@@ -417,8 +436,8 @@ public class MainFragment extends BaseFragment
         WidgetManager.updateAllWidget(mHostActivity);
         MemorialDayDao dao = MemorialDayDao.getInstance(mHostActivity);
         List<MemorialDay> memorialDays = new ArrayList<>();
-        memorialDays.addAll(dao.findMemorialDays(mSelectedDay.getMonth(), mSelectedDay.getDayOfMonth())) ;
-        memorialDays.addAll(dao.findMemorialDays(mSelectedDay.getLunar().getLunarDate())) ;
+        memorialDays.addAll(dao.findMemorialDays(mSelectedDay.getMonth(), mSelectedDay.getDayOfMonth()));
+        memorialDays.addAll(dao.findMemorialDays(mSelectedDay.getLunar().getLunarDate()));
         mSelectedDay.setMemorialDays(memorialDays);
         onSelected(mSelectedDay);
     }
