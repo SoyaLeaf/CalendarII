@@ -236,7 +236,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/normal_margin"
-            android:text="生日"
+            android:text="@string/birthday"
             android:textColor="@color/text_color_sub_dark" />
     </LinearLayout>
 

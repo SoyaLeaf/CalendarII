@@ -11,6 +11,7 @@ public class MemorialDay implements Serializable {
     private int year;
     private int month;
     private int day;
+    private boolean isBirthday;
     private String lunar;
     private boolean isLunar;
 
@@ -84,6 +85,14 @@ public class MemorialDay implements Serializable {
 
     public void setLunar(String lunar) {
         this.lunar = lunar;
+    }
+
+    public void setBirthday(boolean birthday) {
+        isBirthday = birthday;
+    }
+
+    public boolean isBirthday() {
+        return isBirthday;
     }
 
     @Override

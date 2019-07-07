@@ -10,7 +10,6 @@ import top.soyask.calendarii.ui.view.CalendarView;
  */
 public class Day implements CalendarView.IDay, Serializable {
 
-    private static final String BIRTHDAY = "生日";
     private int dayOfMonth;
     private LunarDay lunar;
     private boolean isToday;

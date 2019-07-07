@@ -98,7 +98,7 @@ public class MemorialFragment extends BaseFragment {
         findToolbar().setNavigationOnClickListener(v -> removeFragment(this));
         setupTvWho();
         setupTvDate();
-        boolean isBirthday = "生日".equals(mMemorialDay.getName());
+        boolean isBirthday = mMemorialDay.isBirthday();
         setupNameAndDetails(isBirthday);
         setupCheckbox(isBirthday);
         setupNumberPicker();
@@ -254,7 +254,8 @@ public class MemorialFragment extends BaseFragment {
             mMemorialDay.setLunar(lunar.getLunarDate());
         }
         mMemorialDay.setWho(who.toString());
-        mMemorialDay.setName(mCbBirthday.isChecked() ? "生日" : mEtName.getText().toString());
+        mMemorialDay.setName(mCbBirthday.isChecked() ? getString(R.string.birthday) : mEtName.getText().toString());
+        mMemorialDay.setBirthday(mCbBirthday.isChecked());
         mMemorialDay.setDetails(mEtDetail.getText().toString());
         if (mMemorialDay.getId() > 0) {
             MemorialDayDao.getInstance(mHostActivity).update(mMemorialDay);
@@ -262,7 +263,7 @@ public class MemorialFragment extends BaseFragment {
             MemorialDayDao.getInstance(mHostActivity).insert(mMemorialDay);
         }
         showSnackbar(getString(R.string.add_success));
-        if(mOnMemorialDayUpdateListener != null){
+        if (mOnMemorialDayUpdateListener != null) {
             mOnMemorialDayUpdateListener.onUpdate();
         }
         removeFragment(this);
@@ -273,7 +274,7 @@ public class MemorialFragment extends BaseFragment {
             mTvWhoHint.setHintTextColor(Color.RED);
             return true;
         }
-        if(mEtName.getText().toString().isEmpty()){
+        if (mEtName.getText().toString().isEmpty()) {
             mEtName.setHintTextColor(Color.RED);
             return true;
         }
@@ -308,15 +309,16 @@ public class MemorialFragment extends BaseFragment {
 
     private SpannableString createDetailText() {
         SpannableString text;
+        String birthdayString = getString(R.string.birthday);
         if (mOriginName.isEmpty()) {
-            text = new SpannableString("生日");
+            text = new SpannableString(birthdayString);
             text.setSpan(new ForegroundColorSpan(0xdd000000),
-                    0, "生日".length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    0, birthdayString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             mEtName.setText(text);
-            mEtName.setText("生日");
+            mEtName.setText(birthdayString);
         } else {
-            String source = String.format("生日\t(%s)", mOriginName);
-            int start = "生日\t".length();
+            String source = String.format("%s\t(%s)", birthdayString, mOriginName);
+            int start = (birthdayString + "\t").length();
             text = new SpannableString(source);
             StrikethroughSpan span = new StrikethroughSpan();
             text.setSpan(new ForegroundColorSpan(0xdd000000),
