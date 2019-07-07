@@ -115,8 +115,14 @@ public class MainFragment extends BaseFragment
         mTvLunar = findViewById(R.id.tv_lunar);
         mTvLunarYear = findViewById(R.id.tv_lunar_year);
 
-        findViewById(R.id.ib_add_thing).setOnClickListener(v -> onAddThing());
-        findViewById(R.id.ib_add_memorial_day).setOnClickListener(v -> onAddMemorial());
+        findViewById(R.id.ib_add_thing).setOnClickListener(v -> {
+            hideLayoutActions();
+            onAddThing();
+        });
+        findViewById(R.id.ib_add_memorial_day).setOnClickListener(v -> {
+            hideLayoutActions();
+            onAddMemorial();
+        });
         mIbActions.setOnClickListener(v -> {
             if (mLayoutActions.getVisibility() == View.VISIBLE) {
                 hideLayoutActions();
@@ -153,14 +159,12 @@ public class MainFragment extends BaseFragment
     private void onAddMemorial() {
         MemorialFragment memorialFragment = MemorialFragment.newInstance(mSelectedDay);
         replaceFragment(memorialFragment);
-        hideLayoutActions();
     }
 
     private void onAddThing() {
         EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
         thingFragment.setOnAddListener(MainFragment.this);
         replaceFragment(thingFragment);
-        hideLayoutActions();
     }
 
     private void initSelectDay() {
