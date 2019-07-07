@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -53,6 +54,7 @@ import top.soyask.calendarii.ui.fragment.setting.SettingPreferenceFragment;
 import top.soyask.calendarii.ui.fragment.thing.EditThingFragment;
 import top.soyask.calendarii.ui.widget.WidgetManager;
 import top.soyask.calendarii.utils.DayUtils;
+import top.soyask.calendarii.utils.EraUtils;
 import top.soyask.calendarii.utils.EventBusDefault;
 import top.soyask.calendarii.utils.MonthUtils;
 
@@ -87,6 +89,8 @@ public class MainFragment extends BaseFragment
     private TextView mTvClLunarYear;
     private Toolbar mToolbarBottomSheet;
     private Animator mCurrentAnimator;
+    private ImageView mIvClIcon;
+    private ImageView mIvIcon;
 
     public MainFragment() {
         super(R.layout.fragment_main);
@@ -114,6 +118,7 @@ public class MainFragment extends BaseFragment
         mTvDayCount = findViewById(R.id.tv_day_count);
         mTvLunar = findViewById(R.id.tv_lunar);
         mTvLunarYear = findViewById(R.id.tv_lunar_year);
+        mIvIcon = findViewById(R.id.iv_icon);
 
         findViewById(R.id.ib_add_thing).setOnClickListener(v -> {
             hideLayoutActions();
@@ -194,6 +199,7 @@ public class MainFragment extends BaseFragment
      * 包含事件、日程、纪念日
      */
     private void setupEventList() {
+        mIvClIcon = findViewById(R.id.iv_cl_icon);
         mTvClDayCount = findViewById(R.id.tv_cl_day_count);
         mTvClLunar = findViewById(R.id.tv_cl_lunar);
         mTvClLunarYear = findViewById(R.id.tv_cl_lunar_year);
@@ -367,6 +373,9 @@ public class MainFragment extends BaseFragment
         String year = getString(R.string.xx_year, day.getLunar().getEra());
         mTvLunarYear.setText(year);
         mTvClLunarYear.setText(year);
+        int img = EraUtils.getYearForTwelveZodiacImage(mSelectedDay.getLunar().getYear());
+        mIvClIcon.setImageResource(img);
+        mIvIcon.setImageResource(img);
         if (memorialDays.isEmpty() && things.isEmpty()) {
             if (mIsShowCollapse) {
                 hideCollapseViewWithAnim();
