@@ -7,7 +7,6 @@
 
 # Java class files
 *.class
-
 # Generated files
 bin/
 gen/
@@ -57,3 +56,6 @@ freeline/
 freeline_project_description.json
 /holiday.json
 /workday.json
+
+Statistics.java
+meta_data.xml

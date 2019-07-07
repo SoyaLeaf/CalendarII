@@ -141,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         BackupUtils.insertBackupData(backup, this);
-        GlobalData.loadBirthday(MainActivity.this);
         Toast.makeText(this, "导入成功", Toast.LENGTH_SHORT).show();
         finish();
     }
@@ -185,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             MainActivity activity = mActivity.get();
             if (activity != null) {
-                GlobalData.loadBirthday(activity);
                 GlobalData.loadHoliday(activity);
                 GlobalData.loadWorkday(activity);
             }

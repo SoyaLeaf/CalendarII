@@ -2,6 +2,7 @@ package top.soyask.calendarii;
 
 import android.app.Application;
 
+import me.mapleaf.statistics.Statistics;
 import top.soyask.calendarii.crash.CrashHandler;
 import top.soyask.calendarii.global.Setting;
 
@@ -16,5 +17,6 @@ public class CalendarApplication extends Application {
         super.onCreate();
         CrashHandler.getInstance().init(this);
         Setting.loadSetting(this);
+        Statistics.init(this);
     }
 }
