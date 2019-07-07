@@ -40,6 +40,11 @@ public class ThingDao {
         return mDbUtils.query(TABLE, Thing.class, query);
     }
 
+    public List<Thing> list() {
+        DBUtils.Query query = new DBUtils.Query().setOrderBy("TARGET_TIME desc");
+        return mDbUtils.query(TABLE, Thing.class, query);
+    }
+
     public void insert(Thing thing) {
         ContentValues values = SqlGenerator.getContentValues(thing);
         mDbUtils.insert(TABLE, null, values);
@@ -65,4 +70,5 @@ public class ThingDao {
     public int count() {
         return mDbUtils.count(TABLE);
     }
+
 }

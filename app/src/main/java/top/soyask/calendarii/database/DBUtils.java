@@ -94,7 +94,7 @@ public class DBUtils extends SQLiteOpenHelper {
         db.execSQL("drop table birthday");
     }
 
-    private long title2Time(SimpleDateFormat format, String title) {
+    public static long title2Time(SimpleDateFormat format, String title) {
         try {
             return format.parse(title).getTime();
         } catch (ParseException e) {

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
@@ -14,12 +13,13 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import top.soyask.calendarii.R;
-import top.soyask.calendarii.database.dao.BirthdayDao;
-import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.MemorialDayDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Backup;
-import top.soyask.calendarii.entity.Birthday;
-import top.soyask.calendarii.entity.Event;
+import top.soyask.calendarii.entity.MemorialDay;
+import top.soyask.calendarii.entity.Thing;
 import top.soyask.calendarii.ui.fragment.base.BaseFragment;
 import top.soyask.calendarii.utils.BackupUtils;
 import top.soyask.calendarii.utils.FileUtils;
@@ -27,11 +27,11 @@ import top.soyask.calendarii.utils.PermissionUtils;
 
 public class BackupFragment extends BaseFragment {
 
-    private static final int BACKUP_VERSION = 0;
+    public static final int BACKUP_VERSION = 1;
     public static final String TAG = "BackupFragment";
-    public static final int SELECT_FILE = 012;
-    public static final int REQUEST_CODE_BACKUP = 0x1;
-    public static final int REQUEST_CODE_LOAD = 0x2;
+    private static final int SELECT_FILE = 012;
+    private static final int REQUEST_CODE_BACKUP = 0x1;
+    private static final int REQUEST_CODE_LOAD = 0x2;
     private TextView mTvOutput;
 
     public BackupFragment() {
@@ -141,14 +141,13 @@ public class BackupFragment extends BaseFragment {
     }
 
     private void backup() {
-        EventDao eventDao = EventDao.getInstance(mHostActivity);
-        BirthdayDao birthdayDao = BirthdayDao.getInstance(mHostActivity);
-        List<Event> events = eventDao.queryAll();
-        List<Birthday> birthdays = birthdayDao.queryAll();
+        List<MemorialDay> memorialDays = MemorialDayDao.getInstance(mHostActivity).list();
+        List<Thing> things = ThingDao.getInstance(mHostActivity).list();
+
         Backup backup = new Backup();
         backup.setVersion(BACKUP_VERSION);
-        backup.setBirthdays(birthdays);
-        backup.setEvents(events);
+        backup.setMemorialDays(memorialDays);
+        backup.setThings(things);
 
         String file = BackupUtils.save(backup, mHostActivity);
         if (file == null) {

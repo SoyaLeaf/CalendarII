@@ -15,13 +15,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
+import top.soyask.calendarii.database.DBUtils;
 import top.soyask.calendarii.database.dao.BirthdayDao;
 import top.soyask.calendarii.database.dao.EventDao;
+import top.soyask.calendarii.database.dao.MemorialDayDao;
+import top.soyask.calendarii.database.dao.ThingDao;
 import top.soyask.calendarii.entity.Backup;
 import top.soyask.calendarii.entity.Birthday;
 import top.soyask.calendarii.entity.Event;
+import top.soyask.calendarii.entity.MemorialDay;
+import top.soyask.calendarii.entity.Thing;
+import top.soyask.calendarii.ui.fragment.backup.BackupFragment;
 
 public class BackupUtils {
 
@@ -70,18 +78,36 @@ public class BackupUtils {
     }
 
     public static void insertBackupData(Backup backup, Context context) {
-        EventDao eventDao = EventDao.getInstance(context);
-        List<Event> events = backup.getEvents();
-        if (events != null) {
-            for (Event event : events) {
-                eventDao.add(event);
+        if (backup.getVersion() == BackupFragment.BACKUP_VERSION) {
+            List<Thing> things = backup.getThings();
+            if(things != null){
+                ThingDao thingDao = ThingDao.getInstance(context);
+                for (Thing thing : things) {
+                    thingDao.insert(thing);
+                }
             }
-        }
-        BirthdayDao birthdayDao = BirthdayDao.getInstance(context);
-        List<Birthday> birthdays = backup.getBirthdays();
-        if (birthdays != null) {
-            for (Birthday birthday : birthdays) {
-                birthdayDao.add(birthday);
+            List<MemorialDay> memorialDays = backup.getMemorialDays();
+            if(memorialDays != null){
+                MemorialDayDao memorialDayDao = MemorialDayDao.getInstance(context);
+                for (MemorialDay day : memorialDays) {
+                    memorialDayDao.insert(day);
+                }
+            }
+        } else {
+            List<Event> events = backup.getEvents();
+            if (events != null) {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日", Locale.CHINA);
+                ThingDao thingDao = ThingDao.getInstance(context);
+                for (Event event : events) {
+                    Thing thing = new Thing();
+                    thing.setType(event.getType());
+                    thing.setDetail(event.getDetail());
+                    thing.setDone(event.isComplete());
+                    thing.setUpdateTime(System.currentTimeMillis());
+                    String title = event.getTitle();
+                    thing.setTargetTime(DBUtils.title2Time(format, title));
+                    thingDao.insert(thing);
+                }
             }
         }
     }
