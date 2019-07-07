@@ -49,7 +49,7 @@ public class AllMemorialFragment extends BaseListFragment implements MemorialDay
     public void onMemorialDayClick(int position, MemorialDay day) {
         MemorialFragment memorialFragment = MemorialFragment.newInstance(day);
         memorialFragment.setOnMemorialDayUpdateListener(() -> mAdapter.notifyItemChanged(position));
-        addFragment(memorialFragment);
+        replaceFragment(memorialFragment);
     }
 
     @Override

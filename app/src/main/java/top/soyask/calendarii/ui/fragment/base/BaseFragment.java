@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.FragmentTransaction;
+import androidx.transition.Explode;
 import top.soyask.calendarii.MainActivity;
 import top.soyask.calendarii.R;
 
@@ -85,6 +86,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        postponeEnterTransition();
         view.setOnTouchListener((v, event) -> true);
     }
 
@@ -94,11 +96,11 @@ public abstract class BaseFragment extends Fragment {
      *
      * @param fragment
      */
-    protected void addFragment(Fragment fragment) {
+    protected void replaceFragment(Fragment fragment) {
         mHostActivity.getSupportFragmentManager()
                 .beginTransaction()
-                .setCustomAnimations(R.anim.fade_in, R.anim.out_slide, 0, R.anim.out_slide)
-                .replace(R.id.cover, fragment)
+                .setCustomAnimations(R.anim.in_from_bottom,0, 0, R.anim.out_slide)
+                .add(R.id.cover, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(fragment.getClass().getSimpleName())
                 .commit();

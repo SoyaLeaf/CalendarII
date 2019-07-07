@@ -92,7 +92,7 @@ public class AllThingsFragment extends BaseListFragment
             mThings.remove(position);
             mAdapter.notifyItemRemoved(position);
         });
-        addFragment(editThingFragment);
+        replaceFragment(editThingFragment);
     }
 
     @Override
@@ -126,9 +126,7 @@ public class AllThingsFragment extends BaseListFragment
         thing.setDone(false);
         mThingDao.update(thing);
         mAdapter.notifyItemChanged(position);
-        if (mDoneThings.contains(thing)) {
-            mDoneThings.remove(thing);
-        }
+        mDoneThings.remove(thing);
     }
 
     @Override

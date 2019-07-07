@@ -152,14 +152,14 @@ public class MainFragment extends BaseFragment
 
     private void onAddMemorial() {
         MemorialFragment memorialFragment = MemorialFragment.newInstance(mSelectedDay);
-        addFragment(memorialFragment);
+        replaceFragment(memorialFragment);
         hideLayoutActions();
     }
 
     private void onAddThing() {
         EditThingFragment thingFragment = EditThingFragment.newInstance(mSelectedDay, null);
         thingFragment.setOnAddListener(MainFragment.this);
-        addFragment(thingFragment);
+        replaceFragment(thingFragment);
         hideLayoutActions();
     }
 
@@ -207,13 +207,13 @@ public class MainFragment extends BaseFragment
             @Override
             public void onThingClick(Thing thing) {
                 EditThingFragment editThingFragment = EditThingFragment.newInstance(null, thing);
-                addFragment(editThingFragment);
+                replaceFragment(editThingFragment);
             }
 
             @Override
             public void onMemorialClick(MemorialDay day) {
                 MemorialFragment memorialFragment = MemorialFragment.newInstance(day);
-                addFragment(memorialFragment);
+                replaceFragment(memorialFragment);
             }
         });
         recyclerView.setAdapter(mMainAdapter);
@@ -272,7 +272,7 @@ public class MainFragment extends BaseFragment
                 break;
             case R.id.menu_all_event:
                 AllListFragment allListFragment = AllListFragment.newInstance();
-                addFragment(allListFragment);
+                replaceFragment(allListFragment);
                 break;
             case R.id.menu_select:
                 showSelectDialog();
@@ -282,15 +282,15 @@ public class MainFragment extends BaseFragment
                 break;
             case R.id.menu_about:
                 AboutFragment aboutFragment = AboutFragment.newInstance();
-                addFragment(aboutFragment);
+                replaceFragment(aboutFragment);
                 break;
             case R.id.menu_setting:
                 SettingPreferenceFragment settingFragment = SettingPreferenceFragment.newInstance();
-                addFragment(settingFragment);
+                replaceFragment(settingFragment);
                 break;
             case R.id.menu_backup:
                 BackupFragment backupFragment = BackupFragment.newInstance();
-                addFragment(backupFragment);
+                replaceFragment(backupFragment);
                 break;
         }
         return super.onOptionsItemSelected(item);
